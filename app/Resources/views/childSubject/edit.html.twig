@@ -1,0 +1,51 @@
+{% extends 'base.html.twig' %}
+{% block body %}
+<body>
+{{ include('templates/header.html.twig') }}        		
+{{ include('templates/aside.html.twig') }}        		
+{% embed "templates/content_draft.html.twig" %}
+	{% block content %}
+	<div class="col-lg-6">
+	  <section class="panel">
+	      <header class="panel-heading">
+	          Edit Child Subject
+				{% if not form.vars.valid %}
+	              <div class="alert alert-warning">
+	              <p>Please check your entries below</p>
+	              </div>				
+          		{% endif %}	          
+	      </header>
+	      <div class="panel-body">
+	          {{ form_start(form, {'method': 'post'} ) }}
+	              <div class="form-group">
+	                  <label for="child_subject_c_s_title">Child Subject Title</label>
+	                  {{ form_row(form.c_s_title, {'attr': {'class': 'form-control', 'placeholder': 'Child Subject Title' }}) }}
+	              </div>
+	              <div class="form-group">
+	                  <label for="child_subject_c_s_title">Marked Out Of:</label>
+	                  {{ form_row(form.out_of, {'attr': {'class': 'form-control', 'placeholder': 'Marked Out Of' }}) }}
+	              </div>
+	              <div class="form-group">
+	                  <label for="child_subject_subject">Parent Subject Title</label>
+	                  {{ form_row(form.subject, {'attr': {'class': 'form-control', 'placeholder': 'Parent Subject Title' }}) }}
+	              </div>
+	              {{ form_row(form.save, {'attr': {'class': 'btn btn-primary pull-left margin-md', 'style': 'margin-right: 5px'}}) }}
+	              {{ form_widget(form.saveAndAdd, {'attr': {'class': 'btn btn-info pull-left' }} ) }}
+	              <a href="{{path('homepage')}}" class="btn btn-danger pull-right" style="margin-left: 5px;">DONE</a>
+	              <a href="{{path('list_childSubjects')}}" class="btn btn-danger pull-right">List</a>
+	              
+	          {{ form_end(form) }}
+
+	      </div>
+	  </section>
+	</div>
+{% endblock %}
+{% endembed %}
+{% endblock %}
+{% block javascripts %}
+  <script type="text/javascript">
+    $(function() {
+      $("#student_names").focus().select();
+    });    
+  </script>
+{% endblock %}

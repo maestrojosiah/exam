@@ -1,0 +1,40 @@
+{% extends 'base.html.twig' %}
+{% block body %}
+<body>
+{{ include('templates/header.html.twig') }}        		
+{{ include('templates/aside.html.twig') }}        		
+{% embed "templates/content_draft.html.twig" %}
+	{% block content %}
+	<div class="col-lg-6">
+	  <section class="panel">
+	      <header class="panel-heading">
+	          Edit Class
+				{% if not form.vars.valid %}
+	              <div class="alert alert-warning">
+	              <p>Please check your entries below</p>
+	              </div>				
+          		{% endif %}	          
+	      </header>
+	      <div class="panel-body">
+	          {{ form_start(form, {'method': 'post'} ) }}
+	              <div class="form-group">
+	                  <label for="classs_c_title">Class Title</label>
+	                  {{ form_row(form.c_title, {'attr': {'class': 'form-control', 'placeholder': 'Class Title' }}) }}
+	              </div>
+	              <div class="form-group">
+	                  <label for="classs_class_teacher">Class Teacher</label>
+	                  {{ form_row(form.class_teacher, {'attr': {'class': 'form-control', 'placeholder': 'Class Teacher' }}) }}
+	              </div>
+	              {{ form_row(form.save, {'attr': {'class': 'btn btn-primary pull-left margin-md', 'style': 'margin-right: 5px'}}) }}
+	              {{ form_widget(form.saveAndAdd, {'attr': {'class': 'btn btn-info pull-left' }} ) }}
+	              <a href="{{path('homepage')}}" class="btn btn-danger pull-right" style="margin-left: 5px;">DONE</a>
+	              <a href="{{path('list_classes')}}" class="btn btn-danger pull-right">List</a>
+	              
+	          {{ form_end(form) }}
+
+	      </div>
+	  </section>
+	</div>
+{% endblock %}
+{% endembed %}
+{% endblock %}

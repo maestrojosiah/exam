@@ -1,0 +1,71 @@
+{% extends 'base.html.twig' %}
+{% block body %}
+<body>
+{{ include('templates/header.html.twig') }}        		
+{{ include('templates/aside.html.twig') }}        		
+{% embed "templates/content_draft.html.twig" %}
+	{% block content %}
+	<div class="col-lg-6">
+	  <section class="panel">
+	      <header class="panel-heading">
+	          Add Exam
+				{% if not form.vars.valid %}
+	              <div class="alert alert-warning">
+	              <p>Please check your entries below</p>
+	              </div>				
+          		{% endif %}	          
+	      </header>
+	      <div class="panel-body">
+	      	{% if app.user.classes is not empty %}
+	          {{ form_start(form, {'method': 'post'} ) }}
+	              <div class="form-group">
+	                  <label for="exam_company_c_title">Exam Company Title</label>
+	                  {{ form_row(form.c_title, {'attr': {'class': 'form-control', 'placeholder': 'Exam Title' }}) }}
+	              </div>
+	              <div class="form-group">
+	                  <label for="exam_company_class">Class</label>
+	                  {{ form_row(form.class, {'attr': {'class': 'form-control' }}) }}
+	              </div>
+	              {{ form_widget(form.saveAndAdd, {'attr': {'class': 'btn btn-info pull-left', 'style': 'margin-right: 5px' }} ) }}
+	              {{ form_row(form.save, {'attr': {'class': 'btn btn-primary pull-left margin-md'}}) }}
+	              <a href="{{path('homepage')}}" class="btn btn-danger pull-right" style="margin-left: 5px;">DONE</a>
+	              <a href="{{path('list_examCompanies')}}" class="btn btn-danger pull-right">List</a>
+	              
+	          {{ form_end(form) }}
+			{% else %}
+	            <div class="well">
+	              <h4>You need to  <a href="{{path('new_class')}}"> have at least one class </a> to add an exam </h4>
+	            </div>
+            {% endif %}	      
+	      </div>
+	  </section>
+	</div>
+		{% if app.user.examCompanies is not empty %}
+	<div class="col-lg-6">
+	  <section class="panel">
+	      <header class="panel-heading">
+	          Added Exams
+	      </header>
+	      <div class="panel-body">
+			<p>
+				<ol>
+					{% for exam in app.user.examCompanies %}
+						<li>{{exam.cTitle}} [{{exam.class.cTitle}}]</li>
+					{% endfor %}
+				</ol>
+			</p>
+	      </div>
+	  </section>
+	</div>
+	{% endif %}
+
+{% endblock %}
+{% endembed %}
+{% endblock %}
+{% block javascripts %}
+  <script type="text/javascript">
+    $(function() {
+      $("#exam_company_c_title").focus();
+    });    
+  </script>
+{% endblock %}

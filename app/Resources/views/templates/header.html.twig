@@ -1,0 +1,129 @@
+      <!--header start-->
+      <header class="header white-bg">
+            <div class="toggle-nav">
+                <div class="icon-reorder tooltips" data-original-title="Toggle Navigation" data-placement="bottom"></div>
+            </div>
+
+            <!--logo start-->
+            <a href="index.html" class="logo"><span>Exam</span><span class="lite">Pro</span></a>
+            <!--logo end-->
+
+            <div class="nav search-row" id="top_menu">
+                <!--  search form start -->
+                <ul class="nav top-menu">                    
+                    <li>
+                        <a><span>{% if app.user.configs|first.schName is defined %} {{app.user.configs|first.schName}} {% endif %}</span></a>
+                    </li>                    
+                </ul>
+                <!--  search form end -->                
+            </div>
+
+            <div class="top-nav notification-row">                
+                <!-- notificatoin dropdown start-->
+                <ul class="nav pull-right top-menu">
+                    
+                    <!-- task notificatoin start -->
+                    <li id="task_notificatoin_bar" class="dropdown">
+                    {% if score_list is defined and score_list is not empty %}
+                    {% set notifications = 0 %}
+                    {% for list_item in score_list %}
+                      {% if list_item[0][1] is defined and list_item[0][1] is not empty %}
+                      {% set no_of_students = list_item[0][1].students|length %}
+                      {% set no_of_subjects = app.user.subjects|length %}
+                        {% set no_of_items = 0 %}
+                        {% for item in list_item %}
+                          {% if item[0].marks is defined and item[0].marks > 0 %}
+                            {% set no_of_items = no_of_items + 1 %}
+                            {% endif %}
+                        {% endfor %}
+                        {% if list_item[0][1].students|length > 0 %}
+                          {% set percentage = (no_of_items / (no_of_students * no_of_subjects)) * 100 %}
+                        {% else %}
+                          {% set percentage = 0 %}
+                        {% endif %}
+                        {% if percentage < 100 %}
+                            {% set notifications = notifications + 1 %}
+                        {% endif %}
+                        {% endif %}
+                    {% endfor %}  
+                    {% endif %}
+                        <a data-toggle="dropdown" class="dropdown-toggle" href="#">
+                            <i class="icon-task-l"></i>
+                            {% if score_list is defined and score_list is not empty %}
+                                <span class="badge bg-important">{{notifications}}</span>
+                            {% endif %}
+                        </a>
+                        <ul class="dropdown-menu extended tasks-bar">
+                            <div class="notify-arrow notify-arrow-blue"></div>
+                                <li>
+                                    {% if score_list is defined and score_list is not empty %}
+                                        <p class="blue">You have {{notifications}} pending exam{% if notifications > 1 %}s{% endif %}</p>
+                                    {% endif %}
+                                </li>
+
+                                {% if score_list is defined and score_list is not empty %}
+                                    {% for list_item in score_list %}
+                                        {% if list_item[0][1] is defined and list_item[0][1] is not empty %}
+                                          {% set no_of_students = list_item[0][1].students|length %}
+                                          {% set no_of_subjects = app.user.subjects|length %}
+                                            {% set no_of_items = 0 %}
+                                            {% for item in list_item %}
+                                              {% if item[0].marks is defined and item[0].marks > 0 %}
+                                                {% set no_of_items = no_of_items + 1 %}
+                                                {% endif %}
+                                            {% endfor %}
+                                            {% if no_of_students * no_of_subjects > 0 %}
+                                              {% set percentage = (no_of_items / (no_of_students * no_of_subjects)) * 100 %}
+                                            {% else %}
+                                              {% set percentage = 0 %}
+                                            {% endif %}
+                                            {% if percentage < 100 %}
+                                            <li>
+                                                <a href="{{path('record_scores', {'classId': list_item[0][1].id, 'companyId':list_item[0][2].id})}}">
+                                                    <div class="task-info">
+                                                        <div class="desc">{{list_item[0][2].cTitle}} </div>
+                                                        <div class="percent">{{percentage|round}}%</div>
+                                                    </div>
+                                                    <div class="progress progress-striped">
+                                                        <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="90" aria-valuemin="0" aria-valuemax="100" style="width: {{percentage}}%">
+                                                            <span class="sr-only">{{percentage|round}}% Complete (success)</span>
+                                                        </div>
+                                                    </div>
+                                                </a>
+                                            </li>
+                                            {% endif %}
+                                        {% endif %}
+                                    {% endfor %}  
+                                {% endif %}
+                            <li class="external">
+                                <a href="{{path('list_examCompanies')}}">See All Exams</a>
+                            </li>
+                        </ul>
+                    </li>
+                    <!-- task notificatoin end -->
+                    <!-- user login dropdown start-->
+                    <li class="dropdown">
+                        <a data-toggle="dropdown" class="dropdown-toggle" href="#">
+                           {#  <span class="profile-ava">
+                                <img alt="" src="img/avatar1_small.jpg">
+                            </span> #}
+                            <span class="username">{{app.user.username}}</span>
+                            <b class="caret"></b>
+                        </a>
+                        <ul class="dropdown-menu extended logout">
+                            <div class="log-arrow-up"></div>
+                            <li class="eborder-top">
+                                <a href="{{path('update_config')}}"><i class="icon_profile"></i> Settings</a>
+                            </li>
+                            <li>
+                                <a href="{{path('logout')}}"><i class="icon_key_alt"></i> Log Out</a>
+                            </li>
+                        </ul>
+                    </li>
+                    <!-- user login dropdown end -->
+                </ul>
+                <!-- notificatoin dropdown end-->
+            </div>
+      </header>      
+      <!--header end-->
+

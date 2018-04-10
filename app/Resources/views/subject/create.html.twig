@@ -1,0 +1,66 @@
+{% extends 'base.html.twig' %}
+{% block body %}
+<body>
+{{ include('templates/header.html.twig') }}        		
+{{ include('templates/aside.html.twig') }}        		
+{% embed "templates/content_draft.html.twig" %}
+	{% block content %}
+	<div class="col-lg-6">
+	  <section class="panel">
+	      <header class="panel-heading">
+	          Add Subject
+				{% if not form.vars.valid %}
+	              <div class="alert alert-warning">
+	              <p>Please check your entries below</p>
+	              </div>				
+          		{% endif %}	          
+	      </header>
+	      <div class="panel-body">
+	          {{ form_start(form, {'method': 'post'} ) }}
+	              <div class="form-group">
+	                  <label for="subject_s_title">Subject Title</label>
+	                  {{ form_row(form.s_title, {'attr': {'class': 'form-control', 'placeholder': 'Subject Title' }}) }}
+	              </div>
+	              {{ form_widget(form.saveAndAdd, {'attr': {'class': 'btn btn-info pull-left', 'style': 'margin-right: 5px' }} ) }}
+	              {{ form_row(form.save, {'attr': {'class': 'btn btn-primary pull-left margin-md'}}) }}
+	              <a href="{{path('homepage')}}" class="btn btn-danger pull-right" style="margin-left: 5px;">DONE</a>
+	              <a href="{{path('list_subjects')}}" class="btn btn-danger pull-right">List</a>
+	              
+	          {{ form_end(form) }}
+
+	      </div>
+	  </section>
+	</div>
+	{% if app.user.subjects is not empty %}
+	<div class="col-lg-6">
+	  <section class="panel">
+	      <header class="panel-heading">
+	          Added Subjects
+	      </header>
+	      <div class="panel-body">
+			<p>
+				<ol>
+					{% for subject in app.user.subjects %}
+						<li>{{subject.sTitle}}</li>
+						<ul>
+							{% for child in subject.childSubjects %}
+								<li>{{child.cSTitle}}</li>
+							{% endfor %}
+						</ul>
+					{% endfor %}
+				</ol>
+			</p>
+	      </div>
+	  </section>
+	</div>
+	{% endif %}
+{% endblock %}
+{% endembed %}
+{% endblock %}
+{% block javascripts %}
+  <script type="text/javascript">
+    $(function() {
+      $("#subject_s_title").focus();
+    });    
+  </script>
+{% endblock %}

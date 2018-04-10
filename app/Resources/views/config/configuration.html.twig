@@ -1,0 +1,51 @@
+{% extends 'base.html.twig' %}
+{% block body %}
+<body>
+{{ include('templates/header.html.twig') }}           
+{{ include('templates/aside.html.twig') }}            
+{% embed "templates/content_draft.html.twig" %}
+  {% block content %}
+  <div class="col-lg-6">
+    <section class="panel">
+        <header class="panel-heading">
+        Update Settings
+        {% if not form.vars.valid %}
+                <div class="alert alert-warning">
+                {{ form_errors(form) }}
+                </div>        
+              {% endif %}           
+        </header>
+        <div class="panel-body">
+          {{ form_start(form, {'method': 'post', 'action': path('update_config'), 'attr': {'class': '' }} ) }}
+                <div class="form-group">
+                    <label for="classs_c_title">School Name</label>
+                  {{ form_widget(form.sch_name, {'attr': {'class': 'form-control', 'placeholder': 'School name', 'id': 'school_name' }} ) }}
+                </div>
+                <div class="form-group">
+                    <label for="classs_c_title">School Address</label>
+                  {{ form_widget(form.address, {'attr': {'class': 'form-control', 'placeholder': 'School Address', 'id': 'school_address' }} ) }}
+                </div>
+                <div class="form-group">
+                    <label for="classs_c_title">School Telephone</label>
+                  {{ form_widget(form.telephone, {'attr': {'class': 'form-control', 'placeholder': 'school_telephone', 'id': 'school_name' }} ) }}
+                </div>
+                <div class="form-group">
+                    <label for="classs_c_title">Results Per Page</label>
+                  {{ form_widget(form.results_per_page, {'attr': {'class': 'form-control', 'id': 'results_per_page' }} ) }}
+                </div>
+              {{ form_widget(form.save, {'attr': {'class': 'btn btn-primary' }} ) }}
+            <!-- /.col-lg-6 (nested) -->
+          ` {{ form_end(form) }}
+        </div>
+    </section>
+  </div>
+{% endblock %}
+{% endembed %}
+{% endblock %}
+{% block javascripts %}
+  <script type="text/javascript">
+    $(function() {
+      $("#classs_c_title").focus();
+    });    
+  </script>
+{% endblock %}

@@ -1,0 +1,109 @@
+{% extends 'base.html.twig' %}
+{% block stylesheets %}
+    <!-- Morris Charts CSS -->
+    <link href="{{asset('vendor/morrisjs/morris.css')}}" rel="stylesheet">
+{% endblock %}
+{% block body %}
+<body>
+{{ include('templates/header.html.twig') }}        		
+{{ include('templates/aside.html.twig') }}        		
+{% embed "templates/content_draft.html.twig" %}
+	{% block content %}
+	{% if subject_list is not empty %}
+	<div class="col-lg-12">
+	  <section class="panel">
+	      <header class="panel-heading">
+	          {{class.cTitle}} - Progress Graph for at most Last 5 Exams
+	      </header>
+	      <div class="panel-body" id="chartjs">
+	      	{% set width = exams|length * 250 %}
+              <div class="col-lg-12">
+                  <section class="panel">
+                        <div class="panel-body">
+                            <div id="morris-bar-chart"></div>
+                        </div>
+                  </section>
+              </div>   	      
+          </div>
+	      <div class="panel-body" id="chartjs">
+	      	{% set width = exams|length * 250 %}
+              <div class="col-lg-6">
+                  <section class="panel">
+                        <div class="panel-body">
+                            <div id="morris-bar-chart2"></div>
+                        </div>
+                  </section>
+              </div>   	      
+          </div>
+	  </section>
+	</div>
+	{% else %}
+		<div class="well">
+			<h4>You will find the class' graphs for previous exams here, after you have recorded some exam entries.</h4>
+		</div>
+	{% endif %}
+{% endblock %}
+{% endembed %}
+{% endblock %}
+{% block javascripts %}
+    <!-- Morris Charts JavaScript -->
+    <script src="{{asset('vendor/raphael/raphael.min.js')}}"></script>
+    <script src="{{asset('vendor/morrisjs/morris.min.js')}}"></script>
+    <script src="{{asset('data/morris-data.js')}}"></script>
+    <script type="text/javascript">
+    $(function() {
+
+	    Morris.Bar({
+	        element: 'morris-bar-chart',
+	        data: [
+	        {% for exam in subject_list %}
+	        {
+	            y: "{{exam|first['company'][0]}}",
+	            {% for key, entry in exam %}
+	             {{key|replace({'/':'_', ' ':'_'})}}: {{entry['sum']}},
+	            {% endfor %}
+	        },
+	        {% endfor %}
+	        ],
+	        xkey: 'y',
+	        ykeys: [
+	            {% for subject in app.user.subjects %}
+	            '{{subject.sTitle|replace({'/':'_', ' ':'_'})}}',
+	            {% endfor %}
+	        ],
+	        labels: [
+	            {% for subject in app.user.subjects %}
+	            '{{subject.sTitle|replace({'/':'_', ' ':'_'})}}',
+	            {% endfor %}
+	        ],
+	        hideHover: 'auto',
+	        resize: true
+	    });
+
+	    Morris.Bar({
+	        element: 'morris-bar-chart2',
+	        data: [
+	        {% for exam in score_lst %}
+	        {% set total = 0 %}
+	        {% set mean = 0 %}
+	        {
+	            y: '{{exam[0].examCompany.cTitle}}',
+	            {% for entry in exam %}
+	            	{% set total = total + entry.marks %}
+	            {% endfor %}
+	            {% set mean = total / class.students|length %}
+	            a: {{total}},
+	            b: {{mean|round(2)}}
+	        },
+	        {% endfor %}
+	        ],
+	        xkey: 'y',
+	        ykeys: ['a', 'b'],
+	        labels: ['Total Score', 'Mean Score'],
+	        hideHover: 'auto',
+	        resize: true
+	    });
+   
+    });        	
+    </script>
+{% endblock %}

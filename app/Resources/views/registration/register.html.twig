@@ -1,0 +1,44 @@
+{% extends 'base.html.twig' %}
+{% block body %}
+  <body class="login-img3-body">
+
+    <div class="container">
+
+      {{ form_start(form, {'attr': {'class': 'login-form'}}) }}       
+        <div class="login-wrap">
+            <p class="login-img"><i class="arrow_carrot-right_alt "></i></p>
+            <div class="input-group">
+              <span class="input-group-addon"><i class="icon_comment"></i></span>
+              {{ form_row(form.f_name, {'attr': {'class': 'form-control', 'placeholder': 'First Name', 'id': 'firstname' }}) }}
+            </div>
+            <div class="input-group">
+              <span class="input-group-addon"><i class="icon_comment"></i></span>
+              {{ form_row(form.l_name, {'attr': {'class': 'form-control', 'placeholder': 'Last Name', 'id': 'lastname' }}) }}
+            </div>
+            <div class="input-group">
+              <span class="input-group-addon"><i class="icon_profile"></i></span>
+              {{ form_row(form.username, {'attr': {'class': 'form-control', 'placeholder': 'Username', 'id': 'username' }}) }}
+            </div>
+            <div class="input-group">
+              <span class="input-group-addon"><i class="icon_mail"></i></span>
+              {{ form_row(form.email, {'attr': {'class': 'form-control', 'placeholder': 'Email', 'id': 'email' }}) }}
+            </div>
+            <div class="input-group">
+                <span class="input-group-addon"><i class="icon_key_alt"></i></span>
+                {{ form_row(form.plainPassword.first, {'attr': {'class': 'form-control', 'id': 'password', 'placeholder': 'Password' }}) }}
+            </div>
+            <div class="input-group">
+                <span class="input-group-addon"><i class="icon_key_alt"></i></span>
+                {{ form_row(form.plainPassword.second, {'attr': {'class': 'form-control', 'id': 'passwrdrepeat', 'placeholder': 'Repeat Password' }}) }}
+            </div>
+            <button class="btn btn-primary btn-lg btn-block" type="submit">Signup</button>
+            <a href="{{path('login')}}" class="btn btn-info btn-lg btn-block" >Log In</a>
+        </div>
+      {{ form_end(form) }}
+
+    </div>
+
+
+
+		
+{% endblock %}
