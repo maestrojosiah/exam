@@ -5,6 +5,15 @@
 {{ include('templates/aside.html.twig') }}        		
 {% embed "templates/content_draft.html.twig" %}
 	{% block content %}
+      {% if students is empty %}
+        <div class="well">
+          <h3>There are no students for class {{class.cTitle}}. Please <a href="{{path('new_student')}}">add students</a></h3>
+        </div>
+      {% elseif subjects is empty %}        
+        <div class="well">
+          <h3>You don't have any subjects added yet! Please <a href="{{path('new_subject')}}">add subjects</a></h3>
+        </div>
+      {% else %}        
 			<div class="col-lg-12">
         <section class="panel">
             <header class="panel-heading">
@@ -12,6 +21,7 @@
               <div class="pull-right">
               <a class="btn btn-sm btn-primary" href="{{ path('download_exam', {'classId': class.id, 'companyId': exam.id}) }}">Download PDF</a>
               <a class="btn btn-sm btn-primary" href="{{ path('download_exam_img', {'classId': class.id, 'companyId': exam.id}) }}">Download Image</a>
+              <a href="{{path('report_forms', {'classId': exam.class.id, 'companyId': exam.id})}}" class="btn btn-primary">Report Forms</a>
               </div>
             </header>
             {% set parents = [] %}
@@ -27,17 +37,17 @@
                   {% for subject in subjects %}
                     {% if subject.sTitle in parents %}
                       {% for c_subject in subject.childSubjects %}
-                      <th>{{c_subject.cSTitle}}</th>
+                      <th>{{c_subject.cSTitle|title}}</th>
                       {% endfor %}
                     {% endif %}
-                    <th style="color:red">{{subject.sTitle}}</th>
+                    <th style="color:red">{{subject.sTitle|title}}</th>
                   {% endfor %}
                   <th>Total</th>
                   <th>Position</th>
                 </tr>
                 {% for key, item in sum %}
                 <tr>
-                	<td style="text-nowrap; font-weight:bold; color:black;">{{item[2].names}}</td>
+                	<td style="text-nowrap; white-space: nowrap; font-weight:bold; color:black;">{{item[2].names|title}}</td>
                     {% for subject in subjects %}
                     {% if subject.childSubjects|length > 1 %}
                       {% for childSub in subject.childSubjects %}
@@ -105,7 +115,7 @@
           </table>
         </section>
       </div>
-
+  {% endif %}
 {% endblock %}
 {% endembed %}
 {% endblock %}

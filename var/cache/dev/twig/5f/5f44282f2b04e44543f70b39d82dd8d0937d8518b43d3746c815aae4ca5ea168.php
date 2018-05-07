@@ -21,29 +21,29 @@ class __TwigTemplate_0dd22dfa6af9af9a05ae889512ae1d160b3d3c4780a5745c5221108d0c7
 
     protected function doDisplay(array $context, array $blocks = array())
     {
-        $__internal_cef3f455f7e93c99512c5867746d77477a4796543520f2d32c344a92f3b26d0c = $this->env->getExtension("Symfony\\Bundle\\WebProfilerBundle\\Twig\\WebProfilerExtension");
-        $__internal_cef3f455f7e93c99512c5867746d77477a4796543520f2d32c344a92f3b26d0c->enter($__internal_cef3f455f7e93c99512c5867746d77477a4796543520f2d32c344a92f3b26d0c_prof = new Twig_Profiler_Profile($this->getTemplateName(), "template", "score/summary.html.twig"));
+        $__internal_09aa8bee15a286b5512be14ba2ca233bed15d1db3e41849ef6f980ba77844e9c = $this->env->getExtension("Symfony\\Bundle\\WebProfilerBundle\\Twig\\WebProfilerExtension");
+        $__internal_09aa8bee15a286b5512be14ba2ca233bed15d1db3e41849ef6f980ba77844e9c->enter($__internal_09aa8bee15a286b5512be14ba2ca233bed15d1db3e41849ef6f980ba77844e9c_prof = new Twig_Profiler_Profile($this->getTemplateName(), "template", "score/summary.html.twig"));
 
-        $__internal_2b668eadf6378a3793c00dad0beba19ff0f6b4d1e36c7278a976b93ed9eeeb21 = $this->env->getExtension("Symfony\\Bridge\\Twig\\Extension\\ProfilerExtension");
-        $__internal_2b668eadf6378a3793c00dad0beba19ff0f6b4d1e36c7278a976b93ed9eeeb21->enter($__internal_2b668eadf6378a3793c00dad0beba19ff0f6b4d1e36c7278a976b93ed9eeeb21_prof = new Twig_Profiler_Profile($this->getTemplateName(), "template", "score/summary.html.twig"));
+        $__internal_e39ff981f5a18db4f12d00f912b60f8c82392cbee6bf9061b6cee8bff8d3e091 = $this->env->getExtension("Symfony\\Bridge\\Twig\\Extension\\ProfilerExtension");
+        $__internal_e39ff981f5a18db4f12d00f912b60f8c82392cbee6bf9061b6cee8bff8d3e091->enter($__internal_e39ff981f5a18db4f12d00f912b60f8c82392cbee6bf9061b6cee8bff8d3e091_prof = new Twig_Profiler_Profile($this->getTemplateName(), "template", "score/summary.html.twig"));
 
         $this->parent->display($context, array_merge($this->blocks, $blocks));
         
-        $__internal_cef3f455f7e93c99512c5867746d77477a4796543520f2d32c344a92f3b26d0c->leave($__internal_cef3f455f7e93c99512c5867746d77477a4796543520f2d32c344a92f3b26d0c_prof);
+        $__internal_09aa8bee15a286b5512be14ba2ca233bed15d1db3e41849ef6f980ba77844e9c->leave($__internal_09aa8bee15a286b5512be14ba2ca233bed15d1db3e41849ef6f980ba77844e9c_prof);
 
         
-        $__internal_2b668eadf6378a3793c00dad0beba19ff0f6b4d1e36c7278a976b93ed9eeeb21->leave($__internal_2b668eadf6378a3793c00dad0beba19ff0f6b4d1e36c7278a976b93ed9eeeb21_prof);
+        $__internal_e39ff981f5a18db4f12d00f912b60f8c82392cbee6bf9061b6cee8bff8d3e091->leave($__internal_e39ff981f5a18db4f12d00f912b60f8c82392cbee6bf9061b6cee8bff8d3e091_prof);
 
     }
 
     // line 2
     public function block_body($context, array $blocks = array())
     {
-        $__internal_2f3cf9835ff1f52e39b0faaaf7e0c6e19c2ba227e27bd5173cee6bf78ea8a8eb = $this->env->getExtension("Symfony\\Bundle\\WebProfilerBundle\\Twig\\WebProfilerExtension");
-        $__internal_2f3cf9835ff1f52e39b0faaaf7e0c6e19c2ba227e27bd5173cee6bf78ea8a8eb->enter($__internal_2f3cf9835ff1f52e39b0faaaf7e0c6e19c2ba227e27bd5173cee6bf78ea8a8eb_prof = new Twig_Profiler_Profile($this->getTemplateName(), "block", "body"));
+        $__internal_21e354e6f6d1367853aaa7a3ab8f386613d82573a72651aee93cbeb604a5674f = $this->env->getExtension("Symfony\\Bundle\\WebProfilerBundle\\Twig\\WebProfilerExtension");
+        $__internal_21e354e6f6d1367853aaa7a3ab8f386613d82573a72651aee93cbeb604a5674f->enter($__internal_21e354e6f6d1367853aaa7a3ab8f386613d82573a72651aee93cbeb604a5674f_prof = new Twig_Profiler_Profile($this->getTemplateName(), "block", "body"));
 
-        $__internal_876426e75f924fc92c98866250a6599cc182a903c11958ed5f68f06c225fb4a2 = $this->env->getExtension("Symfony\\Bridge\\Twig\\Extension\\ProfilerExtension");
-        $__internal_876426e75f924fc92c98866250a6599cc182a903c11958ed5f68f06c225fb4a2->enter($__internal_876426e75f924fc92c98866250a6599cc182a903c11958ed5f68f06c225fb4a2_prof = new Twig_Profiler_Profile($this->getTemplateName(), "block", "body"));
+        $__internal_54e04a52a8dacc52efc66a32d652dbdcd9abb39296a0cc39bd7b657ce29c8b0d = $this->env->getExtension("Symfony\\Bridge\\Twig\\Extension\\ProfilerExtension");
+        $__internal_54e04a52a8dacc52efc66a32d652dbdcd9abb39296a0cc39bd7b657ce29c8b0d->enter($__internal_54e04a52a8dacc52efc66a32d652dbdcd9abb39296a0cc39bd7b657ce29c8b0d_prof = new Twig_Profiler_Profile($this->getTemplateName(), "block", "body"));
 
         // line 3
         echo "<body>
@@ -57,12 +57,12 @@ class __TwigTemplate_0dd22dfa6af9af9a05ae889512ae1d160b3d3c4780a5745c5221108d0c7
         echo "        \t\t
 ";
         // line 6
-        $this->loadTemplate("score/summary.html.twig", "score/summary.html.twig", 6, "246231945")->display($context);
+        $this->loadTemplate("score/summary.html.twig", "score/summary.html.twig", 6, "636965738")->display($context);
         
-        $__internal_876426e75f924fc92c98866250a6599cc182a903c11958ed5f68f06c225fb4a2->leave($__internal_876426e75f924fc92c98866250a6599cc182a903c11958ed5f68f06c225fb4a2_prof);
+        $__internal_54e04a52a8dacc52efc66a32d652dbdcd9abb39296a0cc39bd7b657ce29c8b0d->leave($__internal_54e04a52a8dacc52efc66a32d652dbdcd9abb39296a0cc39bd7b657ce29c8b0d_prof);
 
         
-        $__internal_2f3cf9835ff1f52e39b0faaaf7e0c6e19c2ba227e27bd5173cee6bf78ea8a8eb->leave($__internal_2f3cf9835ff1f52e39b0faaaf7e0c6e19c2ba227e27bd5173cee6bf78ea8a8eb_prof);
+        $__internal_21e354e6f6d1367853aaa7a3ab8f386613d82573a72651aee93cbeb604a5674f->leave($__internal_21e354e6f6d1367853aaa7a3ab8f386613d82573a72651aee93cbeb604a5674f_prof);
 
     }
 
@@ -98,6 +98,15 @@ class __TwigTemplate_0dd22dfa6af9af9a05ae889512ae1d160b3d3c4780a5745c5221108d0c7
 {{ include('templates/aside.html.twig') }}        \t\t
 {% embed \"templates/content_draft.html.twig\" %}
 \t{% block content %}
+      {% if students is empty %}
+        <div class=\"well\">
+          <h3>There are no students for class {{class.cTitle}}. Please <a href=\"{{path('new_student')}}\">add students</a></h3>
+        </div>
+      {% elseif subjects is empty %}        
+        <div class=\"well\">
+          <h3>You don't have any subjects added yet! Please <a href=\"{{path('new_subject')}}\">add subjects</a></h3>
+        </div>
+      {% else %}        
 \t\t\t<div class=\"col-lg-12\">
         <section class=\"panel\">
             <header class=\"panel-heading\">
@@ -105,6 +114,7 @@ class __TwigTemplate_0dd22dfa6af9af9a05ae889512ae1d160b3d3c4780a5745c5221108d0c7
               <div class=\"pull-right\">
               <a class=\"btn btn-sm btn-primary\" href=\"{{ path('download_exam', {'classId': class.id, 'companyId': exam.id}) }}\">Download PDF</a>
               <a class=\"btn btn-sm btn-primary\" href=\"{{ path('download_exam_img', {'classId': class.id, 'companyId': exam.id}) }}\">Download Image</a>
+              <a href=\"{{path('report_forms', {'classId': exam.class.id, 'companyId': exam.id})}}\" class=\"btn btn-primary\">Report Forms</a>
               </div>
             </header>
             {% set parents = [] %}
@@ -120,17 +130,17 @@ class __TwigTemplate_0dd22dfa6af9af9a05ae889512ae1d160b3d3c4780a5745c5221108d0c7
                   {% for subject in subjects %}
                     {% if subject.sTitle in parents %}
                       {% for c_subject in subject.childSubjects %}
-                      <th>{{c_subject.cSTitle}}</th>
+                      <th>{{c_subject.cSTitle|title}}</th>
                       {% endfor %}
                     {% endif %}
-                    <th style=\"color:red\">{{subject.sTitle}}</th>
+                    <th style=\"color:red\">{{subject.sTitle|title}}</th>
                   {% endfor %}
                   <th>Total</th>
                   <th>Position</th>
                 </tr>
                 {% for key, item in sum %}
                 <tr>
-                \t<td style=\"text-nowrap; font-weight:bold; color:black;\">{{item[2].names}}</td>
+                \t<td style=\"text-nowrap; white-space: nowrap; font-weight:bold; color:black;\">{{item[2].names|title}}</td>
                     {% for subject in subjects %}
                     {% if subject.childSubjects|length > 1 %}
                       {% for childSub in subject.childSubjects %}
@@ -198,7 +208,7 @@ class __TwigTemplate_0dd22dfa6af9af9a05ae889512ae1d160b3d3c4780a5745c5221108d0c7
           </table>
         </section>
       </div>
-
+  {% endif %}
 {% endblock %}
 {% endembed %}
 {% endblock %}
@@ -208,7 +218,7 @@ class __TwigTemplate_0dd22dfa6af9af9a05ae889512ae1d160b3d3c4780a5745c5221108d0c7
 
 
 /* score/summary.html.twig */
-class __TwigTemplate_0dd22dfa6af9af9a05ae889512ae1d160b3d3c4780a5745c5221108d0c7d78ac_246231945 extends Twig_Template
+class __TwigTemplate_0dd22dfa6af9af9a05ae889512ae1d160b3d3c4780a5745c5221108d0c7d78ac_636965738 extends Twig_Template
 {
     public function __construct(Twig_Environment $env)
     {
@@ -227,350 +237,379 @@ class __TwigTemplate_0dd22dfa6af9af9a05ae889512ae1d160b3d3c4780a5745c5221108d0c7
 
     protected function doDisplay(array $context, array $blocks = array())
     {
-        $__internal_e82710582960b36d1f240d89d555896a74331174c49782ab24e97858ef94d115 = $this->env->getExtension("Symfony\\Bundle\\WebProfilerBundle\\Twig\\WebProfilerExtension");
-        $__internal_e82710582960b36d1f240d89d555896a74331174c49782ab24e97858ef94d115->enter($__internal_e82710582960b36d1f240d89d555896a74331174c49782ab24e97858ef94d115_prof = new Twig_Profiler_Profile($this->getTemplateName(), "template", "score/summary.html.twig"));
+        $__internal_73d2f8639393bc0212029114d51b5ef7c185abbbf38c5314a53f716063f6240e = $this->env->getExtension("Symfony\\Bundle\\WebProfilerBundle\\Twig\\WebProfilerExtension");
+        $__internal_73d2f8639393bc0212029114d51b5ef7c185abbbf38c5314a53f716063f6240e->enter($__internal_73d2f8639393bc0212029114d51b5ef7c185abbbf38c5314a53f716063f6240e_prof = new Twig_Profiler_Profile($this->getTemplateName(), "template", "score/summary.html.twig"));
 
-        $__internal_31073ae5850e4b8f982183cb54b4314cfe66fc35f1c297bfa10fa7189e1b5edd = $this->env->getExtension("Symfony\\Bridge\\Twig\\Extension\\ProfilerExtension");
-        $__internal_31073ae5850e4b8f982183cb54b4314cfe66fc35f1c297bfa10fa7189e1b5edd->enter($__internal_31073ae5850e4b8f982183cb54b4314cfe66fc35f1c297bfa10fa7189e1b5edd_prof = new Twig_Profiler_Profile($this->getTemplateName(), "template", "score/summary.html.twig"));
+        $__internal_85ff5e056acd6967425142ec9c1095321683bf6e71b516ea36fe57a30e085fad = $this->env->getExtension("Symfony\\Bridge\\Twig\\Extension\\ProfilerExtension");
+        $__internal_85ff5e056acd6967425142ec9c1095321683bf6e71b516ea36fe57a30e085fad->enter($__internal_85ff5e056acd6967425142ec9c1095321683bf6e71b516ea36fe57a30e085fad_prof = new Twig_Profiler_Profile($this->getTemplateName(), "template", "score/summary.html.twig"));
 
         $this->parent->display($context, array_merge($this->blocks, $blocks));
         
-        $__internal_e82710582960b36d1f240d89d555896a74331174c49782ab24e97858ef94d115->leave($__internal_e82710582960b36d1f240d89d555896a74331174c49782ab24e97858ef94d115_prof);
+        $__internal_73d2f8639393bc0212029114d51b5ef7c185abbbf38c5314a53f716063f6240e->leave($__internal_73d2f8639393bc0212029114d51b5ef7c185abbbf38c5314a53f716063f6240e_prof);
 
         
-        $__internal_31073ae5850e4b8f982183cb54b4314cfe66fc35f1c297bfa10fa7189e1b5edd->leave($__internal_31073ae5850e4b8f982183cb54b4314cfe66fc35f1c297bfa10fa7189e1b5edd_prof);
+        $__internal_85ff5e056acd6967425142ec9c1095321683bf6e71b516ea36fe57a30e085fad->leave($__internal_85ff5e056acd6967425142ec9c1095321683bf6e71b516ea36fe57a30e085fad_prof);
 
     }
 
     // line 7
     public function block_content($context, array $blocks = array())
     {
-        $__internal_093d94423f192c77155d16137ae533637930686b85dcb206d2e14ca2a6c59fcf = $this->env->getExtension("Symfony\\Bundle\\WebProfilerBundle\\Twig\\WebProfilerExtension");
-        $__internal_093d94423f192c77155d16137ae533637930686b85dcb206d2e14ca2a6c59fcf->enter($__internal_093d94423f192c77155d16137ae533637930686b85dcb206d2e14ca2a6c59fcf_prof = new Twig_Profiler_Profile($this->getTemplateName(), "block", "content"));
+        $__internal_c818577d7d373ec3f99443ff387ed9aaf31b42b2c36064f432cf330e4ed2db0b = $this->env->getExtension("Symfony\\Bundle\\WebProfilerBundle\\Twig\\WebProfilerExtension");
+        $__internal_c818577d7d373ec3f99443ff387ed9aaf31b42b2c36064f432cf330e4ed2db0b->enter($__internal_c818577d7d373ec3f99443ff387ed9aaf31b42b2c36064f432cf330e4ed2db0b_prof = new Twig_Profiler_Profile($this->getTemplateName(), "block", "content"));
 
-        $__internal_458c5752e99f09be491787e299bc85b8abfcd5eb620671d3b39f402df7768930 = $this->env->getExtension("Symfony\\Bridge\\Twig\\Extension\\ProfilerExtension");
-        $__internal_458c5752e99f09be491787e299bc85b8abfcd5eb620671d3b39f402df7768930->enter($__internal_458c5752e99f09be491787e299bc85b8abfcd5eb620671d3b39f402df7768930_prof = new Twig_Profiler_Profile($this->getTemplateName(), "block", "content"));
+        $__internal_29c7285aa8f71bb8c7685713cd60ed26d356259776d776d0e1a530bf0ec944ca = $this->env->getExtension("Symfony\\Bridge\\Twig\\Extension\\ProfilerExtension");
+        $__internal_29c7285aa8f71bb8c7685713cd60ed26d356259776d776d0e1a530bf0ec944ca->enter($__internal_29c7285aa8f71bb8c7685713cd60ed26d356259776d776d0e1a530bf0ec944ca_prof = new Twig_Profiler_Profile($this->getTemplateName(), "block", "content"));
 
         // line 8
-        echo "\t\t\t<div class=\"col-lg-12\">
+        echo "      ";
+        if (twig_test_empty(($context["students"] ?? $this->getContext($context, "students")))) {
+            // line 9
+            echo "        <div class=\"well\">
+          <h3>There are no students for class ";
+            // line 10
+            echo twig_escape_filter($this->env, $this->getAttribute(($context["class"] ?? $this->getContext($context, "class")), "cTitle", array()), "html", null, true);
+            echo ". Please <a href=\"";
+            echo $this->env->getExtension('Symfony\Bridge\Twig\Extension\RoutingExtension')->getPath("new_student");
+            echo "\">add students</a></h3>
+        </div>
+      ";
+        } elseif (twig_test_empty(        // line 12
+($context["subjects"] ?? $this->getContext($context, "subjects")))) {
+            echo "        
+        <div class=\"well\">
+          <h3>You don't have any subjects added yet! Please <a href=\"";
+            // line 14
+            echo $this->env->getExtension('Symfony\Bridge\Twig\Extension\RoutingExtension')->getPath("new_subject");
+            echo "\">add subjects</a></h3>
+        </div>
+      ";
+        } else {
+            // line 16
+            echo "        
+\t\t\t<div class=\"col-lg-12\">
         <section class=\"panel\">
             <header class=\"panel-heading\">
               Exam Report Summary for ";
-        // line 11
-        echo twig_escape_filter($this->env, $this->getAttribute(($context["exam"] ?? $this->getContext($context, "exam")), "cTitle", array()), "html", null, true);
-        echo " [";
-        echo twig_escape_filter($this->env, $this->getAttribute(($context["class"] ?? $this->getContext($context, "class")), "cTitle", array()), "html", null, true);
-        echo "]
+            // line 20
+            echo twig_escape_filter($this->env, $this->getAttribute(($context["exam"] ?? $this->getContext($context, "exam")), "cTitle", array()), "html", null, true);
+            echo " [";
+            echo twig_escape_filter($this->env, $this->getAttribute(($context["class"] ?? $this->getContext($context, "class")), "cTitle", array()), "html", null, true);
+            echo "]
               <div class=\"pull-right\">
               <a class=\"btn btn-sm btn-primary\" href=\"";
-        // line 13
-        echo twig_escape_filter($this->env, $this->env->getExtension('Symfony\Bridge\Twig\Extension\RoutingExtension')->getPath("download_exam", array("classId" => $this->getAttribute(($context["class"] ?? $this->getContext($context, "class")), "id", array()), "companyId" => $this->getAttribute(($context["exam"] ?? $this->getContext($context, "exam")), "id", array()))), "html", null, true);
-        echo "\">Download PDF</a>
+            // line 22
+            echo twig_escape_filter($this->env, $this->env->getExtension('Symfony\Bridge\Twig\Extension\RoutingExtension')->getPath("download_exam", array("classId" => $this->getAttribute(($context["class"] ?? $this->getContext($context, "class")), "id", array()), "companyId" => $this->getAttribute(($context["exam"] ?? $this->getContext($context, "exam")), "id", array()))), "html", null, true);
+            echo "\">Download PDF</a>
               <a class=\"btn btn-sm btn-primary\" href=\"";
-        // line 14
-        echo twig_escape_filter($this->env, $this->env->getExtension('Symfony\Bridge\Twig\Extension\RoutingExtension')->getPath("download_exam_img", array("classId" => $this->getAttribute(($context["class"] ?? $this->getContext($context, "class")), "id", array()), "companyId" => $this->getAttribute(($context["exam"] ?? $this->getContext($context, "exam")), "id", array()))), "html", null, true);
-        echo "\">Download Image</a>
+            // line 23
+            echo twig_escape_filter($this->env, $this->env->getExtension('Symfony\Bridge\Twig\Extension\RoutingExtension')->getPath("download_exam_img", array("classId" => $this->getAttribute(($context["class"] ?? $this->getContext($context, "class")), "id", array()), "companyId" => $this->getAttribute(($context["exam"] ?? $this->getContext($context, "exam")), "id", array()))), "html", null, true);
+            echo "\">Download Image</a>
+              <a href=\"";
+            // line 24
+            echo twig_escape_filter($this->env, $this->env->getExtension('Symfony\Bridge\Twig\Extension\RoutingExtension')->getPath("report_forms", array("classId" => $this->getAttribute($this->getAttribute(($context["exam"] ?? $this->getContext($context, "exam")), "class", array()), "id", array()), "companyId" => $this->getAttribute(($context["exam"] ?? $this->getContext($context, "exam")), "id", array()))), "html", null, true);
+            echo "\" class=\"btn btn-primary\">Report Forms</a>
               </div>
             </header>
             ";
-        // line 17
-        $context["parents"] = array();
-        // line 18
-        echo "            ";
-        $context['_parent'] = $context;
-        $context['_seq'] = twig_ensure_traversable(($context["childSubjects"] ?? $this->getContext($context, "childSubjects")));
-        foreach ($context['_seq'] as $context["_key"] => $context["childSubject"]) {
-            // line 19
-            echo "              ";
-            if (!twig_in_filter($this->getAttribute($this->getAttribute($context["childSubject"], "subject", array()), "sTitle", array()), ($context["parents"] ?? $this->getContext($context, "parents")))) {
-                // line 20
-                echo "                ";
-                $context["parents"] = twig_array_merge(($context["parents"] ?? $this->getContext($context, "parents")), array(0 => $this->getAttribute($this->getAttribute($context["childSubject"], "subject", array()), "sTitle", array())));
-                // line 21
-                echo "              ";
-            }
-            // line 22
+            // line 27
+            $context["parents"] = array();
+            // line 28
             echo "            ";
-        }
-        $_parent = $context['_parent'];
-        unset($context['_seq'], $context['_iterated'], $context['_key'], $context['childSubject'], $context['_parent'], $context['loop']);
-        $context = array_intersect_key($context, $_parent) + $_parent;
-        // line 23
-        echo "            <table class=\"table table-striped table-advance table-hover\">
+            $context['_parent'] = $context;
+            $context['_seq'] = twig_ensure_traversable(($context["childSubjects"] ?? $this->getContext($context, "childSubjects")));
+            foreach ($context['_seq'] as $context["_key"] => $context["childSubject"]) {
+                // line 29
+                echo "              ";
+                if (!twig_in_filter($this->getAttribute($this->getAttribute($context["childSubject"], "subject", array()), "sTitle", array()), ($context["parents"] ?? $this->getContext($context, "parents")))) {
+                    // line 30
+                    echo "                ";
+                    $context["parents"] = twig_array_merge(($context["parents"] ?? $this->getContext($context, "parents")), array(0 => $this->getAttribute($this->getAttribute($context["childSubject"], "subject", array()), "sTitle", array())));
+                    // line 31
+                    echo "              ";
+                }
+                // line 32
+                echo "            ";
+            }
+            $_parent = $context['_parent'];
+            unset($context['_seq'], $context['_iterated'], $context['_key'], $context['childSubject'], $context['_parent'], $context['loop']);
+            $context = array_intersect_key($context, $_parent) + $_parent;
+            // line 33
+            echo "            <table class=\"table table-striped table-advance table-hover\">
              <tbody>
                 <tr>
                   <th style=\"text-nowrap\" class=\"col-md-3\">Name</th>
                   ";
-        // line 27
-        $context['_parent'] = $context;
-        $context['_seq'] = twig_ensure_traversable(($context["subjects"] ?? $this->getContext($context, "subjects")));
-        foreach ($context['_seq'] as $context["_key"] => $context["subject"]) {
-            // line 28
-            echo "                    ";
-            if (twig_in_filter($this->getAttribute($context["subject"], "sTitle", array()), ($context["parents"] ?? $this->getContext($context, "parents")))) {
-                // line 29
-                echo "                      ";
-                $context['_parent'] = $context;
-                $context['_seq'] = twig_ensure_traversable($this->getAttribute($context["subject"], "childSubjects", array()));
-                foreach ($context['_seq'] as $context["_key"] => $context["c_subject"]) {
-                    // line 30
-                    echo "                      <th>";
-                    echo twig_escape_filter($this->env, $this->getAttribute($context["c_subject"], "cSTitle", array()), "html", null, true);
-                    echo "</th>
-                      ";
-                }
-                $_parent = $context['_parent'];
-                unset($context['_seq'], $context['_iterated'], $context['_key'], $context['c_subject'], $context['_parent'], $context['loop']);
-                $context = array_intersect_key($context, $_parent) + $_parent;
-                // line 32
-                echo "                    ";
-            }
-            // line 33
-            echo "                    <th style=\"color:red\">";
-            echo twig_escape_filter($this->env, $this->getAttribute($context["subject"], "sTitle", array()), "html", null, true);
-            echo "</th>
-                  ";
-        }
-        $_parent = $context['_parent'];
-        unset($context['_seq'], $context['_iterated'], $context['_key'], $context['subject'], $context['_parent'], $context['loop']);
-        $context = array_intersect_key($context, $_parent) + $_parent;
-        // line 35
-        echo "                  <th>Total</th>
-                  <th>Position</th>
-                </tr>
-                ";
-        // line 38
-        $context['_parent'] = $context;
-        $context['_seq'] = twig_ensure_traversable(($context["sum"] ?? $this->getContext($context, "sum")));
-        foreach ($context['_seq'] as $context["key"] => $context["item"]) {
-            // line 39
-            echo "                <tr>
-                \t<td style=\"text-nowrap; font-weight:bold; color:black;\">";
-            // line 40
-            echo twig_escape_filter($this->env, $this->getAttribute($this->getAttribute($context["item"], 2, array(), "array"), "names", array()), "html", null, true);
-            echo "</td>
-                    ";
-            // line 41
+            // line 37
             $context['_parent'] = $context;
             $context['_seq'] = twig_ensure_traversable(($context["subjects"] ?? $this->getContext($context, "subjects")));
             foreach ($context['_seq'] as $context["_key"] => $context["subject"]) {
-                // line 42
+                // line 38
                 echo "                    ";
-                if ((twig_length_filter($this->env, $this->getAttribute($context["subject"], "childSubjects", array())) > 1)) {
-                    // line 43
+                if (twig_in_filter($this->getAttribute($context["subject"], "sTitle", array()), ($context["parents"] ?? $this->getContext($context, "parents")))) {
+                    // line 39
                     echo "                      ";
                     $context['_parent'] = $context;
                     $context['_seq'] = twig_ensure_traversable($this->getAttribute($context["subject"], "childSubjects", array()));
-                    foreach ($context['_seq'] as $context["_key"] => $context["childSub"]) {
-                        // line 44
-                        echo "                        ";
-                        $context["c_sub_key"] = (((($this->getAttribute($this->getAttribute($context["item"], 2, array(), "array"), "id", array()) . ".") . $this->getAttribute($context["childSub"], "id", array())) . ".") . "c");
-                        // line 45
-                        echo "                        ";
-                        if ($this->getAttribute($this->getAttribute(($context["key_list_c"] ?? null), ($context["c_sub_key"] ?? $this->getContext($context, "c_sub_key")), array(), "array", false, true), ($context["c_sub_key"] ?? $this->getContext($context, "c_sub_key")), array(), "array", true, true)) {
-                            // line 46
-                            echo "                          <td style=\"color:blue\">";
-                            echo twig_escape_filter($this->env, $this->getAttribute($this->getAttribute($this->getAttribute(($context["key_list_c"] ?? $this->getContext($context, "key_list_c")), ($context["c_sub_key"] ?? $this->getContext($context, "c_sub_key")), array(), "array"), ($context["c_sub_key"] ?? $this->getContext($context, "c_sub_key")), array(), "array"), "marks", array()), "html", null, true);
-                            echo "</td>
-                        ";
-                        } else {
-                            // line 48
-                            echo "                          <td style=\"color:blue\">_</td>
-                        ";
-                        }
-                        // line 50
-                        echo "                      ";
+                    foreach ($context['_seq'] as $context["_key"] => $context["c_subject"]) {
+                        // line 40
+                        echo "                      <th>";
+                        echo twig_escape_filter($this->env, twig_title_string_filter($this->env, $this->getAttribute($context["c_subject"], "cSTitle", array())), "html", null, true);
+                        echo "</th>
+                      ";
                     }
                     $_parent = $context['_parent'];
-                    unset($context['_seq'], $context['_iterated'], $context['_key'], $context['childSub'], $context['_parent'], $context['loop']);
+                    unset($context['_seq'], $context['_iterated'], $context['_key'], $context['c_subject'], $context['_parent'], $context['loop']);
                     $context = array_intersect_key($context, $_parent) + $_parent;
-                    // line 51
+                    // line 42
                     echo "                    ";
                 }
-                // line 52
-                echo "                    ";
-                $context["st_sub_key"] = (((($this->getAttribute($this->getAttribute($context["item"], 2, array(), "array"), "id", array()) . ".") . $this->getAttribute($context["subject"], "id", array())) . ".") . "s");
-                // line 53
-                echo "                      ";
-                if ($this->getAttribute($this->getAttribute(($context["key_list_s"] ?? null), ($context["st_sub_key"] ?? $this->getContext($context, "st_sub_key")), array(), "array", false, true), ($context["st_sub_key"] ?? $this->getContext($context, "st_sub_key")), array(), "array", true, true)) {
-                    // line 54
-                    echo "                        <td style=\"color:red\">";
-                    echo twig_escape_filter($this->env, $this->getAttribute($this->getAttribute($this->getAttribute(($context["key_list_s"] ?? $this->getContext($context, "key_list_s")), ($context["st_sub_key"] ?? $this->getContext($context, "st_sub_key")), array(), "array"), ($context["st_sub_key"] ?? $this->getContext($context, "st_sub_key")), array(), "array"), "marks", array()), "html", null, true);
-                    echo "</td>
-                      ";
-                } else {
-                    // line 56
-                    echo "                        <td style=\"color:red\">_</td>
-                      ";
-                }
-                // line 58
-                echo "                    ";
+                // line 43
+                echo "                    <th style=\"color:red\">";
+                echo twig_escape_filter($this->env, twig_title_string_filter($this->env, $this->getAttribute($context["subject"], "sTitle", array())), "html", null, true);
+                echo "</th>
+                  ";
             }
             $_parent = $context['_parent'];
             unset($context['_seq'], $context['_iterated'], $context['_key'], $context['subject'], $context['_parent'], $context['loop']);
             $context = array_intersect_key($context, $_parent) + $_parent;
-            // line 59
-            echo "                \t<td>";
-            echo twig_escape_filter($this->env, $this->getAttribute($context["item"], 0, array(), "array"), "html", null, true);
-            echo "</td>
-                \t<td>";
-            // line 60
-            echo twig_escape_filter($this->env, $this->getAttribute($context["item"], 1, array(), "array"), "html", null, true);
-            echo "</td>
+            // line 45
+            echo "                  <th>Total</th>
+                  <th>Position</th>
                 </tr>
                 ";
-        }
-        $_parent = $context['_parent'];
-        unset($context['_seq'], $context['_iterated'], $context['key'], $context['item'], $context['_parent'], $context['loop']);
-        $context = array_intersect_key($context, $_parent) + $_parent;
-        // line 63
-        echo "              <tr>
-\t\t\t\t\t<td>Total Score</td>
-\t\t\t\t\t";
-        // line 65
-        $context["total_score"] = 0;
-        // line 66
-        echo "\t\t\t\t\t";
-        $context['_parent'] = $context;
-        $context['_seq'] = twig_ensure_traversable(($context["subjects"] ?? $this->getContext($context, "subjects")));
-        foreach ($context['_seq'] as $context["_key"] => $context["subject"]) {
-            // line 67
-            echo "\t\t\t\t\t\t";
-            $context["total_score"] = (($context["total_score"] ?? $this->getContext($context, "total_score")) + $this->getAttribute($this->getAttribute(($context["sum_sub"] ?? $this->getContext($context, "sum_sub")), $this->getAttribute($context["subject"], "id", array()), array(), "array"), 0, array(), "array"));
-            // line 68
-            echo "                \t\t";
-            if (twig_in_filter($this->getAttribute($context["subject"], "sTitle", array()), ($context["parents"] ?? $this->getContext($context, "parents")))) {
-                // line 69
-                echo "                \t\t\t";
+            // line 48
+            $context['_parent'] = $context;
+            $context['_seq'] = twig_ensure_traversable(($context["sum"] ?? $this->getContext($context, "sum")));
+            foreach ($context['_seq'] as $context["key"] => $context["item"]) {
+                // line 49
+                echo "                <tr>
+                \t<td style=\"text-nowrap; white-space: nowrap; font-weight:bold; color:black;\">";
+                // line 50
+                echo twig_escape_filter($this->env, twig_title_string_filter($this->env, $this->getAttribute($this->getAttribute($context["item"], 2, array(), "array"), "names", array())), "html", null, true);
+                echo "</td>
+                    ";
+                // line 51
                 $context['_parent'] = $context;
-                $context['_seq'] = twig_ensure_traversable($this->getAttribute($context["subject"], "childSubjects", array()));
-                foreach ($context['_seq'] as $context["_key"] => $context["child"]) {
-                    // line 70
-                    echo "                \t\t\t\t<td>";
-                    echo twig_escape_filter($this->env, $this->getAttribute($this->getAttribute(($context["c_sum_sub"] ?? $this->getContext($context, "c_sum_sub")), $this->getAttribute($context["child"], "id", array()), array(), "array"), 0, array(), "array"), "html", null, true);
-                    echo "</td>
-                \t\t\t";
+                $context['_seq'] = twig_ensure_traversable(($context["subjects"] ?? $this->getContext($context, "subjects")));
+                foreach ($context['_seq'] as $context["_key"] => $context["subject"]) {
+                    // line 52
+                    echo "                    ";
+                    if ((twig_length_filter($this->env, $this->getAttribute($context["subject"], "childSubjects", array())) > 1)) {
+                        // line 53
+                        echo "                      ";
+                        $context['_parent'] = $context;
+                        $context['_seq'] = twig_ensure_traversable($this->getAttribute($context["subject"], "childSubjects", array()));
+                        foreach ($context['_seq'] as $context["_key"] => $context["childSub"]) {
+                            // line 54
+                            echo "                        ";
+                            $context["c_sub_key"] = (((($this->getAttribute($this->getAttribute($context["item"], 2, array(), "array"), "id", array()) . ".") . $this->getAttribute($context["childSub"], "id", array())) . ".") . "c");
+                            // line 55
+                            echo "                        ";
+                            if ($this->getAttribute($this->getAttribute(($context["key_list_c"] ?? null), ($context["c_sub_key"] ?? $this->getContext($context, "c_sub_key")), array(), "array", false, true), ($context["c_sub_key"] ?? $this->getContext($context, "c_sub_key")), array(), "array", true, true)) {
+                                // line 56
+                                echo "                          <td style=\"color:blue\">";
+                                echo twig_escape_filter($this->env, $this->getAttribute($this->getAttribute($this->getAttribute(($context["key_list_c"] ?? $this->getContext($context, "key_list_c")), ($context["c_sub_key"] ?? $this->getContext($context, "c_sub_key")), array(), "array"), ($context["c_sub_key"] ?? $this->getContext($context, "c_sub_key")), array(), "array"), "marks", array()), "html", null, true);
+                                echo "</td>
+                        ";
+                            } else {
+                                // line 58
+                                echo "                          <td style=\"color:blue\">_</td>
+                        ";
+                            }
+                            // line 60
+                            echo "                      ";
+                        }
+                        $_parent = $context['_parent'];
+                        unset($context['_seq'], $context['_iterated'], $context['_key'], $context['childSub'], $context['_parent'], $context['loop']);
+                        $context = array_intersect_key($context, $_parent) + $_parent;
+                        // line 61
+                        echo "                    ";
+                    }
+                    // line 62
+                    echo "                    ";
+                    $context["st_sub_key"] = (((($this->getAttribute($this->getAttribute($context["item"], 2, array(), "array"), "id", array()) . ".") . $this->getAttribute($context["subject"], "id", array())) . ".") . "s");
+                    // line 63
+                    echo "                      ";
+                    if ($this->getAttribute($this->getAttribute(($context["key_list_s"] ?? null), ($context["st_sub_key"] ?? $this->getContext($context, "st_sub_key")), array(), "array", false, true), ($context["st_sub_key"] ?? $this->getContext($context, "st_sub_key")), array(), "array", true, true)) {
+                        // line 64
+                        echo "                        <td style=\"color:red\">";
+                        echo twig_escape_filter($this->env, $this->getAttribute($this->getAttribute($this->getAttribute(($context["key_list_s"] ?? $this->getContext($context, "key_list_s")), ($context["st_sub_key"] ?? $this->getContext($context, "st_sub_key")), array(), "array"), ($context["st_sub_key"] ?? $this->getContext($context, "st_sub_key")), array(), "array"), "marks", array()), "html", null, true);
+                        echo "</td>
+                      ";
+                    } else {
+                        // line 66
+                        echo "                        <td style=\"color:red\">_</td>
+                      ";
+                    }
+                    // line 68
+                    echo "                    ";
                 }
                 $_parent = $context['_parent'];
-                unset($context['_seq'], $context['_iterated'], $context['_key'], $context['child'], $context['_parent'], $context['loop']);
+                unset($context['_seq'], $context['_iterated'], $context['_key'], $context['subject'], $context['_parent'], $context['loop']);
                 $context = array_intersect_key($context, $_parent) + $_parent;
-                // line 72
-                echo "                \t\t";
+                // line 69
+                echo "                \t<td>";
+                echo twig_escape_filter($this->env, $this->getAttribute($context["item"], 0, array(), "array"), "html", null, true);
+                echo "</td>
+                \t<td>";
+                // line 70
+                echo twig_escape_filter($this->env, $this->getAttribute($context["item"], 1, array(), "array"), "html", null, true);
+                echo "</td>
+                </tr>
+                ";
             }
+            $_parent = $context['_parent'];
+            unset($context['_seq'], $context['_iterated'], $context['key'], $context['item'], $context['_parent'], $context['loop']);
+            $context = array_intersect_key($context, $_parent) + $_parent;
             // line 73
-            echo "\t\t\t\t\t\t<td style=\"color:black;\">";
-            echo twig_escape_filter($this->env, $this->getAttribute($this->getAttribute(($context["sum_sub"] ?? $this->getContext($context, "sum_sub")), $this->getAttribute($context["subject"], "id", array()), array(), "array"), 0, array(), "array"), "html", null, true);
-            echo "</td>
+            echo "              <tr>
+\t\t\t\t\t<td>Total Score</td>
 \t\t\t\t\t";
-        }
-        $_parent = $context['_parent'];
-        unset($context['_seq'], $context['_iterated'], $context['_key'], $context['subject'], $context['_parent'], $context['loop']);
-        $context = array_intersect_key($context, $_parent) + $_parent;
-        // line 75
-        echo "\t\t\t\t\t<td style=\"color:black;\">";
-        echo twig_escape_filter($this->env, ($context["total_score"] ?? $this->getContext($context, "total_score")), "html", null, true);
-        echo "</td>
+            // line 75
+            $context["total_score"] = 0;
+            // line 76
+            echo "\t\t\t\t\t";
+            $context['_parent'] = $context;
+            $context['_seq'] = twig_ensure_traversable(($context["subjects"] ?? $this->getContext($context, "subjects")));
+            foreach ($context['_seq'] as $context["_key"] => $context["subject"]) {
+                // line 77
+                echo "\t\t\t\t\t\t";
+                $context["total_score"] = (($context["total_score"] ?? $this->getContext($context, "total_score")) + $this->getAttribute($this->getAttribute(($context["sum_sub"] ?? $this->getContext($context, "sum_sub")), $this->getAttribute($context["subject"], "id", array()), array(), "array"), 0, array(), "array"));
+                // line 78
+                echo "                \t\t";
+                if (twig_in_filter($this->getAttribute($context["subject"], "sTitle", array()), ($context["parents"] ?? $this->getContext($context, "parents")))) {
+                    // line 79
+                    echo "                \t\t\t";
+                    $context['_parent'] = $context;
+                    $context['_seq'] = twig_ensure_traversable($this->getAttribute($context["subject"], "childSubjects", array()));
+                    foreach ($context['_seq'] as $context["_key"] => $context["child"]) {
+                        // line 80
+                        echo "                \t\t\t\t<td>";
+                        echo twig_escape_filter($this->env, $this->getAttribute($this->getAttribute(($context["c_sum_sub"] ?? $this->getContext($context, "c_sum_sub")), $this->getAttribute($context["child"], "id", array()), array(), "array"), 0, array(), "array"), "html", null, true);
+                        echo "</td>
+                \t\t\t";
+                    }
+                    $_parent = $context['_parent'];
+                    unset($context['_seq'], $context['_iterated'], $context['_key'], $context['child'], $context['_parent'], $context['loop']);
+                    $context = array_intersect_key($context, $_parent) + $_parent;
+                    // line 82
+                    echo "                \t\t";
+                }
+                // line 83
+                echo "\t\t\t\t\t\t<td style=\"color:black;\">";
+                echo twig_escape_filter($this->env, $this->getAttribute($this->getAttribute(($context["sum_sub"] ?? $this->getContext($context, "sum_sub")), $this->getAttribute($context["subject"], "id", array()), array(), "array"), 0, array(), "array"), "html", null, true);
+                echo "</td>
+\t\t\t\t\t";
+            }
+            $_parent = $context['_parent'];
+            unset($context['_seq'], $context['_iterated'], $context['_key'], $context['subject'], $context['_parent'], $context['loop']);
+            $context = array_intersect_key($context, $_parent) + $_parent;
+            // line 85
+            echo "\t\t\t\t\t<td style=\"color:black;\">";
+            echo twig_escape_filter($this->env, ($context["total_score"] ?? $this->getContext($context, "total_score")), "html", null, true);
+            echo "</td>
               </tr>
               <tr>
 \t\t\t\t\t<td>Mean Score</td>
 \t\t\t\t\t";
-        // line 79
-        $context["total_mean"] = 0;
-        // line 80
-        echo "\t\t\t\t\t";
-        $context['_parent'] = $context;
-        $context['_seq'] = twig_ensure_traversable(($context["subjects"] ?? $this->getContext($context, "subjects")));
-        foreach ($context['_seq'] as $context["_key"] => $context["subject"]) {
-            // line 81
-            echo "\t\t\t\t\t\t";
-            $context["mean"] = ($this->getAttribute($this->getAttribute(($context["sum_sub"] ?? $this->getContext($context, "sum_sub")), $this->getAttribute($context["subject"], "id", array()), array(), "array"), 0, array(), "array") / twig_length_filter($this->env, ($context["students"] ?? $this->getContext($context, "students"))));
-            // line 82
-            echo "\t\t\t\t\t\t";
-            $context["total_mean"] = (($context["total_mean"] ?? $this->getContext($context, "total_mean")) + ($context["mean"] ?? $this->getContext($context, "mean")));
-            // line 83
-            echo "                \t\t";
-            if (twig_in_filter($this->getAttribute($context["subject"], "sTitle", array()), ($context["parents"] ?? $this->getContext($context, "parents")))) {
-                // line 84
-                echo "                \t\t\t";
-                $context['_parent'] = $context;
-                $context['_seq'] = twig_ensure_traversable($this->getAttribute($context["subject"], "childSubjects", array()));
-                foreach ($context['_seq'] as $context["_key"] => $context["child"]) {
-                    // line 85
-                    echo "\t\t\t\t\t\t\t\t";
-                    $context["mean_child"] = ($this->getAttribute($this->getAttribute(($context["c_sum_sub"] ?? $this->getContext($context, "c_sum_sub")), $this->getAttribute($context["child"], "id", array()), array(), "array"), 0, array(), "array") / twig_length_filter($this->env, ($context["students"] ?? $this->getContext($context, "students"))));
-                    // line 86
-                    echo "                \t\t\t\t<td>";
-                    echo twig_escape_filter($this->env, twig_round(($context["mean_child"] ?? $this->getContext($context, "mean_child")), 2), "html", null, true);
-                    echo "</td>
-                \t\t\t";
-                }
-                $_parent = $context['_parent'];
-                unset($context['_seq'], $context['_iterated'], $context['_key'], $context['child'], $context['_parent'], $context['loop']);
-                $context = array_intersect_key($context, $_parent) + $_parent;
-                // line 88
-                echo "                \t\t";
-            }
             // line 89
-            echo "\t\t\t\t\t\t<td style=\"color:black;\">";
-            echo twig_escape_filter($this->env, twig_round(($context["mean"] ?? $this->getContext($context, "mean")), 2), "html", null, true);
-            echo "</td>
+            $context["total_mean"] = 0;
+            // line 90
+            echo "\t\t\t\t\t";
+            $context['_parent'] = $context;
+            $context['_seq'] = twig_ensure_traversable(($context["subjects"] ?? $this->getContext($context, "subjects")));
+            foreach ($context['_seq'] as $context["_key"] => $context["subject"]) {
+                // line 91
+                echo "\t\t\t\t\t\t";
+                $context["mean"] = ($this->getAttribute($this->getAttribute(($context["sum_sub"] ?? $this->getContext($context, "sum_sub")), $this->getAttribute($context["subject"], "id", array()), array(), "array"), 0, array(), "array") / twig_length_filter($this->env, ($context["students"] ?? $this->getContext($context, "students"))));
+                // line 92
+                echo "\t\t\t\t\t\t";
+                $context["total_mean"] = (($context["total_mean"] ?? $this->getContext($context, "total_mean")) + ($context["mean"] ?? $this->getContext($context, "mean")));
+                // line 93
+                echo "                \t\t";
+                if (twig_in_filter($this->getAttribute($context["subject"], "sTitle", array()), ($context["parents"] ?? $this->getContext($context, "parents")))) {
+                    // line 94
+                    echo "                \t\t\t";
+                    $context['_parent'] = $context;
+                    $context['_seq'] = twig_ensure_traversable($this->getAttribute($context["subject"], "childSubjects", array()));
+                    foreach ($context['_seq'] as $context["_key"] => $context["child"]) {
+                        // line 95
+                        echo "\t\t\t\t\t\t\t\t";
+                        $context["mean_child"] = ($this->getAttribute($this->getAttribute(($context["c_sum_sub"] ?? $this->getContext($context, "c_sum_sub")), $this->getAttribute($context["child"], "id", array()), array(), "array"), 0, array(), "array") / twig_length_filter($this->env, ($context["students"] ?? $this->getContext($context, "students"))));
+                        // line 96
+                        echo "                \t\t\t\t<td>";
+                        echo twig_escape_filter($this->env, twig_round(($context["mean_child"] ?? $this->getContext($context, "mean_child")), 2), "html", null, true);
+                        echo "</td>
+                \t\t\t";
+                    }
+                    $_parent = $context['_parent'];
+                    unset($context['_seq'], $context['_iterated'], $context['_key'], $context['child'], $context['_parent'], $context['loop']);
+                    $context = array_intersect_key($context, $_parent) + $_parent;
+                    // line 98
+                    echo "                \t\t";
+                }
+                // line 99
+                echo "\t\t\t\t\t\t<td style=\"color:black;\">";
+                echo twig_escape_filter($this->env, twig_round(($context["mean"] ?? $this->getContext($context, "mean")), 2), "html", null, true);
+                echo "</td>
 \t\t\t\t\t";
-        }
-        $_parent = $context['_parent'];
-        unset($context['_seq'], $context['_iterated'], $context['_key'], $context['subject'], $context['_parent'], $context['loop']);
-        $context = array_intersect_key($context, $_parent) + $_parent;
-        // line 91
-        echo "\t\t\t\t\t<td style=\"color:black;\">";
-        echo twig_escape_filter($this->env, twig_round(($context["total_mean"] ?? $this->getContext($context, "total_mean")), 2), "html", null, true);
-        echo "</td>
+            }
+            $_parent = $context['_parent'];
+            unset($context['_seq'], $context['_iterated'], $context['_key'], $context['subject'], $context['_parent'], $context['loop']);
+            $context = array_intersect_key($context, $_parent) + $_parent;
+            // line 101
+            echo "\t\t\t\t\t<td style=\"color:black;\">";
+            echo twig_escape_filter($this->env, twig_round(($context["total_mean"] ?? $this->getContext($context, "total_mean")), 2), "html", null, true);
+            echo "</td>
               </tr>
               <tr>
 \t\t\t\t\t<td>Position</td>
 \t\t\t\t\t";
-        // line 95
-        $context['_parent'] = $context;
-        $context['_seq'] = twig_ensure_traversable(($context["subjects"] ?? $this->getContext($context, "subjects")));
-        foreach ($context['_seq'] as $context["_key"] => $context["subject"]) {
-            // line 96
-            echo "                \t\t";
-            if (twig_in_filter($this->getAttribute($context["subject"], "sTitle", array()), ($context["parents"] ?? $this->getContext($context, "parents")))) {
-                // line 97
-                echo "                \t\t\t";
-                $context['_parent'] = $context;
-                $context['_seq'] = twig_ensure_traversable($this->getAttribute($context["subject"], "childSubjects", array()));
-                foreach ($context['_seq'] as $context["_key"] => $context["child"]) {
-                    // line 98
-                    echo "                \t\t\t\t<td></td>
-                \t\t\t";
-                }
-                $_parent = $context['_parent'];
-                unset($context['_seq'], $context['_iterated'], $context['_key'], $context['child'], $context['_parent'], $context['loop']);
-                $context = array_intersect_key($context, $_parent) + $_parent;
-                // line 100
+            // line 105
+            $context['_parent'] = $context;
+            $context['_seq'] = twig_ensure_traversable(($context["subjects"] ?? $this->getContext($context, "subjects")));
+            foreach ($context['_seq'] as $context["_key"] => $context["subject"]) {
+                // line 106
                 echo "                \t\t";
-            }
-            // line 101
-            echo "\t\t\t\t\t\t<td style=\"color:red;\">";
-            echo twig_escape_filter($this->env, $this->getAttribute($this->getAttribute(($context["sum_sub"] ?? $this->getContext($context, "sum_sub")), $this->getAttribute($context["subject"], "id", array()), array(), "array"), 1, array(), "array"), "html", null, true);
-            echo "</td>
+                if (twig_in_filter($this->getAttribute($context["subject"], "sTitle", array()), ($context["parents"] ?? $this->getContext($context, "parents")))) {
+                    // line 107
+                    echo "                \t\t\t";
+                    $context['_parent'] = $context;
+                    $context['_seq'] = twig_ensure_traversable($this->getAttribute($context["subject"], "childSubjects", array()));
+                    foreach ($context['_seq'] as $context["_key"] => $context["child"]) {
+                        // line 108
+                        echo "                \t\t\t\t<td></td>
+                \t\t\t";
+                    }
+                    $_parent = $context['_parent'];
+                    unset($context['_seq'], $context['_iterated'], $context['_key'], $context['child'], $context['_parent'], $context['loop']);
+                    $context = array_intersect_key($context, $_parent) + $_parent;
+                    // line 110
+                    echo "                \t\t";
+                }
+                // line 111
+                echo "\t\t\t\t\t\t<td style=\"color:red;\">";
+                echo twig_escape_filter($this->env, $this->getAttribute($this->getAttribute(($context["sum_sub"] ?? $this->getContext($context, "sum_sub")), $this->getAttribute($context["subject"], "id", array()), array(), "array"), 1, array(), "array"), "html", null, true);
+                echo "</td>
 \t\t\t\t\t";
-        }
-        $_parent = $context['_parent'];
-        unset($context['_seq'], $context['_iterated'], $context['_key'], $context['subject'], $context['_parent'], $context['loop']);
-        $context = array_intersect_key($context, $_parent) + $_parent;
-        // line 103
-        echo "              </tr>
+            }
+            $_parent = $context['_parent'];
+            unset($context['_seq'], $context['_iterated'], $context['_key'], $context['subject'], $context['_parent'], $context['loop']);
+            $context = array_intersect_key($context, $_parent) + $_parent;
+            // line 113
+            echo "              </tr>
              </tbody>
           </table>
         </section>
       </div>
-
-";
+  ";
+        }
         
-        $__internal_458c5752e99f09be491787e299bc85b8abfcd5eb620671d3b39f402df7768930->leave($__internal_458c5752e99f09be491787e299bc85b8abfcd5eb620671d3b39f402df7768930_prof);
+        $__internal_29c7285aa8f71bb8c7685713cd60ed26d356259776d776d0e1a530bf0ec944ca->leave($__internal_29c7285aa8f71bb8c7685713cd60ed26d356259776d776d0e1a530bf0ec944ca_prof);
 
         
-        $__internal_093d94423f192c77155d16137ae533637930686b85dcb206d2e14ca2a6c59fcf->leave($__internal_093d94423f192c77155d16137ae533637930686b85dcb206d2e14ca2a6c59fcf_prof);
+        $__internal_c818577d7d373ec3f99443ff387ed9aaf31b42b2c36064f432cf330e4ed2db0b->leave($__internal_c818577d7d373ec3f99443ff387ed9aaf31b42b2c36064f432cf330e4ed2db0b_prof);
 
     }
 
@@ -586,7 +625,7 @@ class __TwigTemplate_0dd22dfa6af9af9a05ae889512ae1d160b3d3c4780a5745c5221108d0c7
 
     public function getDebugInfo()
     {
-        return array (  562 => 103,  553 => 101,  550 => 100,  543 => 98,  538 => 97,  535 => 96,  531 => 95,  523 => 91,  514 => 89,  511 => 88,  502 => 86,  499 => 85,  494 => 84,  491 => 83,  488 => 82,  485 => 81,  480 => 80,  478 => 79,  470 => 75,  461 => 73,  458 => 72,  449 => 70,  444 => 69,  441 => 68,  438 => 67,  433 => 66,  431 => 65,  427 => 63,  418 => 60,  413 => 59,  407 => 58,  403 => 56,  397 => 54,  394 => 53,  391 => 52,  388 => 51,  382 => 50,  378 => 48,  372 => 46,  369 => 45,  366 => 44,  361 => 43,  358 => 42,  354 => 41,  350 => 40,  347 => 39,  343 => 38,  338 => 35,  329 => 33,  326 => 32,  317 => 30,  312 => 29,  309 => 28,  305 => 27,  299 => 23,  293 => 22,  290 => 21,  287 => 20,  284 => 19,  279 => 18,  277 => 17,  271 => 14,  267 => 13,  260 => 11,  255 => 8,  246 => 7,  60 => 6,  56 => 5,  52 => 4,  49 => 3,  40 => 2,  11 => 1,);
+        return array (  601 => 113,  592 => 111,  589 => 110,  582 => 108,  577 => 107,  574 => 106,  570 => 105,  562 => 101,  553 => 99,  550 => 98,  541 => 96,  538 => 95,  533 => 94,  530 => 93,  527 => 92,  524 => 91,  519 => 90,  517 => 89,  509 => 85,  500 => 83,  497 => 82,  488 => 80,  483 => 79,  480 => 78,  477 => 77,  472 => 76,  470 => 75,  466 => 73,  457 => 70,  452 => 69,  446 => 68,  442 => 66,  436 => 64,  433 => 63,  430 => 62,  427 => 61,  421 => 60,  417 => 58,  411 => 56,  408 => 55,  405 => 54,  400 => 53,  397 => 52,  393 => 51,  389 => 50,  386 => 49,  382 => 48,  377 => 45,  368 => 43,  365 => 42,  356 => 40,  351 => 39,  348 => 38,  344 => 37,  338 => 33,  332 => 32,  329 => 31,  326 => 30,  323 => 29,  318 => 28,  316 => 27,  310 => 24,  306 => 23,  302 => 22,  295 => 20,  289 => 16,  283 => 14,  278 => 12,  271 => 10,  268 => 9,  265 => 8,  256 => 7,  60 => 6,  56 => 5,  52 => 4,  49 => 3,  40 => 2,  11 => 1,);
     }
 
     /** @deprecated since 1.27 (to be removed in 2.0). Use getSourceContext() instead */
@@ -606,6 +645,15 @@ class __TwigTemplate_0dd22dfa6af9af9a05ae889512ae1d160b3d3c4780a5745c5221108d0c7
 {{ include('templates/aside.html.twig') }}        \t\t
 {% embed \"templates/content_draft.html.twig\" %}
 \t{% block content %}
+      {% if students is empty %}
+        <div class=\"well\">
+          <h3>There are no students for class {{class.cTitle}}. Please <a href=\"{{path('new_student')}}\">add students</a></h3>
+        </div>
+      {% elseif subjects is empty %}        
+        <div class=\"well\">
+          <h3>You don't have any subjects added yet! Please <a href=\"{{path('new_subject')}}\">add subjects</a></h3>
+        </div>
+      {% else %}        
 \t\t\t<div class=\"col-lg-12\">
         <section class=\"panel\">
             <header class=\"panel-heading\">
@@ -613,6 +661,7 @@ class __TwigTemplate_0dd22dfa6af9af9a05ae889512ae1d160b3d3c4780a5745c5221108d0c7
               <div class=\"pull-right\">
               <a class=\"btn btn-sm btn-primary\" href=\"{{ path('download_exam', {'classId': class.id, 'companyId': exam.id}) }}\">Download PDF</a>
               <a class=\"btn btn-sm btn-primary\" href=\"{{ path('download_exam_img', {'classId': class.id, 'companyId': exam.id}) }}\">Download Image</a>
+              <a href=\"{{path('report_forms', {'classId': exam.class.id, 'companyId': exam.id})}}\" class=\"btn btn-primary\">Report Forms</a>
               </div>
             </header>
             {% set parents = [] %}
@@ -628,17 +677,17 @@ class __TwigTemplate_0dd22dfa6af9af9a05ae889512ae1d160b3d3c4780a5745c5221108d0c7
                   {% for subject in subjects %}
                     {% if subject.sTitle in parents %}
                       {% for c_subject in subject.childSubjects %}
-                      <th>{{c_subject.cSTitle}}</th>
+                      <th>{{c_subject.cSTitle|title}}</th>
                       {% endfor %}
                     {% endif %}
-                    <th style=\"color:red\">{{subject.sTitle}}</th>
+                    <th style=\"color:red\">{{subject.sTitle|title}}</th>
                   {% endfor %}
                   <th>Total</th>
                   <th>Position</th>
                 </tr>
                 {% for key, item in sum %}
                 <tr>
-                \t<td style=\"text-nowrap; font-weight:bold; color:black;\">{{item[2].names}}</td>
+                \t<td style=\"text-nowrap; white-space: nowrap; font-weight:bold; color:black;\">{{item[2].names|title}}</td>
                     {% for subject in subjects %}
                     {% if subject.childSubjects|length > 1 %}
                       {% for childSub in subject.childSubjects %}
@@ -706,7 +755,7 @@ class __TwigTemplate_0dd22dfa6af9af9a05ae889512ae1d160b3d3c4780a5745c5221108d0c7
           </table>
         </section>
       </div>
-
+  {% endif %}
 {% endblock %}
 {% endembed %}
 {% endblock %}

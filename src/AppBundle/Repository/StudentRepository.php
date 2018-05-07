@@ -19,4 +19,44 @@ class StudentRepository extends \Doctrine\ORM\EntityRepository
             ->getQuery()
             ->getSingleScalarResult();
     }
+
+	public function getPreviousStudent($studentId)
+	{
+	    return $this->createQueryBuilder('u')
+	        ->select('u')
+
+	        // Filter users.
+	        ->where('u.id < :studentId')
+	        ->setParameter(':studentId', $studentId)
+
+	        // Order by id.
+	        ->orderBy('u.id', 'DESC')
+
+	        // Get the first record.
+	        ->setFirstResult(0)
+	        ->setMaxResults(1)
+            ->getQuery()
+	        ->getOneOrNullResult()
+	    ;
+
+	}
+
+	public function getNextStudent($studentId)
+	{
+	    return $this->createQueryBuilder('u')
+	        ->select('u')
+
+	        ->where('u.id > :studentId')
+	        ->setParameter(':studentId', $studentId)
+
+	        ->orderBy('u.id', 'ASC')
+
+	        ->setFirstResult(0)
+	        ->setMaxResults(1)
+            ->getQuery()
+	        ->getOneOrNullResult()
+	    ;
+
+	}	
+
 }

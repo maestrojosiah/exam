@@ -5,12 +5,22 @@
 {{ include('templates/aside.html.twig') }}        		
 {% embed "templates/content_draft.html.twig" %}
 	{% block content %}
-      {% if students is not empty %}
+      {% if students is empty %}
+        <div class="well">
+          <h3>There are no students for class {{class.cTitle}}. Please <a href="{{path('new_student')}}">add students</a></h3>
+        </div>
+      {% elseif subjects is empty %}        
+        <div class="well">
+          <h3>You don't have any subjects added yet! Please <a href="{{path('new_subject')}}">add subjects</a></h3>
+        </div>
+      {% else %}        
 			<div class="col-lg-12">
         <section class="panel">
             <header class="panel-heading">
               Exam Records for {{exam.cTitle}} [{{class.cTitle}}]
               <a href="{{path('list_examCompanies', {'class': class.id})}}" class="btn btn-primary pull-right">List Exams</a>
+              <a href="{{path('record_summary', {'classId': exam.class.id, 'companyId': exam.id})}}" class="btn btn-primary">Class Report Summary</a>
+              <a href="{{path('report_forms', {'classId': exam.class.id, 'companyId': exam.id})}}" class="btn btn-primary">Report Forms</a>
             </header>
             {% set parents = [] %}
             {% for childSubject in childSubjects %}
@@ -40,10 +50,10 @@
                       {% if subject.sTitle in parents %}                        
                         {% for c_subject in subject.childSubjects %}
                           {% set childKey = student.id ~ '.' ~ c_subject.id ~ '.' ~ class.id %}
-                          <td><input value="{% if child_score_entries[childKey] is defined %}{{child_score_entries[childKey]}}{% endif %}" id="cSubject|{{c_subject.id}}_user|{{user.id}}_student|{{student.id}}_exam|{{exam.id}}_class|{{class.id}}" style="max-width:40px;" type="text" /></td>
+                          <td><input value="{% if child_score_entries[childKey] is defined %}{{child_score_entries[childKey]}}{% endif %}" id="cSubject|{{c_subject.id}}_user|{{user.id}}_student|{{student.id}}_exam|{{exam.id}}_class|{{class.id}}" style="max-width:40px;" class="c_{{student.id}}_{{c_subject.id}}" type="text" /></td>
                         {% endfor %}
                       {% endif %}
-                      <td>{% if subject.sTitle not in parents %}<input value="{% if score_entries[key] is defined %}{{score_entries[key]}}{% endif %}" id="subject|{{subject.id}}_user|{{user.id}}_student|{{student.id}}_exam|{{exam.id}}_class|{{class.id}}" style="max-width:40px;" type="text" />{% else %}<span id="{{subject.id}}_{{user.id}}_{{student.id}}_{{exam.id}}_{{class.id}}" style="min-width:40px; background-color:#007aff; color:white; padding:2px;">{% if score_entries[key] is defined %}{{score_entries[key]}}{% endif %}</span> {% endif %}</td>
+                      <td>{% if subject.sTitle not in parents %}<input value="{% if score_entries[key] is defined %}{{score_entries[key]}}{% endif %}" id="subject|{{subject.id}}_user|{{user.id}}_student|{{student.id}}_exam|{{exam.id}}_class|{{class.id}}" style="max-width:40px;" class="s_{{student.id}}_{{subject.id}}" type="text" />{% else %}<span id="{{subject.id}}_{{user.id}}_{{student.id}}_{{exam.id}}_{{class.id}}"  class="s_{{student.id}}_{{subject.id}}" style="min-width:40px; background-color:#007aff; color:white; padding:2px;">{% if score_entries[key] is defined %}{{score_entries[key]}}{% endif %}</span> {% endif %}</td>
                     {% endfor %}
                 </tr>
               {% endfor %}
@@ -51,11 +61,7 @@
           </table>
         </section>
       </div>
-      <a href="{{path('record_summary', {'classId': exam.class.id, 'companyId': exam.id})}}" class="btn btn-primary btn-block">Generate Exam Report Summary</a>
-      {% else %}
-        <div class="well">
-          <h3>There are no students for class {{class.cTitle}}. Please <a href="{{path('new_student')}}">add students</a></h3>
-        </div>
+      
       {% endif %}
 
 {% endblock %}
@@ -143,6 +149,180 @@
       });
 
   });
+</script>
+
+<script>
+$(document).on('keyup', '[id^="subject|"]',function (e){
+    var id = jQuery(this).attr("id");
+
+    if(e.keyCode == 38){
+        $.ajax({
+          url:'{{ (path('move_cursor')) }}',
+          type: "POST",
+          dataType: "json",
+          data: {
+              "id": id,
+              "direction": 'up'
+          },
+          async: true,
+          success: function (data)
+          {
+            console.log(data)
+            $(".s_"+data).focus();
+          },
+         error: function () {
+          console.log("something's wrong")
+        }
+      });
+    }
+    if(e.keyCode == 40){
+        $.ajax({
+          url:'{{ (path('move_cursor')) }}',
+          type: "POST",
+          dataType: "json",
+          data: {
+              "id": id,
+              "direction": 'down'
+          },
+          async: true,
+          success: function (data)
+          {
+            console.log(data)
+            $(".s_"+data).focus();
+          },
+         error: function () {
+          console.log("something's wrong")
+        }
+      });
+    }
+    if(e.keyCode == 37){
+        $.ajax({
+          url:'{{ (path('move_cursor')) }}',
+          type: "POST",
+          dataType: "json",
+          data: {
+              "id": id,
+              "direction": 'left'
+          },
+          async: true,
+          success: function (data)
+          {
+            console.log(data)
+            $(".s_"+data).focus();
+          },
+         error: function () {
+          console.log("something's wrong")
+        }
+      });
+      }
+    if(e.keyCode == 39){
+        $.ajax({
+          url:'{{ (path('move_cursor')) }}',
+          type: "POST",
+          dataType: "json",
+          data: {
+              "id": id,
+              "direction": 'right'
+          },
+          async: true,
+          success: function (data)
+          {
+            console.log(data)
+            $(".s_"+data).focus();
+          },
+         error: function () {
+          console.log("something's wrong")
+        }
+      });
+      }
+})
+</script>
+
+<script>
+$(document).on('keyup', '[id^="cSubject|"]',function (e){
+    var id = jQuery(this).attr("id");
+
+    if(e.keyCode == 38){
+        $.ajax({
+          url:'{{ (path('move_cursor_child')) }}',
+          type: "POST",
+          dataType: "json",
+          data: {
+              "id": id,
+              "direction": 'up'
+          },
+          async: true,
+          success: function (data)
+          {
+            console.log(data)
+            $(".c_"+data).focus();
+          },
+         error: function () {
+          console.log("something's wrong")
+        }
+      });
+    }
+    if(e.keyCode == 40){
+        $.ajax({
+          url:'{{ (path('move_cursor_child')) }}',
+          type: "POST",
+          dataType: "json",
+          data: {
+              "id": id,
+              "direction": 'down'
+          },
+          async: true,
+          success: function (data)
+          {
+            console.log(data)
+            $(".c_"+data).focus();
+          },
+         error: function () {
+          console.log("something's wrong")
+        }
+      });
+    }
+    if(e.keyCode == 37){
+        $.ajax({
+          url:'{{ (path('move_cursor_child')) }}',
+          type: "POST",
+          dataType: "json",
+          data: {
+              "id": id,
+              "direction": 'left'
+          },
+          async: true,
+          success: function (data)
+          {
+            console.log(data)
+            $(".c_"+data).focus();
+          },
+         error: function () {
+          console.log("something's wrong")
+        }
+      });
+      }
+    if(e.keyCode == 39){
+        $.ajax({
+          url:'{{ (path('move_cursor_child')) }}',
+          type: "POST",
+          dataType: "json",
+          data: {
+              "id": id,
+              "direction": 'right'
+          },
+          async: true,
+          success: function (data)
+          {
+            console.log(data)
+            $(".c_"+data).focus();
+          },
+         error: function () {
+          console.log("something's wrong")
+        }
+      });
+      }
+})
 </script>
 
 {% endblock %}

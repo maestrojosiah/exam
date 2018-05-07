@@ -171,6 +171,16 @@ class appDevDebugProjectContainerUrlMatcher extends Symfony\Bundle\FrameworkBund
                     return $this->mergeDefaults(array_replace($matches, array('_route' => 'record_scores')), array (  '_controller' => 'AppBundle\\Controller\\ScoreController::updateAction',));
                 }
 
+                // report_forms
+                if (0 === strpos($pathinfo, '/scores/reports') && preg_match('#^/scores/reports/(?P<classId>[^/]++)/(?P<companyId>[^/]++)$#s', $pathinfo, $matches)) {
+                    return $this->mergeDefaults(array_replace($matches, array('_route' => 'report_forms')), array (  '_controller' => 'AppBundle\\Controller\\ScoreController::reportAction',));
+                }
+
+                // move_cursor
+                if ('/scores/move' === $pathinfo) {
+                    return array (  '_controller' => 'AppBundle\\Controller\\ScoreController::moveAction',  '_route' => 'move_cursor',);
+                }
+
                 // record_summary
                 if (0 === strpos($pathinfo, '/scores/summary') && preg_match('#^/scores/summary/(?P<classId>[^/]++)/(?P<companyId>[^/]++)$#s', $pathinfo, $matches)) {
                     return $this->mergeDefaults(array_replace($matches, array('_route' => 'record_summary')), array (  '_controller' => 'AppBundle\\Controller\\ScoreController::summaryAction',));
@@ -188,7 +198,12 @@ class appDevDebugProjectContainerUrlMatcher extends Symfony\Bundle\FrameworkBund
 
             }
 
-            elseif (0 === strpos($pathinfo, '/student')) {
+            // move_cursor_child
+            if ('/scoreChildren/move' === $pathinfo) {
+                return array (  '_controller' => 'AppBundle\\Controller\\ScoreController::moveChildAction',  '_route' => 'move_cursor_child',);
+            }
+
+            if (0 === strpos($pathinfo, '/student')) {
                 // new_student
                 if ('/student/new' === $pathinfo) {
                     return array (  '_controller' => 'AppBundle\\Controller\\StudentController::createAction',  '_route' => 'new_student',);
@@ -294,6 +309,11 @@ class appDevDebugProjectContainerUrlMatcher extends Symfony\Bundle\FrameworkBund
         // user_registration
         if ('/register' === $pathinfo) {
             return array (  '_controller' => 'AppBundle\\Controller\\RegistrationController::registerAction',  '_route' => 'user_registration',);
+        }
+
+        // download_report
+        if (0 === strpos($pathinfo, '/report/download') && preg_match('#^/report/download/(?P<classId>[^/]++)/(?P<companyId>[^/]++)$#s', $pathinfo, $matches)) {
+            return $this->mergeDefaults(array_replace($matches, array('_route' => 'download_report')), array (  '_controller' => 'AppBundle\\Controller\\ScoreController::repotAction',));
         }
 
         // login

@@ -10,4 +10,43 @@ namespace AppBundle\Repository;
  */
 class ChildSubjectRepository extends \Doctrine\ORM\EntityRepository
 {
+	public function getPreviousCSubject($cSubjectId)
+	{
+	    return $this->createQueryBuilder('u')
+	        ->select('u')
+
+	        // Filter users.
+	        ->where('u.id < :cSubjectId')
+	        ->setParameter(':cSubjectId', $cSubjectId)
+
+	        // Order by id.
+	        ->orderBy('u.id', 'DESC')
+
+	        // Get the first record.
+	        ->setFirstResult(0)
+	        ->setMaxResults(1)
+            ->getQuery()
+	        ->getOneOrNullResult()
+	    ;
+
+	}
+
+	public function getNextCSubject($cSubjectId)
+	{
+	    return $this->createQueryBuilder('u')
+	        ->select('u')
+
+	        ->where('u.id > :cSubjectId')
+	        ->setParameter(':cSubjectId', $cSubjectId)
+
+	        ->orderBy('u.id', 'ASC')
+
+	        ->setFirstResult(0)
+	        ->setMaxResults(1)
+            ->getQuery()
+	        ->getOneOrNullResult()
+	    ;
+
+	}	
+
 }

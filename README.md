@@ -1,5 +1,5 @@
-school
+exam app
 ======
 
-A Symfony project created on October 4, 2017, 1:20 pm.
+Manage exams in the easiest and fastest way as a class teacher.
 # exam

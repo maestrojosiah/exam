@@ -19,4 +19,44 @@ class SubjectRepository extends \Doctrine\ORM\EntityRepository
             ->getQuery()
             ->getSingleScalarResult();
     }
+
+	public function getPreviousSubject($subjectId)
+	{
+	    return $this->createQueryBuilder('u')
+	        ->select('u')
+
+	        // Filter users.
+	        ->where('u.id < :subjectId')
+	        ->setParameter(':subjectId', $subjectId)
+
+	        // Order by id.
+	        ->orderBy('u.id', 'DESC')
+
+	        // Get the first record.
+	        ->setFirstResult(0)
+	        ->setMaxResults(1)
+            ->getQuery()
+	        ->getOneOrNullResult()
+	    ;
+
+	}
+
+	public function getNextSubject($subjectId)
+	{
+	    return $this->createQueryBuilder('u')
+	        ->select('u')
+
+	        ->where('u.id > :subjectId')
+	        ->setParameter(':subjectId', $subjectId)
+
+	        ->orderBy('u.id', 'ASC')
+
+	        ->setFirstResult(0)
+	        ->setMaxResults(1)
+            ->getQuery()
+	        ->getOneOrNullResult()
+	    ;
+
+	}	
+    
 }
