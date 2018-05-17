@@ -314,6 +314,101 @@ class ScoreController extends Controller
     }
 
     /**
+     * @Route("/scores/empty/{classId}/{companyId}", name="empty_print")
+     */
+    public function emptyAction(Request $request, $classId, $companyId)
+    {
+        $em = $this->getDoctrine()->getManager();
+        $user = $this->container->get('security.token_storage')->getToken()->getUser();
+        $class = $em->getRepository('AppBundle:Classs')
+            ->find($classId);
+
+        $examCompany = $em->getRepository('AppBundle:examCompany')
+            ->find($companyId);
+
+        $subjects = $em->getRepository('AppBundle:Subject')
+            ->findBy(
+                array('user' => $user),
+                array('id' => 'ASC')
+            );
+
+        $students = $em->getRepository('AppBundle:Student')
+            ->findBy(
+                array('user' => $user, 'class' => $class),
+                array('id' => 'ASC')
+            );
+
+        $childSubjects = $em->getRepository('AppBundle:ChildSubject')
+            ->findBy(
+                array('user' => $user),
+                array('id' => 'ASC')
+            );
+
+
+        $data['examCompany'] = $examCompany;
+        $data['childSubjects'] = $childSubjects;
+        $data['subjects'] = $subjects;
+        $data['students'] = $students;
+        $data['class'] = $class;
+
+        return $this->render('score/empty.html.twig', $data);
+    
+    }
+
+    /**
+     * @Route("/scores/empty_pdf/{classId}/{companyId}", name="pdf_empty_print")
+     */
+    public function emptyPdfAction(Request $request, $classId, $companyId)
+    {
+        $em = $this->getDoctrine()->getManager();
+        $user = $this->container->get('security.token_storage')->getToken()->getUser();
+        $class = $em->getRepository('AppBundle:Classs')
+            ->find($classId);
+
+        $examCompany = $em->getRepository('AppBundle:examCompany')
+            ->find($companyId);
+
+        $subjects = $em->getRepository('AppBundle:Subject')
+            ->findBy(
+                array('user' => $user),
+                array('id' => 'ASC')
+            );
+
+        $students = $em->getRepository('AppBundle:Student')
+            ->findBy(
+                array('user' => $user, 'class' => $class),
+                array('id' => 'ASC')
+            );
+
+        $childSubjects = $em->getRepository('AppBundle:ChildSubject')
+            ->findBy(
+                array('user' => $user),
+                array('id' => 'ASC')
+            );
+
+
+        $data['childSubjects'] = $childSubjects;
+        $data['examCompany'] = $examCompany;
+        $data['subjects'] = $subjects;
+        $data['students'] = $students;
+        $data['class'] = $class;
+
+        $html = $this->renderView('pdf/empty.html.twig', $data);
+
+        $filename = sprintf("empty-%s.pdf", date('Ymd~his'));
+
+        return new Response(
+            $this->get('knp_snappy.pdf')->getOutputFromHtml($html, array('orientation'=>'Portrait')),
+            200,
+            [
+                'Content-Type'        => 'application/pdf',
+                'Content-Disposition' => sprintf('attachment; filename="%s"', $filename),
+            ]
+        );    
+    
+    }
+
+    /**
      * @Route("/scores/reports/{classId}/{companyId}", name="report_forms")
      */
     public function reportAction(Request $request, $classId, $companyId)

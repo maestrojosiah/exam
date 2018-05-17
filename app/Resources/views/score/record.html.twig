@@ -21,6 +21,7 @@
               <a href="{{path('list_examCompanies', {'class': class.id})}}" class="btn btn-primary pull-right">List Exams</a>
               <a href="{{path('record_summary', {'classId': exam.class.id, 'companyId': exam.id})}}" class="btn btn-primary">Class Report Summary</a>
               <a href="{{path('report_forms', {'classId': exam.class.id, 'companyId': exam.id})}}" class="btn btn-primary">Report Forms</a>
+              <a href="{{path('empty_print', {'classId': exam.class.id, 'companyId': exam.id})}}" class="btn btn-primary">Empty Form</a>
             </header>
             {% set parents = [] %}
             {% for childSubject in childSubjects %}
