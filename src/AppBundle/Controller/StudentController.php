@@ -100,28 +100,34 @@ class StudentController extends Controller
         $examCompanies = $em->getRepository('AppBundle:ExamCompany')
             ->findBy(
                 array('user' => $user),
-                array('id' => 'DESC'),
+                array('id' => 'ASC'),
                 5
             );
 
         $scores = $em->getRepository('AppBundle:Score')
             ->findBy(
                 array('user' => $user, 'student' => $student),
-                array('id' => 'DESC')
+                array('id' => 'ASC')
             );
 
         $exams = [];
         $score_lst = [];
+        $list = [];
+        $totalScore = [];
         foreach($examCompanies as $examCompany){
             if($examCompany->getClass() == $student->getClass()){
                 $exams[] = $examCompany;
             }
             $this_score = [];
+            $add = 0;
             foreach($scores as $score){
                 if($score->getExamCompany() == $examCompany){
                     $this_score[] = $score;
+                    $add += $score->getMarks();
                 }
+                $list[] = $score->getMarks();
             }
+            $totalScore[$examCompany->getId()] = $add;
             if(!empty($this_score)){
                 $score_lst[] = $this_score;
             }
@@ -132,6 +138,8 @@ class StudentController extends Controller
         $data['exams'] = $exams;
         $data['scores'] = $scores;
         $data['score_lst'] = $score_lst;
+        $data['list'] = $list;
+        $data['totalScore'] = array_values($totalScore);
 
         return $this->render('student/profile.html.twig', $data);
 

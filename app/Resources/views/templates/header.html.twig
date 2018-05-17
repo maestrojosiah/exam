@@ -5,9 +5,11 @@
             </div>
 
             <!--logo start-->
-            <a href="index.html" class="logo"><span>Exam</span><span class="lite">Pro</span></a>
+            <a href="{{path('homepage')}}" class="logo"><span>Exam</span><span class="lite">Pro</span></a>
             <!--logo end-->
-
+            {% if info is defined and info == "with_print_material" %}
+                <button id="triggerPrint" class="btn btn-info btn-lg" style="margin-top:5;">Print</button>
+            {% endif %}
             <div class="nav search-row" id="top_menu">
                 <!--  search form start -->
                 <ul class="nav top-menu">                    
@@ -50,14 +52,18 @@
                         <a data-toggle="dropdown" class="dropdown-toggle" href="#">
                             <i class="icon-task-l"></i>
                             {% if score_list is defined and score_list is not empty %}
+                                {% if notifications > 0 %}
                                 <span class="badge bg-important">{{notifications}}</span>
+                                {% endif %}
                             {% endif %}
                         </a>
                         <ul class="dropdown-menu extended tasks-bar">
                             <div class="notify-arrow notify-arrow-blue"></div>
                                 <li>
                                     {% if score_list is defined and score_list is not empty %}
+                                        {% if notifications > 0 %}
                                         <p class="blue">You have {{notifications}} pending exam{% if notifications > 1 %}s{% endif %}</p>
+                                        {% endif %}
                                     {% endif %}
                                 </li>
 

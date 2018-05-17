@@ -1,6 +1,9 @@
 {% extends 'base.html.twig' %}
+{% block stylesheets %}
+{% endblock %}
 {% block body %}
 <body>
+{% set info = "with_print_material" %}
 {{ include('templates/header.html.twig') }}        		
 {{ include('templates/aside.html.twig') }}        		
 {% embed "templates/content_draft.html.twig" %}
@@ -25,13 +28,19 @@
               </div>
             </header>
             {% set parents = [] %}
+              {% set span = childSubjects|length + subjects|length %}
             {% for childSubject in childSubjects %}
               {% if childSubject.subject.sTitle not in parents %}
                 {% set parents = parents|merge([childSubject.subject.sTitle]) %}
               {% endif %}
             {% endfor %}
-            <table class="table table-striped table-advance table-hover">
+            <table id="printDiv" class="table table-striped table-advance table-hover">
              <tbody>
+                <tr>
+                  <td colspan="{{span}}"> 
+                    <img style="width:100%" src="{{asset('img/logo.jpg')}}" />
+                  </td>
+                </tr>
                 <tr>
                   <th style="text-nowrap" class="col-md-3">Name</th>
                   {% for subject in subjects %}
@@ -118,4 +127,31 @@
   {% endif %}
 {% endblock %}
 {% endembed %}
+{% endblock %}
+{% block javascripts %}
+    <script src="{{asset('printThis/printThis.js')}}"></script>
+    <script type="text/javascript">
+    $(document).ready(function() {
+      $( "#triggerPrint" ).click(function(e) {    
+        $("#printDiv").printThis({
+          debug: false,               // show the iframe for debugging
+          importCSS: true,            // import page CSS
+          importStyle: false,         // import style tags
+          printContainer: true,       // grab outer container as well as the contents of the selector
+          pageTitle: "{{exam.cTitle}} [Class {{class.cTitle}}]",              // add title to print page
+          removeInline: false,        // remove all inline styles from print elements
+          printDelay: 333,            // variable print delay; depending on complexity a higher value may be necessary
+          header: null,               // prefix to html
+          footer: null,               // postfix to html
+          base: false ,               // preserve the BASE tag, or accept a string for the URL
+          formValues: true,           // preserve input/form values
+          canvas: false,              // copy canvas elements (experimental)
+          doctypeString: "...",       // enter a different doctype for older markup
+          removeScripts: false,       // remove script tags from print content
+          copyTagClasses: false       // copy classes from the html & body tag
+      });
+      });
+    });    
+  </script>
+
 {% endblock %}

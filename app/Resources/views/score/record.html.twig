@@ -35,10 +35,10 @@
                   {% for subject in subjects %}
                     {% if subject.sTitle in parents %}
                       {% for c_subject in subject.childSubjects %}
-                      <th>{{c_subject.cSTitle}}</th>
+                      <th>{{c_subject.cSTitle|title}}</th>
                       {% endfor %}
                     {% endif %}
-                    <th style="color:red">{{subject.sTitle}}</th>
+                    <th style="color:red">{{subject.sTitle|title}}</th>
                   {% endfor %}
                 </tr>
                 {% for key, student in students %}

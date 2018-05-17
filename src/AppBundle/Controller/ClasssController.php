@@ -100,20 +100,23 @@ class ClasssController extends Controller
         $examCompanies = $em->getRepository('AppBundle:ExamCompany')
             ->findBy(
                 array('user' => $user),
-                array('id' => 'DESC'),
+                array('id' => 'ASC'),
                 5
             );
 
         $scores = $em->getRepository('AppBundle:Score')
             ->findBy(
                 array('user' => $user, 'class' => $class),
-                array('id' => 'DESC')
+                array('id' => 'ASC')
             );
 
         $exams = [];
         $score_lst = [];
         $total_score = 0;
         $subject_list = [];
+        $list = [];
+        $companyTotals = [];
+        $list_totals = 0;
         foreach($examCompanies as $examCompany){
             if($examCompany->getClass() == $class){
                 $exams[] = $examCompany;
@@ -138,8 +141,10 @@ class ClasssController extends Controller
                     }
                 }
                 $subject_sum = ['sum' => array_sum($this_subject), 'company' => $company];
+                $list[] = array_sum($this_subject);
                 $subject_score[$subject->getSTitle()] = $subject_sum;
-                   
+                $subject_total += array_sum($this_subject);
+                $companyTotals[$examCompany->getId()] = [$subject_total, ($subject_total/count($class->getStudents()))];
             }
 
             if(!empty($this_score)){
@@ -149,7 +154,15 @@ class ClasssController extends Controller
             
         }
 
+        $manual_add_to_array = [];
+        foreach($companyTotals as $a_total){
+            foreach($a_total as $item){
+                $manual_add_to_array[$item] = $a_total;    
+            }
+        }
+
         $data['class'] = $class;
+        $data['list'] = $list;
         $data['exams'] = $exams;
         $data['scores'] = $scores;
         $data['score_lst'] = $score_lst;
@@ -157,6 +170,8 @@ class ClasssController extends Controller
         $data['subject_list'] = $subject_list;
         $data['subject_total'] = $subject_total;
         $data['subject_score'] = $subject_score;
+        $data['companyTotals'] = array_values($companyTotals);
+        $data['merged'] = array_keys($manual_add_to_array);
 
         return $this->render('class/profile.html.twig', $data);
 
