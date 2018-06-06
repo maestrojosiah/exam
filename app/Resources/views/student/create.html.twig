@@ -9,6 +9,7 @@
 	  <section class="panel">
 	      <header class="panel-heading">
 	          Add Student
+	          <a class="btn btn-xs btn-default btn-outline pull-right" href="{{path('students_upload', {'classId': data.class.id})}}">Upload from excel file (xls / xlsx)</a>
 				{% if not form.vars.valid %}
 	              <div class="alert alert-dangers">
 	              <p>Please check your entries below</p>
@@ -37,7 +38,7 @@
 	              {{ form_widget(form.saveAndAdd, {'attr': {'class': 'btn btn-info pull-left', 'style': 'margin-right: 5px' }} ) }}
 	              {{ form_row(form.save, {'attr': {'class': 'btn btn-primary pull-left margin-md'}}) }}
 	              <a href="{{path('homepage')}}" class="btn btn-danger pull-right" style="margin-left: 5px;">DONE</a>
-	              <a href="{{path('choose_class')}}" class="btn btn-danger pull-right">List</a>
+	              <a href="{{path('choose_class', {'goto': 'list_students'})}}" class="btn btn-danger pull-right">List</a>
 	              
 	          {{ form_end(form) }}
 			{% else %}

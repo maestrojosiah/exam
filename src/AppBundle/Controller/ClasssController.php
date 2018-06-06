@@ -17,41 +17,25 @@ class ClasssController extends Controller
     {
 
 	   	$data = [];
-        $user = $this->container->get('security.token_storage')->getToken()->getUser();
-
-        $em = $this->getDoctrine()->getManager();
-
-        $classes = $em->getRepository('AppBundle:Classs')
-        	->findBy(
-        		array('user' => $user),
-        		array('id' => 'DESC')
-        	);
+        $user = $user = $this->user();
+        $classes = $this->findby('Classs', 'user', $user);
 
         $class = new Classs();
         $class->setUser($user);
 
         $form = $this->createForm(ClasssType::class, $class);
-
         $form->handleRequest($request);
+
         if ($form->isSubmitted() && $form->isValid()) {
 
-            $em = $this->getDoctrine()->getManager();
             $form_data = $form->getData();
-
-            $safe_class = trim(str_replace(" ", "", $form_data->getCTitle()));
+            $safe_class = trim(str_replace(" ", "-", $form_data->getCTitle()));
             $class->setCTitle($safe_class);
-            $em->persist($class);
-            $em->flush();
-
-        	$this->addFlash(
-	            'success',
-	            'Classs created successfully!'
-        	);
-
+            $this->save($class);
+        	$this->addFlash('success', 'Classs created successfully!' );
             $nextAction = $form->get('saveAndAdd')->isClicked()
                 ? 'new_class'
                 : 'list_classes';
-
             return $this->redirectToRoute($nextAction);
 		} 
 
@@ -69,19 +53,10 @@ class ClasssController extends Controller
     public function listAction(Request $request)
     {
         $data = [];
-        $user = $this->container->get('security.token_storage')->getToken()->getUser();
-
-        $em = $this->getDoctrine()->getManager();
-
-        $classes = $em->getRepository('AppBundle:Classs')
-            ->findBy(
-                array('user' => $user),
-                array('cTitle' => 'ASC')
-            );
-
+        $user = $user = $this->user();
+        $classes = $this->findby('Classs', 'user', $user);
         $data['classes'] = $classes;
         $data['user'] = $user;
-
         return $this->render('class/list.html.twig', $data );
 
     }
@@ -92,23 +67,9 @@ class ClasssController extends Controller
      */
     public function profileAction(Request $request, $classId)
     {
-        $user = $this->container->get('security.token_storage')->getToken()->getUser();
-        $em = $this->getDoctrine()->getManager();
-        $class = $em->getRepository('AppBundle:Classs')
-            ->find($classId);
-
-        $examCompanies = $em->getRepository('AppBundle:ExamCompany')
-            ->findBy(
-                array('user' => $user),
-                array('id' => 'ASC'),
-                5
-            );
-
-        $scores = $em->getRepository('AppBundle:Score')
-            ->findBy(
-                array('user' => $user, 'class' => $class),
-                array('id' => 'ASC')
-            );
+        $user = $user = $this->user();
+        $class = $this->find('Classs', $classId);
+        $examCompanies = findandlimit('ExamCompany', 'user', $user, 5, 'ASC');
 
         $exams = [];
         $score_lst = [];
@@ -116,7 +77,6 @@ class ClasssController extends Controller
         $subject_list = [];
         $list = [];
         $companyTotals = [];
-        $list_totals = 0;
         foreach($examCompanies as $examCompany){
             if($examCompany->getClass() == $class){
                 $exams[] = $examCompany;
@@ -164,13 +124,8 @@ class ClasssController extends Controller
         $data['class'] = $class;
         $data['list'] = $list;
         $data['exams'] = $exams;
-        $data['scores'] = $scores;
         $data['score_lst'] = $score_lst;
-        $data['total_score'] = $total_score;
         $data['subject_list'] = $subject_list;
-        $data['subject_total'] = $subject_total;
-        $data['subject_score'] = $subject_score;
-        $data['companyTotals'] = array_values($companyTotals);
         $data['merged'] = array_keys($manual_add_to_array);
 
         return $this->render('class/profile.html.twig', $data);
@@ -184,45 +139,34 @@ class ClasssController extends Controller
     public function editAction(Request $request, $classId)
     {
         $data = [];
-        $em = $this->getDoctrine()->getManager();
-
-        $classs = $em->getRepository('AppBundle:Classs')
-            ->find($classId);
-
-
+        $classs = $this->find('Classs', $classId);
         $form = $this->createForm(ClasssType::class, $classs);
-
         $form->handleRequest($request);
 
         if($form->isSubmitted() && $form->isValid()) {
+
             $form_data = $form->getData();
             $data['form'] = $form_data;
 
             $safe_class = trim(str_replace(" ", ".", $form_data->getCTitle()));
             $classs->setCTitle($safe_class);
 
-            $em->persist($classs);
-            $em->flush();
-
-            $this->addFlash(
-                'success',
-                'Classs edited successfully!'
-            );
-
+            $this->save($classs);
+            $this->addFlash( 'success', 'Classs edited successfully!' );
             $nextAction = $form->get('saveAndAdd')->isClicked()
                 ? 'new_class'
                 : 'list_classes';
-
             return $this->redirectToRoute($nextAction);
 
         } else {
+
             $form_data['class_number'] = $classs->getCTitle();
             $form_data['class_teacher'] = $classs->getClassTeacher();
             $data['form'] = $form_data;
+
         }
 
         $data['class'] = $classs;
-
 
         return $this->render('class/edit.html.twig', ['form' => $form->createView(), $data,] );
 
@@ -234,17 +178,54 @@ class ClasssController extends Controller
     public function deleteAction(Request $request, $classId)
     {
         $data = [];
-        $em = $this->getDoctrine()->getManager();
 
-        $classs = $em->getRepository('AppBundle:Classs')
-            ->find($classId);
-
-        $em->remove($classs);
-        $em->flush();
-
+        $classs = $this->find('Classs', $classId);
+        $this->delete($classs);
         return $this->redirectToRoute('list_classes');
 
     }
 
+    private function em(){
+        $em = $this->getDoctrine()->getManager();
+        return $em;
+    }
+
+    private function find($entity, $id){
+        $entity = $this->em()->getRepository("AppBundle:$entity")->find($id);
+        return $entity;
+    }
+
+    private function findby($entity, $by, $actual){
+        $query_string = "findBy$by";
+        $entity = $this->em()->getRepository("AppBundle:$entity")->$query_string($actual);
+        return $entity;
+    }
+
+    private function findandlimit($entity, $by, $actual, $limit, $order){
+        $entity = $this->em()->getRepository("AppBundle:$entity")
+            ->findBy(
+                array($by => $actual),
+                array('id' => $order),
+                $limit
+            );
+        return $entity;
+    }
+
+    private function save($entity){
+        $this->em()->persist($entity);
+        $this->em()->flush();   
+        return true;     
+    }
+
+    private function delete($entity){
+        $this->em()->remove($entity);
+        $this->em()->flush();    
+        return true;    
+    }
+
+    private function user(){
+        $user = $this->container->get('security.token_storage')->getToken()->getUser();
+        return $user;
+    }
 
 }

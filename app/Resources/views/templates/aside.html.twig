@@ -50,8 +50,8 @@
                           <span class="menu-arrow arrow_carrot-right"></span>
                       </a>
                       <ul class="sub">
-                          <li><a class="" href="{{path('new_student')}}">Add Student</a></li>                          
-                          <li><a class="" href="{{path('choose_class')}}">List Students</a></li>
+                          <li><a class="" href="{{path('choose_class', {'goto': 'new_student'})}}">Add Student</a></li>                          
+                          <li><a class="" href="{{path('choose_class', {'goto': 'list_students'})}}">List Students</a></li>
                       </ul>
                   </li>                  
                   <li class="sub-menu">
@@ -61,8 +61,8 @@
                           <span class="menu-arrow arrow_carrot-right"></span>
                       </a>
                       <ul class="sub">                          
-                          <li><a class="" href="{{path('new_examCompany')}}">Add Exam</a></li>
-                          <li><a class="" href="{{path('list_examCompanies')}}"><span>List Exams</span></a></li>
+                          <li><a class="" href="{{path('choose_class_exam', {'goto': 'new_examCompany'})}}">Add Exam</a></li>
+                          <li><a class="" href="{{path('choose_class_exam', {'goto': 'list_examCompanies'})}}"><span>List Exams</span></a></li>
                       </ul>
                   </li>
                   <li class="sub-menu">

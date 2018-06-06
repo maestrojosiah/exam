@@ -36,7 +36,7 @@
 	              {{ form_row(form.save, {'attr': {'class': 'btn btn-primary pull-left margin-md', 'style': 'margin-right: 5px'}}) }}
 	              {{ form_widget(form.saveAndAdd, {'attr': {'class': 'btn btn-info pull-left' }} ) }}
 	              <a href="{{path('homepage')}}" class="btn btn-danger pull-right" style="margin-left: 5px;">DONE</a>
-	              <a href="{{path('choose_class')}}" class="btn btn-danger pull-right">List</a>
+	              <a href="{{path('choose_class', {'goto': 'list_students'})}}" class="btn btn-danger pull-right">List</a>
 	              
 	          {{ form_end(form) }}
 

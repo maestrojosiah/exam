@@ -17,16 +17,8 @@ class ChildSubjectController extends Controller
     {
 
 	   	$data = [];
-        $user = $this->container->get('security.token_storage')->getToken()->getUser();
-
-        $em = $this->getDoctrine()->getManager();
-
-        $childSubjects = $em->getRepository('AppBundle:ChildSubject')
-        	->findBy(
-        		array('user' => $user),
-        		array('id' => 'DESC')
-        	);
-
+        $user = $this->user();
+        $childSubjects = $this->findby('ChildSubject', 'user', $user);
         $childSubject = new ChildSubject();
         $childSubject->setUser($user);
 
@@ -34,27 +26,16 @@ class ChildSubjectController extends Controller
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-
-            $em = $this->getDoctrine()->getManager();
-
-            $em->persist($childSubject);
-            $em->flush();
-
-        	$this->addFlash(
-	            'success',
-	            'ChildSubject created successfully!'
-        	);
-
+            $this->save($childSubject);
+        	$this->addFlash('success', 'ChildSubject created successfully!');
             $nextAction = $form->get('saveAndAdd')->isClicked()
                 ? 'new_childSubject'
                 : 'list_childSubjects';
-
             return $this->redirectToRoute($nextAction);
 		} 
 
         $data['childSubjects'] = $childSubjects;
         $data['user'] = $user;
-
 
 	    return $this->render('childSubject/create.html.twig',['form' => $form->createView(), 'data' => $data] );
     
@@ -66,21 +47,11 @@ class ChildSubjectController extends Controller
     public function listAction(Request $request)
     {
         $data = [];
-        $user = $this->container->get('security.token_storage')->getToken()->getUser();
-
-        $em = $this->getDoctrine()->getManager();
-
-        $childSubjects = $em->getRepository('AppBundle:ChildSubject')
-            ->findBy(
-                array('user' => $user),
-                array('id' => 'ASC')
-            );
-
+        $user = $this->user();
+        $childSubjects = $this->findby('ChildSubject', 'user', $user);
         $data['childSubjects'] = $childSubjects;
         $data['user'] = $user;
-
         return $this->render('childSubject/list.html.twig', $data );
-
     }
 
     /**
@@ -89,45 +60,32 @@ class ChildSubjectController extends Controller
     public function editAction(Request $request, $childSubjectId)
     {
         $data = [];
-        $em = $this->getDoctrine()->getManager();
-
-        $childSubjects = $em->getRepository('AppBundle:ChildSubject')
-            ->find($childSubjectId);
-
+        $childSubjects = $this->find('childSubject', $childSubjectId);
 
         $form = $this->createForm(ChildSubjectType::class, $childSubjects);
-
         $form->handleRequest($request);
 
         if($form->isSubmitted() && $form->isValid()) {
+
             $form_data = $form->getData();
             $data['form'] = $form_data;
-
-            $em->persist($form_data);
-            $em->flush();
-
-            $this->addFlash(
-                'success',
-                'ChildSubject edited successfully!'
-            );
-
+            $this->save($form_data);
+            $this->addFlash('success', 'ChildSubject edited successfully!' );
             $nextAction = $form->get('saveAndAdd')->isClicked()
                 ? 'new_childSubject'
                 : 'list_childSubjects';
-
             return $this->redirectToRoute($nextAction);
 
         } else {
+
             $form_data['child_subject_c_s_title'] = $childSubjects->getCSTitle();
             $form_data['child_subject_subject'] = $childSubjects->getSubject();
             $data['form'] = $form_data;
+
         }
 
         $data['childSubject'] = $childSubjects;
-
-
         return $this->render('childSubject/edit.html.twig', ['form' => $form->createView(), $data,] );
-
     }
 
     /**
@@ -136,17 +94,42 @@ class ChildSubjectController extends Controller
     public function deleteAction(Request $request, $childSubjectId)
     {
         $data = [];
-        $em = $this->getDoctrine()->getManager();
-
-        $childSubjects = $em->getRepository('AppBundle:ChildSubject')
-            ->find($childSubjectId);
-
-        $em->remove($childSubjects);
-        $em->flush();
-
+        $childSubject = $this->find('childSubject', $childSubjectId);
+        $this->delete($childSubject);
         return $this->redirectToRoute('list_childSubjects');
 
     }
 
+    private function em(){
+        $em = $this->getDoctrine()->getManager();
+        return $em;
+    }
 
+    private function find($entity, $id){
+        $entity = $this->em()->getRepository("AppBundle:$entity")->find($id);
+        return $entity;
+    }
+
+    private function findby($entity, $by, $actual){
+        $query_string = "findBy$by";
+        $entity = $this->em()->getRepository("AppBundle:$entity")->$query_string($actual);
+        return $entity;
+    }
+
+    private function save($entity){
+        $this->em()->persist($entity);
+        $this->em()->flush();   
+        return true;     
+    }
+
+    private function delete($entity){
+        $this->em()->remove($entity);
+        $this->em()->flush();    
+        return true;    
+    }
+
+    private function user(){
+        $user = $this->container->get('security.token_storage')->getToken()->getUser();
+        return $user;
+    }
 }

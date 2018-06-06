@@ -17,45 +17,23 @@ class ScoreController extends Controller
      */
     public function updateAction(Request $request, $classId, $companyId)
     {
-        $em = $this->getDoctrine()->getManager();
-        $user = $this->container->get('security.token_storage')->getToken()->getUser();
-        $class = $em->getRepository('AppBundle:Classs')
-            ->find($classId);
-
-        $examCompany = $em->getRepository('AppBundle:examCompany')
-            ->find($companyId);
-
-        $subjects = $em->getRepository('AppBundle:Subject')
-            ->findBy(
-                array('user' => $user),
-                array('id' => 'ASC')
-            );
-
-        $scores = $em->getRepository('AppBundle:Score')
+        
+        $user = $this->user();
+        $class = $this->find('Classs', $classId);
+        $examCompany = $this->find('ExamCompany', $companyId);
+        $subjects = $this->findby('Subject', 'user', $user);
+        $scores = $this->em()->getRepository('AppBundle:Score')
             ->findBy(
                 array('user' => $user, 'class' => $class, 'examCompany' => $examCompany),
                 array('id' => 'ASC')
             );
-
-        $scoreChildren = $em->getRepository('AppBundle:ScoreChild')
+        $scoreChildren = $this->em()->getRepository('AppBundle:ScoreChild')
             ->findBy(
                 array('user' => $user, 'class' => $class, 'examCompany' => $examCompany),
                 array('id' => 'ASC')
             );
-            
-
-        $students = $em->getRepository('AppBundle:Student')
-            ->findBy(
-                array('user' => $user, 'class' => $class),
-                array('id' => 'ASC')
-            );
-
-        $childSubjects = $em->getRepository('AppBundle:ChildSubject')
-            ->findBy(
-                array('user' => $user),
-                array('id' => 'ASC')
-            );
-
+        $students = $this->findbyand('Student', 'user', $user, 'class', $class);
+        $childSubjects = $this->findby('ChildSubject', 'user', $user);
 
         $score_entries = [];
         foreach($scores as $score){
@@ -67,7 +45,6 @@ class ScoreController extends Controller
             $child_score_entries[$scoreChild->getStudent()->getId().'.'.$scoreChild->getChildSubject()->getId().'.'.$class->getId()] = $scoreChild->getMarks();
         }
 
-
         $data['user'] = $user;
         $data['subjects'] = $subjects;
         $data['childSubjects'] = $childSubjects;
@@ -77,9 +54,6 @@ class ScoreController extends Controller
         $data['scores'] = $scores;
         $data['child_score_entries'] = $child_score_entries;
         $data['score_entries'] = $score_entries;
-
-
-
 
         return $this->render('score/record.html.twig', $data );
     
@@ -91,37 +65,15 @@ class ScoreController extends Controller
      */
     public function moveAction(Request $request)
     {
-        $em = $this->getDoctrine()->getManager();
-        $user = $this->container->get('security.token_storage')->getToken()->getUser();
+        
+        $user = $this->user();
         $id = $request->request->get('id');
         $direction = $request->request->get('direction');
-        // subject|6_user|2_student|6_exam|6_class|3
         $parts = explode("_", $id);
         $subjectId = explode("|", $parts[0])[1];
         $studentId = explode("|", $parts[2])[1];
-
-        $prev_student = $em->getRepository('AppBundle:Student')
-            ->getPreviousStudent($studentId);
-        $next_student = $em->getRepository('AppBundle:Student')
-            ->getNextStudent($studentId);
-
-        $prev_subject = $em->getRepository('AppBundle:Subject')
-            ->getPreviousSubject($subjectId);
-        $next_subject = $em->getRepository('AppBundle:Subject')
-            ->getNextSubject($subjectId);
-
-        if($direction == "down"){
-            $move = $next_student->getId()."_".$subjectId;
-        } elseif ($direction == "up") {
-            $move = $prev_student->getId()."_".$subjectId;
-        } elseif ($direction == "left") {
-            $move = $studentId."_".$prev_subject->getId();
-        } elseif ($direction == "right") {
-            $move = $studentId."_".$next_subject->getId();
-        }
-        
+        $move = $this->move($studentId, $subjectId, $direction);
         return new JsonResponse($move);
-    
     }
 
     /**
@@ -129,38 +81,16 @@ class ScoreController extends Controller
      */
     public function moveChildAction(Request $request)
     {
-        $em = $this->getDoctrine()->getManager();
-        $user = $this->container->get('security.token_storage')->getToken()->getUser();
+        
+        $user = $this->user();
         $id = $request->request->get('id');
         $direction = $request->request->get('direction');
-        // subject|6_user|2_student|6_exam|6_class|3
-        // cSubject|7_user|2_student|6_exam|6_class|3
         $parts = explode("_", $id);
         $cSubjectId = explode("|", $parts[0])[1];
         $studentId = explode("|", $parts[2])[1];
 
-        $prev_student = $em->getRepository('AppBundle:Student')
-            ->getPreviousStudent($studentId);
-        $next_student = $em->getRepository('AppBundle:Student')
-            ->getNextStudent($studentId);
-
-        $prev_subject = $em->getRepository('AppBundle:ChildSubject')
-            ->getPreviousCSubject($cSubjectId);
-        $next_subject = $em->getRepository('AppBundle:ChildSubject')
-            ->getNextCSubject($cSubjectId);
-
-        if($direction == "down"){
-            $move = $next_student->getId()."_".$cSubjectId;
-        } elseif ($direction == "up") {
-            $move = $prev_student->getId()."_".$cSubjectId;
-        } elseif ($direction == "left") {
-            $move = $studentId."_".$prev_subject->getId();
-        } elseif ($direction == "right") {
-            $move = $studentId."_".$next_subject->getId();
-        }
-        
+        $move = $this->move($studentId, $cSubjectId, $direction);
         return new JsonResponse($move);
-    
     }
 
 
@@ -169,146 +99,37 @@ class ScoreController extends Controller
      */
     public function summaryAction(Request $request, $classId, $companyId)
     {
-        $em = $this->getDoctrine()->getManager();
-        $user = $this->container->get('security.token_storage')->getToken()->getUser();
-        $class = $em->getRepository('AppBundle:Classs')
-            ->find($classId);
-
-        $examCompany = $em->getRepository('AppBundle:examCompany')
-            ->find($companyId);
-
-        $subjects = $em->getRepository('AppBundle:Subject')
-            ->findBy(
-                array('user' => $user),
-                array('id' => 'ASC')
-            );
-
-        $scores = $em->getRepository('AppBundle:Score')
+        
+        $user = $this->user();
+        $class = $this->find('Classs', $classId);
+        $examCompany = $this->find('ExamCompany', $companyId);
+        $subjects = $this->findby('Subject', 'user', $user);
+        $scores = $this->em()->getRepository('AppBundle:Score')
             ->findBy(
                 array('user' => $user, 'class' => $class, 'examCompany' => $examCompany),
                 array('subject' => 'ASC')
             );
-
-
-        $students = $em->getRepository('AppBundle:Student')
-            ->findBy(
-                array('user' => $user, 'class' => $class),
-                array('id' => 'ASC')
-            );
-
-        $childSubjects = $em->getRepository('AppBundle:ChildSubject')
-            ->findBy(
-                array('user' => $user),
-                array('id' => 'ASC')
-            );
-
-        $scoreChildren = $em->getRepository('AppBundle:ScoreChild')
+        $students = $this->findbyand('Student', 'user', $user, 'class', $class);
+        $childSubjects = $this->findby('ChildSubject', 'user', $user);
+        $scoreChildren = $this->em()->getRepository('AppBundle:ScoreChild')
             ->findBy(
                 array('user' => $user, 'class' => $class, 'examCompany' => $examCompany),
                 array('id' => 'ASC')
             );
-            
-
         $child_score_entries = [];
         foreach($scoreChildren as $scoreChild){
             $child_score_entries[$scoreChild->getStudent()->getId().'.'.$scoreChild->getChildSubject()->getId().'.'.$class->getId()] = $scoreChild->getMarks();
         }
 
-        $student_list = [];
-        $sum = [];
-        foreach($students as $student){
-            $all_subjects_for_this_student = [];
-            $all_subjects_for_this_student_total = [];
-            foreach($scores as $score){
-                if($score->getStudent() == $student){
-                    $all_subjects_for_this_student[] = $score;
-                    $all_subjects_for_this_student_total[] = $score->getMarks();
-                }
-            }
-            $sum[$student->getId()] = array_sum($all_subjects_for_this_student_total);
-            $student_list[$student->getId()] = $all_subjects_for_this_student;
-        }
-
-        $key_list_s  = [];
-        $key_list_c  = [];
-        foreach($students as $student){
-            foreach($subjects as $subject){
-                $for_s_subject = [];
-                foreach($scores as $score){
-                    if($score->getStudent() == $student && $score->getSubject() == $subject){
-                        $for_s_subject[$student->getId().".".$subject->getId()."."."s"] = $score;
-                    } else {
-                        $for_s_subject[] = 0;
-                    }
-                }
-                $key_list_s[$student->getId().".".$subject->getId()."."."s"] = $for_s_subject;
-            }
-        }
-
-        foreach($students as $student){
-            foreach($childSubjects as $childSubject){
-                $for_c_subject = [];
-                foreach($scoreChildren as $c_score){
-                    if($c_score->getStudent() == $student && $c_score->getChildSubject() == $childSubject){
-                        $for_c_subject[$student->getId().".".$childSubject->getId()."."."c"] = $c_score;
-                    } else {
-                        $for_c_subject[] = 0;
-                    }
-                }
-
-                $key_list_c[$student->getId().".".$childSubject->getId()."."."c"] = $for_c_subject;
-
-            }
-        }
-
-        $subject_list = [];
-        $sum_sub = [];
-        foreach($subjects as $subject){
-            $all_scores_for_this_subject = [];
-            $all_scores_for_this_subject_total = [];
-            foreach($scores as $score){
-                if($score->getSubject() == $subject){
-                    $all_scores_for_this_subject[$subject->getId().".".$score->getStudent()->getId()] = $score;
-                    $all_scores_for_this_subject_total[] = $score->getMarks();
-                }
-            }
-            $sum_sub[$subject->getId()] = array_sum($all_scores_for_this_subject_total);
-            $subject_list[$subject->getId()] = $all_scores_for_this_subject;
-        }
-
-        $c_subject_list = [];
-        $c_sum_sub = [];
-        foreach($childSubjects as $c_subject){
-            $all_scores_for_this_c_subject = [];
-            $all_scores_for_this_c_subject_total = [];
-            foreach($scoreChildren as $score){
-                if($score->getChildSubject() == $c_subject){
-                    $all_scores_for_this_c_subject[] = $score;
-                    $all_scores_for_this_c_subject_total[] = $score->getMarks();
-                }
-            }
-            $c_sum_sub[$c_subject->getId()] = array_sum($all_scores_for_this_c_subject_total);
-            $c_subject_list[$c_subject->getId()] = $all_scores_for_this_c_subject;
-        }
-
-
-        $data['exam'] = $examCompany;
-        $data['key_list_s'] = $key_list_s;
-        $data['key_list_c'] = $key_list_c;
-        $data['user'] = $user;
-        $data['subjects'] = $subjects;
-        $data['students'] = $students;
-        $data['class'] = $class;
-        $data['scores'] = $scores;
-        $data['childSubjects'] = $childSubjects;
-        $data['student_list'] = $student_list;
-        $data['subject_list'] = $subject_list;
-        $data['c_subject_list'] = $c_subject_list;
-        $data['child_score_entries'] = $child_score_entries;
-        $data['sum'] = $this->rank($sum);
-        $data['sum_sub'] = $this->rank_sub($sum_sub);
-        $data['c_sum_sub'] = $this->rank_sub_child($c_sum_sub);
-
+        list($student_list, $sum) = $this->calculateListAndSum($students, $scores);
+        $key_list_s = $this->getSubjectKeysAsList($students, $subjects, $scores);
+        $key_list_c = $this->getCSubjectKeysAsList($students, $childSubjects, $scoreChildren);
+        list($subject_list, $sum_sub) = $this->getSubjectSumAndList($subjects, $scores);
+        list($c_subject_list, $c_sum_sub) = $this->getCSubjectSumAndList($childSubjects, $scoreChildren);
+        list($data['c_sum_sub'], $data['exam'], $data['key_list_s'], $data['key_list_c'], $data['user'], $data['subjects'])  = [$this->rank_sub_child($c_sum_sub), $examCompany, $key_list_s, $key_list_c, $user, $subjects];
+        list($data['students'], $data['class'], $data['scores'], $data['childSubjects'], $data['student_list'])  = [$students, $class, $scores, $childSubjects, $student_list];
+        list($data['subject_list'], $data['c_subject_list'], $data['child_score_entries'], $data['sum'], $data['sum_sub'])   = [$subject_list, $c_subject_list, $child_score_entries, $this->rank($sum), $this->rank_sub($sum_sub)];
+        
         return $this->render('score/summary.html.twig', $data);
     
     }
@@ -318,39 +139,18 @@ class ScoreController extends Controller
      */
     public function emptyAction(Request $request, $classId, $companyId)
     {
-        $em = $this->getDoctrine()->getManager();
-        $user = $this->container->get('security.token_storage')->getToken()->getUser();
-        $class = $em->getRepository('AppBundle:Classs')
-            ->find($classId);
-
-        $examCompany = $em->getRepository('AppBundle:examCompany')
-            ->find($companyId);
-
-        $subjects = $em->getRepository('AppBundle:Subject')
-            ->findBy(
-                array('user' => $user),
-                array('id' => 'ASC')
-            );
-
-        $students = $em->getRepository('AppBundle:Student')
-            ->findBy(
-                array('user' => $user, 'class' => $class),
-                array('id' => 'ASC')
-            );
-
-        $childSubjects = $em->getRepository('AppBundle:ChildSubject')
-            ->findBy(
-                array('user' => $user),
-                array('id' => 'ASC')
-            );
-
-
+        
+        $user = $this->user();
+        $class = $this->find('Classs', $classId);
+        $examCompany = $this->find('ExamCompany', $companyId);
+        $subjects = $this->findby('Subject', 'user', $user);
+        $students = $this->findbyand('Student', 'user', $user, 'class', $class);
+        $childSubjects = $this->findby('ChildSubject', 'user', $user);
         $data['examCompany'] = $examCompany;
         $data['childSubjects'] = $childSubjects;
         $data['subjects'] = $subjects;
         $data['students'] = $students;
         $data['class'] = $class;
-
         return $this->render('score/empty.html.twig', $data);
     
     }
@@ -360,33 +160,13 @@ class ScoreController extends Controller
      */
     public function emptyPdfAction(Request $request, $classId, $companyId)
     {
-        $em = $this->getDoctrine()->getManager();
-        $user = $this->container->get('security.token_storage')->getToken()->getUser();
-        $class = $em->getRepository('AppBundle:Classs')
-            ->find($classId);
-
-        $examCompany = $em->getRepository('AppBundle:examCompany')
-            ->find($companyId);
-
-        $subjects = $em->getRepository('AppBundle:Subject')
-            ->findBy(
-                array('user' => $user),
-                array('id' => 'ASC')
-            );
-
-        $students = $em->getRepository('AppBundle:Student')
-            ->findBy(
-                array('user' => $user, 'class' => $class),
-                array('id' => 'ASC')
-            );
-
-        $childSubjects = $em->getRepository('AppBundle:ChildSubject')
-            ->findBy(
-                array('user' => $user),
-                array('id' => 'ASC')
-            );
-
-
+        
+        $user = $this->user();
+        $class = $this->find('Classs', $classId);
+        $examCompany = $this->find('ExamCompany', $companyId);
+        $subjects = $this->findby('Subject', 'user', $user);
+        $students = $this->findbyand('Student', 'user', $user, 'class', $class);
+        $childSubjects = $this->findby('ChildSubject', 'user', $user);
         $data['childSubjects'] = $childSubjects;
         $data['examCompany'] = $examCompany;
         $data['subjects'] = $subjects;
@@ -413,145 +193,36 @@ class ScoreController extends Controller
      */
     public function reportAction(Request $request, $classId, $companyId)
     {
-        $em = $this->getDoctrine()->getManager();
-        $user = $this->container->get('security.token_storage')->getToken()->getUser();
-        $class = $em->getRepository('AppBundle:Classs')
-            ->find($classId);
-
-        $examCompany = $em->getRepository('AppBundle:examCompany')
-            ->find($companyId);
-
-        $subjects = $em->getRepository('AppBundle:Subject')
-            ->findBy(
-                array('user' => $user),
-                array('id' => 'ASC')
-            );
-
-        $scores = $em->getRepository('AppBundle:Score')
+        
+        $user = $this->user();
+        $class = $this->find('Classs', $classId);
+        $examCompany = $this->find('ExamCompany', $companyId);
+        $subjects = $this->findby('Subject', 'user', $user);
+        $scores = $this->em()->getRepository('AppBundle:Score')
             ->findBy(
                 array('user' => $user, 'class' => $class, 'examCompany' => $examCompany),
                 array('subject' => 'ASC')
             );
-
-
-        $students = $em->getRepository('AppBundle:Student')
-            ->findBy(
-                array('user' => $user, 'class' => $class),
-                array('id' => 'ASC')
-            );
-
-        $childSubjects = $em->getRepository('AppBundle:ChildSubject')
-            ->findBy(
-                array('user' => $user),
-                array('id' => 'ASC')
-            );
-
-        $scoreChildren = $em->getRepository('AppBundle:ScoreChild')
+        $students = $this->findbyand('Student', 'user', $user, 'class', $class);
+        $childSubjects = $this->findby('ChildSubject', 'user', $user);
+        $scoreChildren = $this->em()->getRepository('AppBundle:ScoreChild')
             ->findBy(
                 array('user' => $user, 'class' => $class, 'examCompany' => $examCompany),
                 array('id' => 'ASC')
             );
-            
-
         $child_score_entries = [];
         foreach($scoreChildren as $scoreChild){
             $child_score_entries[$scoreChild->getStudent()->getId().'.'.$scoreChild->getChildSubject()->getId().'.'.$class->getId()] = $scoreChild->getMarks();
         }
 
-        $student_list = [];
-        $sum = [];
-        foreach($students as $student){
-            $all_subjects_for_this_student = [];
-            $all_subjects_for_this_student_total = [];
-            foreach($scores as $score){
-                if($score->getStudent() == $student){
-                    $all_subjects_for_this_student[] = $score;
-                    $all_subjects_for_this_student_total[] = $score->getMarks();
-                }
-            }
-            $sum[$student->getId()] = array_sum($all_subjects_for_this_student_total);
-            $student_list[$student->getId()] = $all_subjects_for_this_student;
-        }
-
-        $key_list_s  = [];
-        $key_list_c  = [];
-        foreach($students as $student){
-            foreach($subjects as $subject){
-                $for_s_subject = [];
-                foreach($scores as $score){
-                    if($score->getStudent() == $student && $score->getSubject() == $subject){
-                        $for_s_subject[$student->getId().".".$subject->getId()."."."s"] = $score;
-                    } else {
-                        $for_s_subject[] = 0;
-                    }
-                }
-                $key_list_s[$student->getId().".".$subject->getId()."."."s"] = $for_s_subject;
-            }
-        }
-
-        foreach($students as $student){
-            foreach($childSubjects as $childSubject){
-                $for_c_subject = [];
-                foreach($scoreChildren as $c_score){
-                    if($c_score->getStudent() == $student && $c_score->getChildSubject() == $childSubject){
-                        $for_c_subject[$student->getId().".".$childSubject->getId()."."."c"] = $c_score;
-                    } else {
-                        $for_c_subject[] = 0;
-                    }
-                }
-
-                $key_list_c[$student->getId().".".$childSubject->getId()."."."c"] = $for_c_subject;
-
-            }
-        }
-
-        $subject_list = [];
-        $sum_sub = [];
-        foreach($subjects as $subject){
-            $all_scores_for_this_subject = [];
-            $all_scores_for_this_subject_total = [];
-            foreach($scores as $score){
-                if($score->getSubject() == $subject){
-                    $all_scores_for_this_subject[$subject->getId().".".$score->getStudent()->getId()] = $score;
-                    $all_scores_for_this_subject_total[] = $score->getMarks();
-                }
-            }
-            $sum_sub[$subject->getId()] = array_sum($all_scores_for_this_subject_total);
-            $subject_list[$subject->getId()] = $all_scores_for_this_subject;
-        }
-
-        $c_subject_list = [];
-        $c_sum_sub = [];
-        foreach($childSubjects as $c_subject){
-            $all_scores_for_this_c_subject = [];
-            $all_scores_for_this_c_subject_total = [];
-            foreach($scoreChildren as $score){
-                if($score->getChildSubject() == $c_subject){
-                    $all_scores_for_this_c_subject[] = $score;
-                    $all_scores_for_this_c_subject_total[] = $score->getMarks();
-                }
-            }
-            $c_sum_sub[$c_subject->getId()] = array_sum($all_scores_for_this_c_subject_total);
-            $c_subject_list[$c_subject->getId()] = $all_scores_for_this_c_subject;
-        }
-
-
-        $data['exam'] = $examCompany;
-        $data['key_list_s'] = $key_list_s;
-        $data['key_list_c'] = $key_list_c;
-        $data['user'] = $user;
-        $data['subjects'] = $subjects;
-        $data['students'] = $students;
-        $data['class'] = $class;
-        $data['scores'] = $scores;
-        $data['childSubjects'] = $childSubjects;
-        $data['student_list'] = $student_list;
-        $data['subject_list'] = $subject_list;
-        $data['c_subject_list'] = $c_subject_list;
-        $data['child_score_entries'] = $child_score_entries;
-        $data['sum'] = $this->rank($sum);
-        $data['sum_sub'] = $this->rank_sub($sum_sub);
-        $data['c_sum_sub'] = $this->rank_sub_child($c_sum_sub);
+        list($student_list, $sum) = $this->calculateListAndSum($students, $scores);
+        $key_list_s = $this->getSubjectKeysAsList($students, $subjects, $scores);
+        $key_list_c = $this->getCSubjectKeysAsList($students, $childSubjects, $scoreChildren);
+        list($subject_list, $sum_sub) = $this->getSubjectSumAndList($subjects, $scores);
+        list($c_subject_list, $c_sum_sub) = $this->getCSubjectSumAndList($childSubjects, $scoreChildren);
+        list($data['c_sum_sub'], $data['exam'], $data['key_list_s'], $data['key_list_c'], $data['user'], $data['subjects'])  = [$this->rank_sub_child($c_sum_sub), $examCompany, $key_list_s, $key_list_c, $user, $subjects];
+        list($data['students'], $data['class'], $data['scores'], $data['childSubjects'], $data['student_list'])  = [$students, $class, $scores, $childSubjects, $student_list];
+        list($data['subject_list'], $data['c_subject_list'], $data['child_score_entries'], $data['sum'], $data['sum_sub'])   = [$subject_list, $c_subject_list, $child_score_entries, $this->rank($sum), $this->rank_sub($sum_sub)];
 
         return $this->render('score/report.html.twig', $data);
     
@@ -562,145 +233,36 @@ class ScoreController extends Controller
      */
     public function downloadAction(Request $request, $classId, $companyId)
     {
-        $em = $this->getDoctrine()->getManager();
-        $user = $this->container->get('security.token_storage')->getToken()->getUser();
-        $class = $em->getRepository('AppBundle:Classs')
-            ->find($classId);
-
-        $examCompany = $em->getRepository('AppBundle:examCompany')
-            ->find($companyId);
-
-        $subjects = $em->getRepository('AppBundle:Subject')
-            ->findBy(
-                array('user' => $user),
-                array('id' => 'ASC')
-            );
-
-        $scores = $em->getRepository('AppBundle:Score')
+        
+        $user = $this->user();
+        $class = $this->find('Classs', $classId);
+        $examCompany = $this->find('ExamCompany', $companyId);
+        $subjects = $this->findby('Subject', 'user', $user);
+        $scores = $this->em()->getRepository('AppBundle:Score')
             ->findBy(
                 array('user' => $user, 'class' => $class, 'examCompany' => $examCompany),
                 array('subject' => 'ASC')
             );
-
-
-        $students = $em->getRepository('AppBundle:Student')
-            ->findBy(
-                array('user' => $user, 'class' => $class),
-                array('id' => 'ASC')
-            );
-
-        $childSubjects = $em->getRepository('AppBundle:ChildSubject')
-            ->findBy(
-                array('user' => $user),
-                array('id' => 'ASC')
-            );
-
-        $scoreChildren = $em->getRepository('AppBundle:ScoreChild')
+        $students = $this->findbyand('Student', 'user', $user, 'class', $class);
+        $childSubjects = $this->findby('ChildSubject', 'user', $user);
+        $scoreChildren = $this->em()->getRepository('AppBundle:ScoreChild')
             ->findBy(
                 array('user' => $user, 'class' => $class, 'examCompany' => $examCompany),
                 array('id' => 'ASC')
             );
-            
-
         $child_score_entries = [];
         foreach($scoreChildren as $scoreChild){
             $child_score_entries[$scoreChild->getStudent()->getId().'.'.$scoreChild->getChildSubject()->getId().'.'.$class->getId()] = $scoreChild->getMarks();
         }
 
-        $student_list = [];
-        $sum = [];
-        foreach($students as $student){
-            $all_subjects_for_this_student = [];
-            $all_subjects_for_this_student_total = [];
-            foreach($scores as $score){
-                if($score->getStudent() == $student){
-                    $all_subjects_for_this_student[] = $score;
-                    $all_subjects_for_this_student_total[] = $score->getMarks();
-                }
-            }
-            $sum[$student->getId()] = array_sum($all_subjects_for_this_student_total);
-            $student_list[$student->getId()] = $all_subjects_for_this_student;
-        }
-
-        $key_list_s  = [];
-        $key_list_c  = [];
-        foreach($students as $student){
-            foreach($subjects as $subject){
-                $for_s_subject = [];
-                foreach($scores as $score){
-                    if($score->getStudent() == $student && $score->getSubject() == $subject){
-                        $for_s_subject[$student->getId().".".$subject->getId()."."."s"] = $score;
-                    } else {
-                        $for_s_subject[] = 0;
-                    }
-                }
-                $key_list_s[$student->getId().".".$subject->getId()."."."s"] = $for_s_subject;
-            }
-        }
-
-        foreach($students as $student){
-            foreach($childSubjects as $childSubject){
-                $for_c_subject = [];
-                foreach($scoreChildren as $c_score){
-                    if($c_score->getStudent() == $student && $c_score->getChildSubject() == $childSubject){
-                        $for_c_subject[$student->getId().".".$childSubject->getId()."."."c"] = $c_score;
-                    } else {
-                        $for_c_subject[] = 0;
-                    }
-                }
-
-                $key_list_c[$student->getId().".".$childSubject->getId()."."."c"] = $for_c_subject;
-
-            }
-        }
-
-        $subject_list = [];
-        $sum_sub = [];
-        foreach($subjects as $subject){
-            $all_scores_for_this_subject = [];
-            $all_scores_for_this_subject_total = [];
-            foreach($scores as $score){
-                if($score->getSubject() == $subject){
-                    $all_scores_for_this_subject[$subject->getId().".".$score->getStudent()->getId()] = $score;
-                    $all_scores_for_this_subject_total[] = $score->getMarks();
-                }
-            }
-            $sum_sub[$subject->getId()] = array_sum($all_scores_for_this_subject_total);
-            $subject_list[$subject->getId()] = $all_scores_for_this_subject;
-        }
-
-        $c_subject_list = [];
-        $c_sum_sub = [];
-        foreach($childSubjects as $c_subject){
-            $all_scores_for_this_c_subject = [];
-            $all_scores_for_this_c_subject_total = [];
-            foreach($scoreChildren as $score){
-                if($score->getChildSubject() == $c_subject){
-                    $all_scores_for_this_c_subject[] = $score;
-                    $all_scores_for_this_c_subject_total[] = $score->getMarks();
-                }
-            }
-            $c_sum_sub[$c_subject->getId()] = array_sum($all_scores_for_this_c_subject_total);
-            $c_subject_list[$c_subject->getId()] = $all_scores_for_this_c_subject;
-        }
-
-
-        $data['exam'] = $examCompany;
-        $data['key_list_s'] = $key_list_s;
-        $data['key_list_c'] = $key_list_c;
-        $data['user'] = $user;
-        $data['subjects'] = $subjects;
-        $data['students'] = $students;
-        $data['class'] = $class;
-        $data['scores'] = $scores;
-        $data['childSubjects'] = $childSubjects;
-        $data['student_list'] = $student_list;
-        $data['subject_list'] = $subject_list;
-        $data['c_subject_list'] = $c_subject_list;
-        $data['child_score_entries'] = $child_score_entries;
-        $data['sum'] = $this->rank($sum);
-        $data['sum_sub'] = $this->rank_sub($sum_sub);
-        $data['c_sum_sub'] = $this->rank_sub_child($c_sum_sub);
+        list($student_list, $sum) = $this->calculateListAndSum($students, $scores);
+        $key_list_s = $this->getSubjectKeysAsList($students, $subjects, $scores);
+        $key_list_c = $this->getCSubjectKeysAsList($students, $childSubjects, $scoreChildren);
+        list($subject_list, $sum_sub) = $this->getSubjectSumAndList($subjects, $scores);
+        list($c_subject_list, $c_sum_sub) = $this->getCSubjectSumAndList($childSubjects, $scoreChildren);
+        list($data['c_sum_sub'], $data['exam'], $data['key_list_s'], $data['key_list_c'], $data['user'], $data['subjects'])  = [$this->rank_sub_child($c_sum_sub), $examCompany, $key_list_s, $key_list_c, $user, $subjects];
+        list($data['students'], $data['class'], $data['scores'], $data['childSubjects'], $data['student_list'])  = [$students, $class, $scores, $childSubjects, $student_list];
+        list($data['subject_list'], $data['c_subject_list'], $data['child_score_entries'], $data['sum'], $data['sum_sub'])   = [$subject_list, $c_subject_list, $child_score_entries, $this->rank($sum), $this->rank_sub($sum_sub)];
 
         $html = $this->renderView('pdf/pdf.html.twig', $data);
 
@@ -721,145 +283,36 @@ class ScoreController extends Controller
      */
     public function repotAction(Request $request, $classId, $companyId)
     {
-        $em = $this->getDoctrine()->getManager();
-        $user = $this->container->get('security.token_storage')->getToken()->getUser();
-        $class = $em->getRepository('AppBundle:Classs')
-            ->find($classId);
-
-        $examCompany = $em->getRepository('AppBundle:examCompany')
-            ->find($companyId);
-
-        $subjects = $em->getRepository('AppBundle:Subject')
-            ->findBy(
-                array('user' => $user),
-                array('id' => 'ASC')
-            );
-
-        $scores = $em->getRepository('AppBundle:Score')
+        
+        $user = $this->user();
+        $class = $this->find('Classs', $classId);
+        $examCompany = $this->find('ExamCompany', $companyId);
+        $subjects = $this->findby('Subject', 'user', $user);
+        $scores = $this->em()->getRepository('AppBundle:Score')
             ->findBy(
                 array('user' => $user, 'class' => $class, 'examCompany' => $examCompany),
                 array('subject' => 'ASC')
             );
-
-
-        $students = $em->getRepository('AppBundle:Student')
-            ->findBy(
-                array('user' => $user, 'class' => $class),
-                array('id' => 'ASC')
-            );
-
-        $childSubjects = $em->getRepository('AppBundle:ChildSubject')
-            ->findBy(
-                array('user' => $user),
-                array('id' => 'ASC')
-            );
-
-        $scoreChildren = $em->getRepository('AppBundle:ScoreChild')
+        $students = $this->findbyand('Student', 'user', $user, 'class', $class);
+        $childSubjects = $this->findby('ChildSubject', 'user', $user);
+        $scoreChildren = $this->em()->getRepository('AppBundle:ScoreChild')
             ->findBy(
                 array('user' => $user, 'class' => $class, 'examCompany' => $examCompany),
                 array('id' => 'ASC')
             );
-            
-
         $child_score_entries = [];
         foreach($scoreChildren as $scoreChild){
             $child_score_entries[$scoreChild->getStudent()->getId().'.'.$scoreChild->getChildSubject()->getId().'.'.$class->getId()] = $scoreChild->getMarks();
         }
 
-        $student_list = [];
-        $sum = [];
-        foreach($students as $student){
-            $all_subjects_for_this_student = [];
-            $all_subjects_for_this_student_total = [];
-            foreach($scores as $score){
-                if($score->getStudent() == $student){
-                    $all_subjects_for_this_student[] = $score;
-                    $all_subjects_for_this_student_total[] = $score->getMarks();
-                }
-            }
-            $sum[$student->getId()] = array_sum($all_subjects_for_this_student_total);
-            $student_list[$student->getId()] = $all_subjects_for_this_student;
-        }
-
-        $key_list_s  = [];
-        $key_list_c  = [];
-        foreach($students as $student){
-            foreach($subjects as $subject){
-                $for_s_subject = [];
-                foreach($scores as $score){
-                    if($score->getStudent() == $student && $score->getSubject() == $subject){
-                        $for_s_subject[$student->getId().".".$subject->getId()."."."s"] = $score;
-                    } else {
-                        $for_s_subject[] = 0;
-                    }
-                }
-                $key_list_s[$student->getId().".".$subject->getId()."."."s"] = $for_s_subject;
-            }
-        }
-
-        foreach($students as $student){
-            foreach($childSubjects as $childSubject){
-                $for_c_subject = [];
-                foreach($scoreChildren as $c_score){
-                    if($c_score->getStudent() == $student && $c_score->getChildSubject() == $childSubject){
-                        $for_c_subject[$student->getId().".".$childSubject->getId()."."."c"] = $c_score;
-                    } else {
-                        $for_c_subject[] = 0;
-                    }
-                }
-
-                $key_list_c[$student->getId().".".$childSubject->getId()."."."c"] = $for_c_subject;
-
-            }
-        }
-
-        $subject_list = [];
-        $sum_sub = [];
-        foreach($subjects as $subject){
-            $all_scores_for_this_subject = [];
-            $all_scores_for_this_subject_total = [];
-            foreach($scores as $score){
-                if($score->getSubject() == $subject){
-                    $all_scores_for_this_subject[$subject->getId().".".$score->getStudent()->getId()] = $score;
-                    $all_scores_for_this_subject_total[] = $score->getMarks();
-                }
-            }
-            $sum_sub[$subject->getId()] = array_sum($all_scores_for_this_subject_total);
-            $subject_list[$subject->getId()] = $all_scores_for_this_subject;
-        }
-
-        $c_subject_list = [];
-        $c_sum_sub = [];
-        foreach($childSubjects as $c_subject){
-            $all_scores_for_this_c_subject = [];
-            $all_scores_for_this_c_subject_total = [];
-            foreach($scoreChildren as $score){
-                if($score->getChildSubject() == $c_subject){
-                    $all_scores_for_this_c_subject[] = $score;
-                    $all_scores_for_this_c_subject_total[] = $score->getMarks();
-                }
-            }
-            $c_sum_sub[$c_subject->getId()] = array_sum($all_scores_for_this_c_subject_total);
-            $c_subject_list[$c_subject->getId()] = $all_scores_for_this_c_subject;
-        }
-
-
-        $data['exam'] = $examCompany;
-        $data['key_list_s'] = $key_list_s;
-        $data['key_list_c'] = $key_list_c;
-        $data['user'] = $user;
-        $data['subjects'] = $subjects;
-        $data['students'] = $students;
-        $data['class'] = $class;
-        $data['scores'] = $scores;
-        $data['childSubjects'] = $childSubjects;
-        $data['student_list'] = $student_list;
-        $data['subject_list'] = $subject_list;
-        $data['c_subject_list'] = $c_subject_list;
-        $data['child_score_entries'] = $child_score_entries;
-        $data['sum'] = $this->rank($sum);
-        $data['sum_sub'] = $this->rank_sub($sum_sub);
-        $data['c_sum_sub'] = $this->rank_sub_child($c_sum_sub);
+        list($student_list, $sum) = $this->calculateListAndSum($students, $scores);
+        $key_list_s = $this->getSubjectKeysAsList($students, $subjects, $scores);
+        $key_list_c = $this->getCSubjectKeysAsList($students, $childSubjects, $scoreChildren);
+        list($subject_list, $sum_sub) = $this->getSubjectSumAndList($subjects, $scores);
+        list($c_subject_list, $c_sum_sub) = $this->getCSubjectSumAndList($childSubjects, $scoreChildren);
+        list($data['c_sum_sub'], $data['exam'], $data['key_list_s'], $data['key_list_c'], $data['user'], $data['subjects'])  = [$this->rank_sub_child($c_sum_sub), $examCompany, $key_list_s, $key_list_c, $user, $subjects];
+        list($data['students'], $data['class'], $data['scores'], $data['childSubjects'], $data['student_list'])  = [$students, $class, $scores, $childSubjects, $student_list];
+        list($data['subject_list'], $data['c_subject_list'], $data['child_score_entries'], $data['sum'], $data['sum_sub'])   = [$subject_list, $c_subject_list, $child_score_entries, $this->rank($sum), $this->rank_sub($sum_sub)];
 
         $html = $this->renderView('pdf/report.html.twig', $data);
 
@@ -880,145 +333,36 @@ class ScoreController extends Controller
      */
     public function downloadImgAction(Request $request, $classId, $companyId)
     {
-        $em = $this->getDoctrine()->getManager();
-        $user = $this->container->get('security.token_storage')->getToken()->getUser();
-        $class = $em->getRepository('AppBundle:Classs')
-            ->find($classId);
-
-        $examCompany = $em->getRepository('AppBundle:examCompany')
-            ->find($companyId);
-
-        $subjects = $em->getRepository('AppBundle:Subject')
-            ->findBy(
-                array('user' => $user),
-                array('id' => 'ASC')
-            );
-
-        $scores = $em->getRepository('AppBundle:Score')
+        
+        $user = $this->user();
+        $class = $this->find('Classs', $classId);
+        $examCompany = $this->find('ExamCompany', $companyId);
+        $subjects = $this->findby('Subject', 'user', $user);
+        $scores = $this->em()->getRepository('AppBundle:Score')
             ->findBy(
                 array('user' => $user, 'class' => $class, 'examCompany' => $examCompany),
                 array('subject' => 'ASC')
             );
-
-
-        $students = $em->getRepository('AppBundle:Student')
-            ->findBy(
-                array('user' => $user, 'class' => $class),
-                array('id' => 'ASC')
-            );
-
-        $childSubjects = $em->getRepository('AppBundle:ChildSubject')
-            ->findBy(
-                array('user' => $user),
-                array('id' => 'ASC')
-            );
-
-        $scoreChildren = $em->getRepository('AppBundle:ScoreChild')
+        $students = $this->findbyand('Student', 'user', $user, 'class', $class);
+        $childSubjects = $this->findby('ChildSubject', 'user', $user);
+        $scoreChildren = $this->em()->getRepository('AppBundle:ScoreChild')
             ->findBy(
                 array('user' => $user, 'class' => $class, 'examCompany' => $examCompany),
                 array('id' => 'ASC')
             );
-            
-
         $child_score_entries = [];
         foreach($scoreChildren as $scoreChild){
             $child_score_entries[$scoreChild->getStudent()->getId().'.'.$scoreChild->getChildSubject()->getId().'.'.$class->getId()] = $scoreChild->getMarks();
         }
 
-        $student_list = [];
-        $sum = [];
-        foreach($students as $student){
-            $all_subjects_for_this_student = [];
-            $all_subjects_for_this_student_total = [];
-            foreach($scores as $score){
-                if($score->getStudent() == $student){
-                    $all_subjects_for_this_student[] = $score;
-                    $all_subjects_for_this_student_total[] = $score->getMarks();
-                }
-            }
-            $sum[$student->getId()] = array_sum($all_subjects_for_this_student_total);
-            $student_list[$student->getId()] = $all_subjects_for_this_student;
-        }
-
-        $key_list_s  = [];
-        $key_list_c  = [];
-        foreach($students as $student){
-            foreach($subjects as $subject){
-                $for_s_subject = [];
-                foreach($scores as $score){
-                    if($score->getStudent() == $student && $score->getSubject() == $subject){
-                        $for_s_subject[$student->getId().".".$subject->getId()."."."s"] = $score;
-                    } else {
-                        $for_s_subject[] = 0;
-                    }
-                }
-                $key_list_s[$student->getId().".".$subject->getId()."."."s"] = $for_s_subject;
-            }
-        }
-
-        foreach($students as $student){
-            foreach($childSubjects as $childSubject){
-                $for_c_subject = [];
-                foreach($scoreChildren as $c_score){
-                    if($c_score->getStudent() == $student && $c_score->getChildSubject() == $childSubject){
-                        $for_c_subject[$student->getId().".".$childSubject->getId()."."."c"] = $c_score;
-                    } else {
-                        $for_c_subject[] = 0;
-                    }
-                }
-
-                $key_list_c[$student->getId().".".$childSubject->getId()."."."c"] = $for_c_subject;
-
-            }
-        }
-
-        $subject_list = [];
-        $sum_sub = [];
-        foreach($subjects as $subject){
-            $all_scores_for_this_subject = [];
-            $all_scores_for_this_subject_total = [];
-            foreach($scores as $score){
-                if($score->getSubject() == $subject){
-                    $all_scores_for_this_subject[$subject->getId().".".$score->getStudent()->getId()] = $score;
-                    $all_scores_for_this_subject_total[] = $score->getMarks();
-                }
-            }
-            $sum_sub[$subject->getId()] = array_sum($all_scores_for_this_subject_total);
-            $subject_list[$subject->getId()] = $all_scores_for_this_subject;
-        }
-
-        $c_subject_list = [];
-        $c_sum_sub = [];
-        foreach($childSubjects as $c_subject){
-            $all_scores_for_this_c_subject = [];
-            $all_scores_for_this_c_subject_total = [];
-            foreach($scoreChildren as $score){
-                if($score->getChildSubject() == $c_subject){
-                    $all_scores_for_this_c_subject[] = $score;
-                    $all_scores_for_this_c_subject_total[] = $score->getMarks();
-                }
-            }
-            $c_sum_sub[$c_subject->getId()] = array_sum($all_scores_for_this_c_subject_total);
-            $c_subject_list[$c_subject->getId()] = $all_scores_for_this_c_subject;
-        }
-
-
-        $data['exam'] = $examCompany;
-        $data['key_list_s'] = $key_list_s;
-        $data['key_list_c'] = $key_list_c;
-        $data['user'] = $user;
-        $data['subjects'] = $subjects;
-        $data['students'] = $students;
-        $data['class'] = $class;
-        $data['scores'] = $scores;
-        $data['childSubjects'] = $childSubjects;
-        $data['student_list'] = $student_list;
-        $data['subject_list'] = $subject_list;
-        $data['c_subject_list'] = $c_subject_list;
-        $data['child_score_entries'] = $child_score_entries;
-        $data['sum'] = $this->rank($sum);
-        $data['sum_sub'] = $this->rank_sub($sum_sub);
-        $data['c_sum_sub'] = $this->rank_sub_child($c_sum_sub);
+        list($student_list, $sum) = $this->calculateListAndSum($students, $scores);
+        $key_list_s = $this->getSubjectKeysAsList($students, $subjects, $scores);
+        $key_list_c = $this->getCSubjectKeysAsList($students, $childSubjects, $scoreChildren);
+        list($subject_list, $sum_sub) = $this->getSubjectSumAndList($subjects, $scores);
+        list($c_subject_list, $c_sum_sub) = $this->getCSubjectSumAndList($childSubjects, $scoreChildren);
+        list($data['c_sum_sub'], $data['exam'], $data['key_list_s'], $data['key_list_c'], $data['user'], $data['subjects'])  = [$this->rank_sub_child($c_sum_sub), $examCompany, $key_list_s, $key_list_c, $user, $subjects];
+        list($data['students'], $data['class'], $data['scores'], $data['childSubjects'], $data['student_list'])  = [$students, $class, $scores, $childSubjects, $student_list];
+        list($data['subject_list'], $data['c_subject_list'], $data['child_score_entries'], $data['sum'], $data['sum_sub'])   = [$subject_list, $c_subject_list, $child_score_entries, $this->rank($sum), $this->rank_sub($sum_sub)];
 
         $html = $this->renderView('pdf/image.html.twig', $data);
 
@@ -1040,8 +384,8 @@ class ScoreController extends Controller
         $s = array();
         $i = 0;
         foreach ($arr as $k=>$v) {
-            $em = $this->getDoctrine()->getManager();
-            $stude = $em->getRepository('AppBundle:Student')
+            
+            $stude = $this->em()->getRepository('AppBundle:Student')
                 ->find($k);
             if (!isset($s[$v])) { $s[$v] = ++$i; } else { ++$i; }
             $ret[$k]= array($v, $s[$v], $stude);
@@ -1055,8 +399,8 @@ class ScoreController extends Controller
         $s = array();
         $i = 0;
         foreach ($arr as $k=>$v) {
-            $em = $this->getDoctrine()->getManager();
-            $stude = $em->getRepository('AppBundle:Subject')
+            
+            $stude = $this->em()->getRepository('AppBundle:Subject')
                 ->find($k);
             if (!isset($s[$v])) { $s[$v] = ++$i; } else { ++$i; }
             $ret[$k]= array($v, $s[$v], $stude);
@@ -1070,8 +414,8 @@ class ScoreController extends Controller
         $s = array();
         $i = 0;
         foreach ($arr as $k=>$v) {
-            $em = $this->getDoctrine()->getManager();
-            $stude = $em->getRepository('AppBundle:ChildSubject')
+            
+            $stude = $this->em()->getRepository('AppBundle:ChildSubject')
                 ->find($k);
             if (!isset($s[$v])) { $s[$v] = ++$i; } else { ++$i; }
             $ret[$k]= array($v, $s[$v], $stude);
@@ -1095,21 +439,21 @@ class ScoreController extends Controller
             $marks = $request->request->get('marks');
             $user = $this->get('security.token_storage')->getToken()->getUser();
           
-            $em = $this->getDoctrine()->getManager();
+            
 
-            $student = $em->getRepository('AppBundle:Student')
+            $student = $this->em()->getRepository('AppBundle:Student')
                 ->find($student_id);
 
-            $examCompany = $em->getRepository('AppBundle:ExamCompany')
+            $examCompany = $this->em()->getRepository('AppBundle:ExamCompany')
                 ->find($examCompanyId);
 
-            $class = $em->getRepository('AppBundle:Classs')
+            $class = $this->em()->getRepository('AppBundle:Classs')
                 ->find($thisClass);
 
-            $subject = $em->getRepository('AppBundle:Subject')
+            $subject = $this->em()->getRepository('AppBundle:Subject')
             ->find($subject_id);
 
-            $isAlreadyRecorded = $em->getRepository('AppBundle:Score')
+            $isAlreadyRecorded = $this->em()->getRepository('AppBundle:Score')
                 ->isAlreadyRecorded($student, $class, $subject, $examCompany);
 
 
@@ -1128,13 +472,173 @@ class ScoreController extends Controller
             $score->setSubject($subject);
             $score->setUser($user);
 
-            $em->persist($score);
-            $em->flush();
-
+            $this->save($score);
         }
 
         return new JsonResponse($data);
     } 
 
+    private function move($studentId, $cSubjectId, $direction){
+        $move = "";
+        $prev_student = $this->em()->getRepository('AppBundle:Student')->getPreviousStudent($studentId);
+        $next_student = $this->em()->getRepository('AppBundle:Student')->getNextStudent($studentId);
+        $prev_subject = $this->em()->getRepository('AppBundle:ChildSubject')->getPreviousCSubject($cSubjectId);
+        $next_subject = $this->em()->getRepository('AppBundle:ChildSubject')->getNextCSubject($cSubjectId);
+
+        if($direction == "down"){
+            $move = $next_student->getId()."_".$cSubjectId;
+        } elseif ($direction == "up") {
+            $move = $prev_student->getId()."_".$cSubjectId;
+        } elseif ($direction == "left") {
+            $move = $studentId."_".$prev_subject->getId();
+        } elseif ($direction == "right") {
+            $move = $studentId."_".$next_subject->getId();
+        } 
+        return $move;
+    }
+
+    private function calculateListAndSum($students, $scores){
+        $sum = [];
+        $student_list = [];
+        foreach($students as $student){
+            $all_subjects_for_this_student = [];
+            $all_subjects_for_this_student_total = [];
+            foreach($scores as $score){
+                if($score->getStudent() == $student){
+                    $all_subjects_for_this_student[] = $score;
+                    $all_subjects_for_this_student_total[] = $score->getMarks();
+                }
+            }
+            $sum[$student->getId()] = array_sum($all_subjects_for_this_student_total);
+            $student_list[$student->getId()] = $all_subjects_for_this_student;
+        }
+        return [$student_list, $sum];
+    }
+
+    private function getSubjectKeysAsList($students, $subjects, $scores){
+        $key_list_s  = [];
+        foreach($students as $student){
+            foreach($subjects as $subject){
+                $for_s_subject = [];
+                foreach($scores as $score){
+                    if($score->getStudent() == $student && $score->getSubject() == $subject){
+                        $for_s_subject[$student->getId().".".$subject->getId()."."."s"] = $score;
+                    } else {
+                        $for_s_subject[] = 0;
+                    }
+                }
+                $key_list_s[$student->getId().".".$subject->getId()."."."s"] = $for_s_subject;
+            }
+        }
+        return $key_list_s;
+    }
+
+    private function getCSubjectKeysAsList($students, $childSubjects, $scoreChildren){
+        $key_list_c  = [];
+        foreach($students as $student){
+            foreach($childSubjects as $childSubject){
+                $for_c_subject = [];
+                foreach($scoreChildren as $c_score){
+                    if($c_score->getStudent() == $student && $c_score->getChildSubject() == $childSubject){
+                        $for_c_subject[$student->getId().".".$childSubject->getId()."."."c"] = $c_score;
+                    } else {
+                        $for_c_subject[] = 0;
+                    }
+                }
+
+                $key_list_c[$student->getId().".".$childSubject->getId()."."."c"] = $for_c_subject;
+
+            }
+        }
+        return $key_list_c;
+    }
+
+    private function getSubjectSumAndList($subjects, $scores){
+        $subject_list = [];
+        $sum_sub = [];
+        foreach($subjects as $subject){
+            $all_scores_for_this_subject = [];
+            $all_scores_for_this_subject_total = [];
+            foreach($scores as $score){
+                if($score->getSubject() == $subject){
+                    $all_scores_for_this_subject[$subject->getId().".".$score->getStudent()->getId()] = $score;
+                    $all_scores_for_this_subject_total[] = $score->getMarks();
+                }
+            }
+            $sum_sub[$subject->getId()] = array_sum($all_scores_for_this_subject_total);
+            $subject_list[$subject->getId()] = $all_scores_for_this_subject;
+        }
+        return [$subject_list, $sum_sub];
+    }
+
+    private function getCSubjectSumAndList($childSubjects, $scoreChildren){
+        $c_subject_list = [];
+        $c_sum_sub = [];
+        foreach($childSubjects as $c_subject){
+            $all_scores_for_this_c_subject = [];
+            $all_scores_for_this_c_subject_total = [];
+            foreach($scoreChildren as $score){
+                if($score->getChildSubject() == $c_subject){
+                    $all_scores_for_this_c_subject[] = $score;
+                    $all_scores_for_this_c_subject_total[] = $score->getMarks();
+                }
+            }
+            $c_sum_sub[$c_subject->getId()] = array_sum($all_scores_for_this_c_subject_total);
+            $c_subject_list[$c_subject->getId()] = $all_scores_for_this_c_subject;
+        }
+        return [$c_subject_list, $c_sum_sub];        
+    }
+
+    private function em(){
+        $em = $this->getDoctrine()->getManager();
+        return $em;
+    }
+
+    private function find($entity, $id){
+        $entity = $this->em()->getRepository("AppBundle:$entity")->find($id);
+        return $entity;
+    }
+
+    private function findby($entity, $by, $actual){
+        $query_string = "findBy$by";
+        $entity = $this->em()->getRepository("AppBundle:$entity")->$query_string($actual);
+        return $entity;
+    }
+
+    private function findandlimit($entity, $by, $actual, $limit, $order){
+        $entity = $this->em()->getRepository("AppBundle:$entity")
+            ->findBy(
+                array($by => $actual),
+                array('id' => $order),
+                $limit
+            );
+        return $entity;
+    }
+
+    private function findbyand($entity, $by, $actual, $by2, $actual2){
+        $entity = $this->em()->getRepository("AppBundle:$entity")
+            ->findBy(
+                array($by => $actual, $by2 => $actual2),
+                array('id' => 'ASC')
+            );
+        return $entity;
+    }
+
+    private function save($entity){
+        $this->em()->persist($entity);
+        $this->em()->flush();   
+        return true;     
+    }
+
+    private function delete($entity){
+        $this->em()->remove($entity);
+        $this->em()->flush();    
+        return true;    
+    }
+
+    private function user(){
+        $user = $this->container->get('security.token_storage')->getToken()->getUser();
+        return $user;
+    }
 
 }
