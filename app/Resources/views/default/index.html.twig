@@ -141,12 +141,12 @@
                                   {% endfor %} 
                                 {% else %}
                                   <div class="well">
-                                    <h4>Its lonely here! You can add some exams after you're done with adding <a href="{{path('new_class')}}">classes</a>, <a href="{{path('new_subject')}}">subjects</a> and <a href="{{path('new_student')}}"> students </a>.</h4>
+                                    <h4>Its lonely here! You can add some exams after you're done with adding <a href="{{path('new_class')}}">classes</a>, <a href="{{path('new_subject')}}">subjects</a> and <a id="add_student" href="{{path('choose_class', {'goto': 'new_student'})}}" style="background-color:white;"> students </a>.</h4>
                                   </div>
                                 {% endif %}
                                 {% if score_list|length < 5 %} 
                                   <li>
-                                    <a href="{{path('new_examCompany')}}" class="btn btn-default " style="padding:10px!important; margin-bottom:10px; color:black;"> Add New Exam </a>
+                                    <a id="add_exam" href="{{path('choose_class_exam', {'goto': 'new_examCompany'})}}" class="btn btn-default " style="padding:10px!important; margin-bottom:10px; color:black;"> Add New Exam </a>
                                   </li>   
                                 {% endif %}                            
                                 </ul>
@@ -163,7 +163,7 @@
         <div class="row">
             <div class="col-lg-4">
                 <!--project team start-->
-                <section class="panel">
+                <section id='subjs' class="panel">
                   <div class="panel-body project-team">
                       <div class="task-progress">
                             <h1>Subjects</h1>  
@@ -182,6 +182,8 @@
                                 {% for child in subject.childSubjects %}
                                   <span class="badge bg-important">{{child.cSTitle}}</span>
                                 {% endfor %}
+                              {% else %}
+                                <a href="{{path('new_childSubject', {'subjectId': subject.id})}}" class="badge">Add Child</a>
                               {% endif %}
                             </td>
                         </tr>
@@ -190,7 +192,7 @@
                     </table>
                   {% else %}
                     <div class="well">
-                      <h4>Its lonely here! You can  <a href="{{path('new_subject')}}"> add some subjects </a> after you're done with adding classes and students.</h4>
+                      <h4>Its lonely here! You can  <a href="{{path('new_subject')}}" id="add_subject" style="background-color:white;"> add some subjects </a> after you're done with adding classes and students.</h4>
                     </div>
                   {% endif %}
                 </section>
@@ -221,7 +223,7 @@
                               </td>
                               <td>
                                 <span class="profile-ava">
-                                    <a href="{{path('list_students', {'classId': class.id})}}" class="btn btn-info btn-xs">View Students</a>
+                                    <a id="add_student" href="{{path('list_students', {'classId': class.id})}}" class="btn btn-info btn-xs">Class {{class}} Students</a>
                                 </span>
                               </td>
                           </tr>
@@ -230,13 +232,17 @@
                     </table>
                     {% else %}
                       <div class="well">
-                        <h4>Its lonely here! You can <a href="{{path('new_class')}}"> add some classes </a> now. If you have already added some classes, you can now <a href="{{path('new_student')}}"> add some students to your class </a></h4>
+                        <h4>Its lonely here! You can <a id="add_class" href="{{path('new_class')}}" style="background-color:white;"> add some classes </a> now. If you have already added some classes, you can now <a href="{{path('choose_class', {'goto': 'new_student'})}}" style="background-color:white;"> add some students to your class </a></h4>
                       </div>
                     {% endif %}
                 </section>
                 <!--Project Activity end-->
             </div>
-        </div>
+            <div class="col-lg-8">
+              {% if classes_length < 1 %}
+                <div class="text-center"><a href="javascript:void(0);" class="btn btn-primary btn-outline btn-lg btn-block touring">Show Me Around</a></div>            </div>
+              {% endif %}
+            </div>
         <!-- project team & activity end -->
 {% endblock %}
 {% endembed %}

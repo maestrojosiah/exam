@@ -37,7 +37,7 @@
 		              <td>{{childSubject.subject}}</td>
 					  <td>
 		                  <div class="btn-group">
-		                      <a class="btn btn-primary" title="Add ChildSubject" href="{{path('new_childSubject')}}"><i class="icon_plus_alt2"></i></a>
+		                      <a class="btn btn-primary" title="Add ChildSubject" href="{{path('new_childSubject', {'subjectId': childSubject.subject.id})}}"><i class="icon_plus_alt2"></i></a>
 		                      <a class="btn btn-success" title="Edit ChildSubject" href="{{path('edit_childSubject', {'childSubjectId': childSubject.id})}}"><i class="icon_pencil"></i></a>
 		                      <a class="btn btn-danger" data-toggle="modal" title="Delete ChildSubject" href="#deleteModal{{childSubject.id}}"><i class="icon_close_alt2"></i></a>
 		                  </div>

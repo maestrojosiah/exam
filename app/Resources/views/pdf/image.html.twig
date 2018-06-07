@@ -50,12 +50,16 @@ html{font-family:sans-serif;-webkit-text-size-adjust:100%;-ms-text-size-adjust:1
 	<div class="col-lg-12">
 <section class="panel">
     <header class="panel-heading">
+    {% if app.user.configs|first.titleDisplay == 'txt' %}
       <h3>{{app.user.configs|first.schName}}<br />
       {{app.user.configs|first.address}}<br />
       {{app.user.configs|first.telephone}}</h3>
-      <h4>Exam Report Summary for {{exam.cTitle}} [{{class.cTitle}}]</h4>
+  	{% endif %}
+      <h4>Exam Report Summary for {{exam.cTitle}} [ Class {{class.cTitle}} ]</h4>
     </header>
     {% set parents = [] %}
+    {% set span = childSubjects|length + subjects|length + 3 %}
+    {% set img_height = app.user.configs|first.letterheadHeight %}
     {% for childSubject in childSubjects %}
       {% if childSubject.subject.sTitle not in parents %}
         {% set parents = parents|merge([childSubject.subject.sTitle]) %}
@@ -63,6 +67,14 @@ html{font-family:sans-serif;-webkit-text-size-adjust:100%;-ms-text-size-adjust:1
     {% endfor %}
     <table class="table table-striped table-advance table-hover">
      <tbody>
+    {% if app.user.configs|first.titleDisplay == 'img' %}
+	    <tr>
+	      <td colspan="{{span}}"> 
+             {% set img_path = "img/" ~ app.user.configs|first.letterhead %}
+              <img style="width:100%; height:{{img_height}}px;" src="http://127.0.0.1:8001/{{img_path}}" {#  src="{{ absolute_url(asset(img_path)) }}" #} />
+	      </td>
+	    </tr>
+	{% endif %}
         <tr>
           <th style="text-nowrap" class="col-md-3">Name</th>
           {% for subject in subjects %}

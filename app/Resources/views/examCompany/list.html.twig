@@ -65,7 +65,7 @@
 			          </div>
 			          <div class="modal-footer">
 			              <button data-dismiss="modal" class="btn btn-default" type="button">Close</button>
-			              <a href="{{ path('delete_examCompany', { 'examCompanyId': examCompany.id } ) }}" class="btn btn-danger">Go Ahead</a>
+			              <a href="{{ path('delete_examCompany', { 'examCompanyId': examCompany.id, 'classId': examCompany.class.id } ) }}" class="btn btn-danger">Go Ahead</a>
 			          </div>
 			      </div>
 			  </div>

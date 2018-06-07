@@ -5,6 +5,11 @@
     <div class="container">
 
       <form class="login-form" method="post" action="{{ path('login') }}">        
+      {% for message in app.flashes('success') %}
+          <div class="flash-success">
+              {{ message }}
+          </div>
+      {% endfor %}
         {% if error %}
           {{ error.messageKey|trans(error.messageData, 'security') }}
         {% endif %}
@@ -32,4 +37,32 @@
 
   </body>
 
+{% endblock %}
+{% block javascripts %}
+  <script>
+      var tour = {
+          autoStart: true,
+          data : [
+              { element : '.login-form', tooltip : 'If you\'re signed up, Login. If not, why not Create an account?. Its free to have an account with us.', text: 'Start making your work easier. Sign Up or Sign In, Free', position: 'B' },
+          ],
+          welcomeMessage: 'Welcome ExamPro App. If its your first time here, you may need a tour guide :) Click "start" to begin the tour.',
+          controlsPosition : 'TR',
+          buttons: {
+              next  : { text : 'Next &rarr;', class : 'btn btn-default'},
+              prev  : { text : '&larr; Previous', class: 'btn btn-default' },
+              start : { text : 'Start', class: 'btn btn-primary btn-lg' },
+              end   : { text : 'End', class: 'btn btn-primary' }
+          },
+          controlsCss: {
+              background: 'rgba(124, 124, 124, 0.9)',
+              color: '#fff',
+              width: '400px',
+              'border-radius': 0
+          }
+      };
+
+      $(document).ready(function(){
+          $.aSimpleTour(tour);
+      });
+  </script>
 {% endblock %}

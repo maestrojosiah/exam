@@ -35,13 +35,14 @@ class ExamCompanyController extends Controller
             if($form->get('saveAndAdd')->isClicked()){
                 return $this->redirectToRoute('new_examCompany', ['classId' => $class_id ]);
             } else {
-                return $this->redirectToRoute('list_examCompanies', ['classId' => $student->getClass()->getId()]);
+                return $this->redirectToRoute('list_examCompanies', ['classId' => $class_id]);
             }
 
             return $this->redirectToRoute($nextAction);
 		} 
 
         $data['examCompanies'] = $examCompanies;
+        $data['class'] = $classs;
         $data['user'] = $user;
 
 	    return $this->render('examCompany/create.html.twig',['form' => $form->createView(), 'data' => $data] );
@@ -96,17 +97,17 @@ class ExamCompanyController extends Controller
             $nextAction = $form->get('saveAndAdd')->isClicked()
                 ? 'new_examCompany'
                 : 'list_examCompanies';
-            return $this->redirectToRoute($nextAction);
+            return $this->redirectToRoute($nextAction, ['classId' => $examCompany->getClass()->getId()]);
 
         } else {
-            $form_data['exam_company_c_title'] = $examCompanies->getCTitle();
-            $form_data['exam_company_class'] = $examCompanies->getClass();
+            $form_data['exam_company_c_title'] = $examCompany->getCTitle();
+            $form_data['exam_company_class'] = $examCompany->getClass();
             $data['form'] = $form_data;
         }
 
-        $data['examCompany'] = $examCompanies;
+        $data['examCompany'] = $examCompany;
 
-        return $this->render('examCompany/edit.html.twig', ['form' => $form->createView(), $data,] );
+        return $this->render('examCompany/edit.html.twig', ['form' => $form->createView(), 'data' =>$data,] );
     }
 
     /**
@@ -116,8 +117,9 @@ class ExamCompanyController extends Controller
     {
         $data = [];
         $examCompanies = $this->find('ExamCompany', $examCompanyId);
+        $class_id = $request->query->get('classId');
         $this->delete($examCompanies);
-        return $this->redirectToRoute('list_examCompanies');
+        return $this->redirectToRoute('list_examCompanies', ['classId'=> $class_id]);
 
     }
 

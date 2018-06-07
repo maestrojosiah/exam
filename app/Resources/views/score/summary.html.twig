@@ -10,7 +10,7 @@
 	{% block content %}
       {% if students is empty %}
         <div class="well">
-          <h3>There are no students for class {{class.cTitle}}. Please <a href="{{path('new_student')}}">add students</a></h3>
+          <h3>There are no students for class {{class.cTitle}}. Please <a href="{{path('choose_class', {'goto': 'new_student'})}}">add students</a></h3>
         </div>
       {% elseif subjects is empty %}        
         <div class="well">
@@ -22,13 +22,14 @@
             <header class="panel-heading">
               Exam Report Summary for {{exam.cTitle}} [{{class.cTitle}}]
               <div class="pull-right">
-              <a class="btn btn-sm btn-primary" href="{{ path('download_exam', {'classId': class.id, 'companyId': exam.id}) }}">Download PDF</a>
-              <a class="btn btn-sm btn-primary" href="{{ path('download_exam_img', {'classId': class.id, 'companyId': exam.id}) }}">Download Image</a>
-              <a href="{{path('report_forms', {'classId': exam.class.id, 'companyId': exam.id})}}" class="btn btn-primary">Report Forms</a>
+              <a class="btn btn-sm btn-primary" {% if app.user.tokens < 1 %} href="#" {% else %} href="{{ path('download_exam', {'classId': class.id, 'companyId': exam.id}) }}"{% endif %}>Download PDF</a>
+              <a class="btn btn-sm btn-primary" {% if app.user.tokens < 1 %} href="#" {% else %} href="{{ path('download_exam_img', {'classId': class.id, 'companyId': exam.id}) }}"{% endif %}>Download Image</a>
+              <a {% if app.user.tokens < 1 %} href="#" {% else %} href="{{path('report_forms', {'classId': exam.class.id, 'companyId': exam.id})}}"{% endif %} class="btn btn-primary">Report Forms</a>
               </div>
-            </header>
+              </header>
             {% set parents = [] %}
-              {% set span = childSubjects|length + subjects|length %}
+              {% set span = childSubjects|length + subjects|length + 3 %}
+              {% set img_height = app.user.configs|first.letterheadHeight %}
             {% for childSubject in childSubjects %}
               {% if childSubject.subject.sTitle not in parents %}
                 {% set parents = parents|merge([childSubject.subject.sTitle]) %}
@@ -38,7 +39,16 @@
              <tbody>
                 <tr>
                   <td colspan="{{span}}"> 
-                    <img style="width:100%" src="{{asset('img/logo.jpg')}}" />
+                    {% if app.user.configs|first.titleDisplay == 'txt' %}
+                      <h3>{{app.user.configs|first.schName}}<br />
+                      {{app.user.configs|first.address}}<br />
+                      {{app.user.configs|first.telephone}}</h3>
+                      <h4>Exam Report Summary for {{exam.cTitle}} [ Class {{class.cTitle}} ]</h4>
+                    {% else  %}
+                      {% set img_path = "img/" ~ app.user.configs|first.letterhead %}
+                      <img style="width:100%; height:{{img_height}}px;" src="{{ absolute_url(asset(img_path)) }}" {# src="{{asset('img/{{app.user.configs|first.letterhead}}')}}" #} />
+                      <h4>Exam Report Summary for {{exam.cTitle}} [ Class {{class.cTitle}} ]</h4>
+                    {% endif %}
                   </td>
                 </tr>
                 <tr>
@@ -80,18 +90,41 @@
                 </tr>
                 {% endfor %}
               <tr>
-					<td>Total Score</td>
-					{% set total_score  = 0 %}
-					{% for subject in subjects %}
-						{% set total_score = total_score + sum_sub[subject.id][0] %}
-                		{% if subject.sTitle in parents %}
-                			{% for child in subject.childSubjects %}
-                				<td>{{c_sum_sub[child.id][0]}}</td>
-                			{% endfor %}
-                		{% endif %}
-						<td style="color:black;">{{sum_sub[subject.id][0]}}</td>
-					{% endfor %}
-					<td style="color:black;">{{total_score}}</td>
+                {% if app.user.tokens < 1 %}
+                  <tr>
+                  <td colspan="{{span}}"> 
+                    <div class="col-lg-12 text-center" style="background-color:white; font-size:15px;">
+                      <h2>Congratulations!</h2>
+                      <p><strong>You are now ready to download your neat job. You need to buy me a cup of tea for making your work easier. Its only 100/= - less than a dollar.</strong></p>
+                      <p><strong>Its easy! send the cash through MPESA to this magic number: 0716339886 and you will receive a code. One code costs 100/= and can be used only once.</strong></p>
+                      <p><strong>Once you get the six-digit code, type it in the text box below and submit. You will then be able to see all your results and download the nice, neat document.</strong></p>
+                      <form class="form-inline">
+                        <div class="form-group">
+                          <label class="sr-only" for="exampleInputAmount">Amount (in dollars)</label>
+                          <div class="input-group">
+                            <div class="input-group-addon">Code</div>
+                            <input type="text" class="form-control" id="exampleInputAmount" placeholder="XXX-XXX">
+                          </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Submit Code!</button>
+                      </form>
+                    </div>
+                  </td>
+                  </tr>
+                {% endif %}
+
+      					<td>Total Score</td>
+      					{% set total_score  = 0 %}
+      					{% for subject in subjects %}
+      						{% set total_score = total_score + sum_sub[subject.id][0] %}
+                      		{% if subject.sTitle in parents %}
+                      			{% for child in subject.childSubjects %}
+                      				<td>{{c_sum_sub[child.id][0]}}</td>
+                      			{% endfor %}
+                      		{% endif %}
+      						<td style="color:black;">{{sum_sub[subject.id][0]}}</td>
+      					{% endfor %}
+      					<td style="color:black;">{{total_score}}</td>
               </tr>
               <tr>
 					<td>Mean Score</td>

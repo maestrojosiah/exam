@@ -3,6 +3,7 @@
 namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Config
@@ -23,31 +24,58 @@ class Config
 
     /**
      * @var string
-     *
+     * @Assert\NotBlank()
      * @ORM\Column(name="sch_name", type="string", length=255)
      */
     private $schName;
 
     /**
      * @var string
-     *
+     * @Assert\NotBlank()
      * @ORM\Column(name="address", type="string", length=100)
      */
     private $address;
 
     /**
      * @var string
-     *
+     * @Assert\NotBlank()
      * @ORM\Column(name="telephone", type="string", length=30)
      */
     private $telephone;
 
     /**
      * @var string
-     *
+     * @Assert\NotBlank()
      * @ORM\Column(name="results_per_page", type="string", length=3)
      */
     private $resultsPerPage;
+
+    /**
+     * @var string
+     * @Assert\NotBlank()
+     * @ORM\Column(name="tour_guide", type="string", length=10)
+     */
+    private $tourGuide;
+
+    /**
+     * @var string
+     * @ORM\Column(name="letterhead", type="string", length=255, nullable=true)
+     */
+    private $letterhead;
+
+    /**
+     * @var string
+     * @Assert\NotBlank()
+     * @ORM\Column(name="letterhead_height", type="string", length=255)
+     */
+    private $letterheadHeight;
+
+    /**
+     * @var string
+     * @Assert\NotBlank()
+     * @ORM\Column(name="title_display", type="string", length=100)
+     */
+    private $titleDisplay;
 
     /**
      * @ORM\ManyToOne(targetEntity="User", inversedBy="configs")
@@ -184,5 +212,101 @@ class Config
     public function getUser()
     {
         return $this->user;
+    }
+
+    /**
+     * Set tourGuide
+     *
+     * @param string $tourGuide
+     *
+     * @return Config
+     */
+    public function setTourGuide($tourGuide)
+    {
+        $this->tourGuide = $tourGuide;
+
+        return $this;
+    }
+
+    /**
+     * Get tourGuide
+     *
+     * @return string
+     */
+    public function getTourGuide()
+    {
+        return $this->tourGuide;
+    }
+
+    /**
+     * Set letterhead
+     *
+     * @param string $letterhead
+     *
+     * @return Config
+     */
+    public function setLetterhead($letterhead)
+    {
+        $this->letterhead = $letterhead;
+
+        return $this;
+    }
+
+    /**
+     * Get letterhead
+     *
+     * @return string
+     */
+    public function getLetterhead()
+    {
+        return $this->letterhead;
+    }
+
+    /**
+     * Set letterheadHeight
+     *
+     * @param string $letterheadHeight
+     *
+     * @return Config
+     */
+    public function setLetterheadHeight($letterheadHeight)
+    {
+        $this->letterheadHeight = $letterheadHeight;
+
+        return $this;
+    }
+
+    /**
+     * Get letterheadHeight
+     *
+     * @return string
+     */
+    public function getLetterheadHeight()
+    {
+        return $this->letterheadHeight;
+    }
+
+    /**
+     * Set titleDisplay
+     *
+     * @param string $titleDisplay
+     *
+     * @return Config
+     */
+    public function setTitleDisplay($titleDisplay)
+    {
+        $this->titleDisplay = $titleDisplay;
+
+        return $this;
+    }
+
+    /**
+     * Get titleDisplay
+     *
+     * @return string
+     */
+    public function getTitleDisplay()
+    {
+        return $this->titleDisplay;
     }
 }

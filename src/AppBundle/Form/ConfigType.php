@@ -10,6 +10,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Ivory\CKEditorBundle\Form\Type\CKEditorType;
 use AppBundle\Entity\Config;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
 
 class ConfigType extends AbstractType
 {
@@ -27,6 +28,30 @@ class ConfigType extends AbstractType
 			        '100' => 100,
 			    ),
 			))
+			->add('letterhead_height', ChoiceType::class, array(
+			    'choices'  => array(
+			        '150px' => 150,
+			        '180px' => 180,
+			        '200px' => 200,
+			        '220px' => 220,
+			        '250px' => 250,
+			        '280px' => 280,
+			        '300px' => 300,
+			    ),
+			))
+			->add('tour_guide', ChoiceType::class, array(
+			    'choices'  => array(
+			        'On' => 'on',
+			        'Off' => 'off',
+			    ),
+			))
+			->add('title_display', ChoiceType::class, array(
+			    'choices'  => array(
+			        'Letterhead Image' => 'img',
+			        'Basic Info Text' => 'txt',
+			    ),
+			))
+            ->add('letterhead', FileType::class, array('label' => 'jpg or png image', 'data_class' => null))
             ->add('save', SubmitType::class, array(
             	'label' => "Save Settings"
             ))
@@ -39,6 +64,7 @@ class ConfigType extends AbstractType
 	{
 	    $resolver->setDefaults(array(
 	        'data_class' => Config::class,
+        	'validation_groups' => false,	        
 	    ));
 	}
 

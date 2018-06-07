@@ -16,7 +16,7 @@
     {% endfor %}
       {% if students is empty %}
         <div class="well">
-          <h3>There are no students for class {{class.cTitle}}. Please <a href="{{path('new_student')}}">add students</a></h3>
+          <h3>There are no students for class {{class.cTitle}}. Please <a href="{{path('choose_class', {'goto': 'new_student'})}}">add students</a></h3>
         </div>
       {% elseif subjects is empty %}        
         <div class="well">

@@ -75,6 +75,13 @@ class User implements AdvancedUserInterface, \Serializable
     private $active;
 
     /**
+     * @var string
+     *
+     * @ORM\Column(name="tokens", type="string", length=255)
+     */
+    private $tokens;
+
+    /**
      * @ORM\OneToMany(targetEntity="Subject", mappedBy="user")
      */
     private $subjects;
@@ -118,6 +125,7 @@ class User implements AdvancedUserInterface, \Serializable
     public function __construct()
     {
         $this->active = true;
+        $this->tokens = 0;
         $this->configs = new \Doctrine\Common\Collections\ArrayCollection();    
         $this->examCompanies = new \Doctrine\Common\Collections\ArrayCollection();    
         $this->students = new \Doctrine\Common\Collections\ArrayCollection();    
@@ -621,5 +629,29 @@ class User implements AdvancedUserInterface, \Serializable
     public function getScoreChildren()
     {
         return $this->scoreChildren;
+    }
+
+    /**
+     * Set tokens
+     *
+     * @param string $tokens
+     *
+     * @return User
+     */
+    public function setTokens($tokens)
+    {
+        $this->tokens = $tokens;
+
+        return $this;
+    }
+
+    /**
+     * Get tokens
+     *
+     * @return string
+     */
+    public function getTokens()
+    {
+        return $this->tokens;
     }
 }

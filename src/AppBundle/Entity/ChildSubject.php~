@@ -3,6 +3,7 @@
 namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * ChildSubject
@@ -23,14 +24,17 @@ class ChildSubject
 
     /**
      * @var string
-     *
+     * @Assert\NotBlank()
      * @ORM\Column(name="c_s_title", type="string", length=100)
      */
     private $cSTitle;
 
     /**
      * @var integer
-     *
+     * @Assert\Type(
+     *     type="digit",
+     *     message="The value {{ value }} is not a valid {{ type }}."
+     * )
      * @ORM\Column(name="out_of", type="integer")
      */
     private $out_of;
@@ -42,6 +46,7 @@ class ChildSubject
     private $user;
 
     /**
+     * @Assert\NotBlank()
      * @ORM\ManyToOne(targetEntity="Subject", inversedBy="childSubjects")
      * @ORM\JoinColumn(name="subject_id", referencedColumnName="id", onDelete="CASCADE")
      */

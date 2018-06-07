@@ -38,18 +38,32 @@
 	    <![endif]-->    	
 	    {% block stylesheets %}{% endblock %}
     </head>
-	{% block body %}{% endblock %}
+	{% set classes_length = app.user.classes|length %}
+	{% set subjects_length = app.user.subjects|length %}
+	{% set child_subjects_length = app.user.childSubjects|length %}
+	{% set students_length = app.user.students|length %}
+	{% set exams_length = app.user.examCompanies|length %}
+	{% set scores_length = app.user.scores|length %}
 	{% if app.user.configs is defined and app.user.configs is not empty %}
     	{% set entriesPerPage = app.user.configs|first.resultsPerPage %}
+    	{% set tour_guide = app.user.configs|first.tourGuide %}
     {% else %}
     	{% set entriesPerPage = 10 %}
+    	{% set tour_guide = 'on' %}
     {% endif %}
+    {% if classes_length > 0 and subjects_length > 0 and child_subjects_length > 0
+		and students_length > 0 and exams_length > 0 and scores_length > 0 %}
+		{% set tour_guide = 'off' %}
+	{% endif %}
     <!-- javascripts -->
+	{% block body %}{% endblock %}
     <script src="{{asset('js/jquery.js')}}"></script>
     <script src="{{asset('js/jquery-1.8.3.min.js')}}"></script>
     <script type="text/javascript" src="{{asset('js/jquery-ui-1.9.2.custom.min.js')}}"></script>
     <!-- bootstrap -->
     <script src="{{asset('js/bootstrap.min.js')}}"></script>
+    <!-- aSimpleTour -->
+    <script src="{{asset('aSimpleTour/jquery.aSimpleTour.min.js')}}"></script>
     <!-- nice scroll -->
     <script src="{{asset('js/jquery.scrollTo.min.js')}}"></script>
     <script src="{{asset('js/jquery.nicescroll.js')}}" type="text/javascript"></script>
@@ -71,6 +85,7 @@
     <script src="{{asset('js/easy-pie-chart.js')}}"></script>
     <!-- Notification javascript - notiny -->
     <script src="{{ asset('notiny/notiny.min.js') }}"></script>
+    <script src="{{ asset('custom/custom_tour.js') }}"></script>
 	  <script>
 
 	      //knob
@@ -112,6 +127,62 @@
             $.notiny({ text: '{{ message }}',  position: 'left-top' });
         </script>
     {% endfor %}
+	<script type="text/javascript">
+		var tour = {
+			{% if tour_guide == "on" %}
+				autoStart: true,
+			{% else %}
+		    	autoStart: false,
+		    {% endif %}
+		    data : [
+		    	{% if classes_length < 1 %}
+		        { element : '#add_class', tooltip : 'This is the very first thing you need to do.', text: 'Click on "add some classes" to start adding classes', position: 'T' },
+		        {% endif %}
+		    	{% if subjects_length < 1 %}
+		        { element : '#add_subject', tooltip : 'Now add subjects. You really need them.', text: 'Click on "add some subjects" to start adding subjects', position: 'T' },
+		        {% endif %}
+		    	{% if students_length < 1 %}
+		        { element : '#add_student', tooltip : 'Now add some students. You can import from spreadsheet xls,xlsx file!', text: 'If you have at least one class and subjects added, now you can add students to any of your classes.', position: 'L' },
+		        {% endif %}
+		    	{% if exams_length < 1 %}
+		        { element : '#add_exam', tooltip : 'Now add some exam titles.', text: 'This can by the exam body title or anything like "End Term Exams".', position: 'L', location: "{{path('choose_class_cs', {'goto': 'new_childSubject'} ) }}" },
+		        {% endif %}
+		    	{% if child_subjects_length < 1 %}
+		        { element : '#subjs', tooltip : 'Check if some subjects will need children!', text: 'Example: Add Composition and Language child subjects to English Subject.', position: 'R', location: "{{path('choose_class_cs', {'goto': 'new_childSubject'} ) }}" },
+		        {% endif %}
+		    	{% if scores_length < 1 %}
+		        { element : '.knob-charts', tooltip : 'Click one of these to Start recording the scores!', text: 'Click one of the links over here to begin adding the scores.', position: 'L' },
+		        {% endif %}
+		    ],
+		    welcomeMessage: "It's all easy. I'll walk you through the process from beginning to end. If you are already familiar, you can turn off the website tour guide setting",
+		    controlsPosition : 'BL',
+		    buttons: {
+		        next  : { text : 'Next &rarr;', class : 'btn btn-default'},
+		        prev  : { text : '&larr; Previous', class: 'btn btn-default' },
+		        start : { text : 'Start', class: 'btn btn-primary btn-lg' },
+		        end   : { text : 'End', class: 'btn btn-primary' }
+		    },
+		    controlsCss: {
+		        background: 'rgba(124, 124, 124, 0.9)',
+		        color: '#fff',
+		        width: '400px',
+		        'border-radius': 0
+		    }
+		};
+
+		{% if tour_guide == "on" and app.request.get('_route') == 'homepage' %}
+			$(document).ready(function(){
+			   $.aSimpleTour(tour);
+			});
+		{% else %}
+			$(document).ready(function(){
+			    $('.touring').on('click', function(){
+			        $.aSimpleTour(tour);
+			    });
+			});
+	    {% endif %}
+
+	</script>
 	{% block javascripts %}{% endblock %}
 
   </body>

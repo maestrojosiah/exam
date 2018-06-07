@@ -28,21 +28,21 @@ class User implements AdvancedUserInterface, \Serializable
 
     /**
      * @var string
-     *
+     * @Assert\NotBlank()
      * @ORM\Column(name="f_name", type="string", length=255)
      */
     private $fName;
 
     /**
      * @var string
-     *
+     * @Assert\NotBlank()
      * @ORM\Column(name="l_name", type="string", length=255)
      */
     private $lName;
 
     /**
      * @var string
-     *
+     * @Assert\NotBlank()
      * @ORM\Column(name="username", type="string", length=255)
      */
     private $username;
@@ -62,7 +62,7 @@ class User implements AdvancedUserInterface, \Serializable
 
     /**
      * @var string
-     *
+     * @Assert\NotBlank()
      * @ORM\Column(name="email", type="string", length=255)
      */
     private $email;
@@ -73,6 +73,13 @@ class User implements AdvancedUserInterface, \Serializable
      * @ORM\Column(name="active", type="string", length=255)
      */
     private $active;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="tokens", type="string", length=255)
+     */
+    private $tokens;
 
     /**
      * @ORM\OneToMany(targetEntity="Subject", mappedBy="user")
@@ -118,6 +125,7 @@ class User implements AdvancedUserInterface, \Serializable
     public function __construct()
     {
         $this->active = true;
+        $this->tokens = 0;
         $this->configs = new \Doctrine\Common\Collections\ArrayCollection();    
         $this->examCompanies = new \Doctrine\Common\Collections\ArrayCollection();    
         $this->students = new \Doctrine\Common\Collections\ArrayCollection();    

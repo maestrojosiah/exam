@@ -19,8 +19,12 @@ class ChildSubjectController extends Controller
 	   	$data = [];
         $user = $this->user();
         $childSubjects = $this->findby('ChildSubject', 'user', $user);
+        $subject_id = $request->query->get('subjectId');
+        $subject = $this->find('Subject', $subject_id);
+
         $childSubject = new ChildSubject();
         $childSubject->setUser($user);
+        $childSubject->setSubject($subject);
 
         $form = $this->createForm(ChildSubjectType::class, $childSubject);
 
@@ -31,7 +35,7 @@ class ChildSubjectController extends Controller
             $nextAction = $form->get('saveAndAdd')->isClicked()
                 ? 'new_childSubject'
                 : 'list_childSubjects';
-            return $this->redirectToRoute($nextAction);
+            return $this->redirectToRoute($nextAction, ['subjectId' => $subject_id]);
 		} 
 
         $data['childSubjects'] = $childSubjects;
@@ -55,12 +59,27 @@ class ChildSubjectController extends Controller
     }
 
     /**
+     * @Route("/child_subject/class/choose/{goto}", name="choose_class_cs")
+     */
+    public function chooseAction(Request $request, $goto)
+    {
+        $data = [];
+        $user = $this->user();
+        $subjects = $this->findby('Subject', 'user', $user);
+        $data['subjects'] = $subjects;
+        $data['user'] = $user;
+        $data['goto'] = $goto;
+        return $this->render('childSubject/choose.html.twig', $data );
+    }
+
+    /**
      * @Route("/childSubjects/edit/{childSubjectId}", name="edit_childSubject")
      */
     public function editAction(Request $request, $childSubjectId)
     {
         $data = [];
         $childSubjects = $this->find('childSubject', $childSubjectId);
+        $subject_id = $childSubjects->getSubject()->getId();
 
         $form = $this->createForm(ChildSubjectType::class, $childSubjects);
         $form->handleRequest($request);
@@ -74,7 +93,7 @@ class ChildSubjectController extends Controller
             $nextAction = $form->get('saveAndAdd')->isClicked()
                 ? 'new_childSubject'
                 : 'list_childSubjects';
-            return $this->redirectToRoute($nextAction);
+            return $this->redirectToRoute($nextAction, ['subjectId' => $subject_id]);
 
         } else {
 
@@ -95,8 +114,9 @@ class ChildSubjectController extends Controller
     {
         $data = [];
         $childSubject = $this->find('childSubject', $childSubjectId);
+        $subject_id = $childSubject->getSubject()->getId();
         $this->delete($childSubject);
-        return $this->redirectToRoute('list_childSubjects');
+        return $this->redirectToRoute('list_childSubjects', ['subjectId' => $subject_id]);
 
     }
 

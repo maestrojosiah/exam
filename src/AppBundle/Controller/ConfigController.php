@@ -24,6 +24,7 @@ class ConfigController extends Controller
 
         $thisUser = $em->getRepository('AppBundle:Config')
         	->settingsForThisUser($user);
+        $originalName = $thisUser->getLetterHead();
 
         if($thisUser){
         	$config = $thisUser;
@@ -36,7 +37,15 @@ class ConfigController extends Controller
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
+            $letterhead = $form->get('letterhead')->getData();
+            if($letterhead){
+                $originalName = $user->getId()."_logo".'.'.$letterhead->guessExtension();;
+                $filepath = $this->get('kernel')->getProjectDir()."/web/img/";
+                $letterhead->move($filepath, $originalName);
+            } 
 
+            $config->setLetterhead($originalName);
+            
             $em = $this->getDoctrine()->getManager();
 
             $config->setUser($user);
@@ -46,7 +55,7 @@ class ConfigController extends Controller
 
         	$this->addFlash(
 	            'success',
-	            'Settings created successfully!'
+	            'You\'re ok now. Start working!'
         	);
 
             // ... do any other work - like sending them an email, etc
@@ -57,7 +66,8 @@ class ConfigController extends Controller
 			$form_data['sch_name'] = $config->getSchName();
 			$form_data['address'] = $config->getAddress();
 			$form_data['telephone'] = $config->getTelephone();
-			$form_data['results_per_page'] = $config->getResultsPerPage();
+            $form_data['results_per_page'] = $config->getResultsPerPage();
+			$form_data['tour_guide'] = $config->getResultsPerPage();
 			$data['form'] = $form_data;
 		}
 

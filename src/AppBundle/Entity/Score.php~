@@ -3,6 +3,7 @@
 namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Score
@@ -23,7 +24,10 @@ class Score
 
     /**
      * @var int
-     *
+     * @Assert\Type(
+     *     type="digit",
+     *     message="The value {{ value }} is not a valid {{ type }}."
+     * )
      * @ORM\Column(name="marks", type="integer")
      */
     private $marks;

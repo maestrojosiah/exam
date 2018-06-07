@@ -12,6 +12,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 
 class ScoreController extends Controller
 {
+    private $enoughTokens = 1;
     /**
      * @Route("/scores/record/{classId}/{companyId}", name="record_scores")
      */
@@ -73,6 +74,17 @@ class ScoreController extends Controller
         $subjectId = explode("|", $parts[0])[1];
         $studentId = explode("|", $parts[2])[1];
         $move = $this->move($studentId, $subjectId, $direction);
+        return new JsonResponse($move);
+    }
+
+    /**
+     * @Route("/scores/code/check", name="check_code_validity")
+     */
+    public function checkCodeAction(Request $request)
+    {
+        
+        $user = $this->user();
+        
         return new JsonResponse($move);
     }
 
@@ -500,7 +512,13 @@ class ScoreController extends Controller
     private function calculateListAndSum($students, $scores){
         $sum = [];
         $student_list = [];
+        $user = $this->user();
+        $count = 0;
+        if($user->getTokens() < $this->enoughTokens){
+            $limit_students = 3;
+        }
         foreach($students as $student){
+            $count ++;
             $all_subjects_for_this_student = [];
             $all_subjects_for_this_student_total = [];
             foreach($scores as $score){
@@ -511,6 +529,9 @@ class ScoreController extends Controller
             }
             $sum[$student->getId()] = array_sum($all_subjects_for_this_student_total);
             $student_list[$student->getId()] = $all_subjects_for_this_student;
+            if($limit_students && $count == 3){
+                break;
+            }
         }
         return [$student_list, $sum];
     }

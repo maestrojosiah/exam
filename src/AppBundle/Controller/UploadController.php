@@ -28,7 +28,7 @@ class UploadController extends Controller
         if($form->isSubmitted() && $form->isValid()){
             $excelFile = $form->get('file')->getData();
             $originalName = $excelFile->getClientOriginalName();
-        	$filepath = $this->get('kernel')->getProjectDir()."/public/excelFiles/";
+        	$filepath = $this->get('kernel')->getProjectDir()."/web/excelFiles/";
             $excelFile->move($filepath, $originalName);
             $upload->setFile($originalName);
             $rows = $this->readThrough($originalName);
@@ -53,7 +53,7 @@ class UploadController extends Controller
 	 * @Route("/download", name="download_file")
 	**/
 	public function downloadFileAction(){
-        $filepath = $this->get('kernel')->getProjectDir()."/public/excelFiles/example.xlsx";
+        $filepath = $this->get('kernel')->getProjectDir()."/web/excelFiles/example.xlsx";
 	    $response = new BinaryFileResponse($filepath);
 	    $response->setContentDisposition(ResponseHeaderBag::DISPOSITION_ATTACHMENT,'example.xls');
 	    return $response;
@@ -61,7 +61,7 @@ class UploadController extends Controller
 
     private function readThrough($filename){
     	// path to file
-        $file = $this->get('kernel')->getProjectDir()."/public/excelFiles/$filename";
+        $file = $this->get('kernel')->getProjectDir()."/web/excelFiles/$filename";
         // create a reader
 		$reader  = $this->get('phpoffice.spreadsheet')->createReader('Xlsx');
 		// load the spreadsheet to a variable

@@ -7,7 +7,7 @@
 	{% block content %}
       {% if students is empty %}
         <div class="well">
-          <h3>There are no students for class {{class.cTitle}}. Please <a href="{{path('new_student')}}">add students</a></h3>
+          <h3>There are no students for class {{class.cTitle}}. Please <a href="{{path('choose_class', {'goto': 'new_student'})}}">add students</a></h3>
         </div>
       {% elseif subjects is empty %}        
         <div class="well">
@@ -20,7 +20,7 @@
               Exam Records for {{exam.cTitle}} [{{class.cTitle}}]
               <a href="{{path('list_examCompanies', {'class': class.id})}}" class="btn btn-primary pull-right">List Exams</a>
               <a href="{{path('record_summary', {'classId': exam.class.id, 'companyId': exam.id})}}" class="btn btn-primary">Class Report Summary</a>
-              <a href="{{path('report_forms', {'classId': exam.class.id, 'companyId': exam.id})}}" class="btn btn-primary">Report Forms</a>
+              <a {% if app.user.tokens < 1 %} href="#" {% else %} href="{{path('report_forms', {'classId': exam.class.id, 'companyId': exam.id})}}" {% endif %} class="btn btn-primary">Report Forms</a>
               <a href="{{path('empty_print', {'classId': exam.class.id, 'companyId': exam.id})}}" class="btn btn-primary">Empty Form</a>
             </header>
             {% set parents = [] %}
