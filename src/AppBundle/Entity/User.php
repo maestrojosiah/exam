@@ -118,6 +118,11 @@ class User implements AdvancedUserInterface, \Serializable
     private $scores;
 
     /**
+     * @ORM\OneToMany(targetEntity="Download", mappedBy="user")
+     */
+    private $downloads;
+
+    /**
      * @ORM\OneToMany(targetEntity="ScoreChild", mappedBy="user")
      */
     private $scoreChildren;
@@ -133,6 +138,7 @@ class User implements AdvancedUserInterface, \Serializable
         $this->classes = new \Doctrine\Common\Collections\ArrayCollection();    
         $this->scores = new \Doctrine\Common\Collections\ArrayCollection();    
         $this->subjects = new \Doctrine\Common\Collections\ArrayCollection();    
+        $this->downloads = new \Doctrine\Common\Collections\ArrayCollection();    
     }
     /**
      * Get id
@@ -653,5 +659,39 @@ class User implements AdvancedUserInterface, \Serializable
     public function getTokens()
     {
         return $this->tokens;
+    }
+
+    /**
+     * Add download
+     *
+     * @param \AppBundle\Entity\Download $download
+     *
+     * @return User
+     */
+    public function addDownload(\AppBundle\Entity\Download $download)
+    {
+        $this->downloads[] = $download;
+
+        return $this;
+    }
+
+    /**
+     * Remove download
+     *
+     * @param \AppBundle\Entity\Download $download
+     */
+    public function removeDownload(\AppBundle\Entity\Download $download)
+    {
+        $this->downloads->removeElement($download);
+    }
+
+    /**
+     * Get downloads
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getDownloads()
+    {
+        return $this->downloads;
     }
 }

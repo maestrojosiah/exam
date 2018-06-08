@@ -38,12 +38,18 @@
 	    <![endif]-->    	
 	    {% block stylesheets %}{% endblock %}
     </head>
+	{% if app.user %}
 	{% set classes_length = app.user.classes|length %}
 	{% set subjects_length = app.user.subjects|length %}
 	{% set child_subjects_length = app.user.childSubjects|length %}
 	{% set students_length = app.user.students|length %}
 	{% set exams_length = app.user.examCompanies|length %}
 	{% set scores_length = app.user.scores|length %}
+    {% if classes_length > 0 and subjects_length > 0 and child_subjects_length > 0
+		and students_length > 0 and exams_length > 0 and scores_length > 0 %}
+		{% set tour_guide = 'off' %}
+	{% endif %}
+	{% endif %}
 	{% if app.user.configs is defined and app.user.configs is not empty %}
     	{% set entriesPerPage = app.user.configs|first.resultsPerPage %}
     	{% set tour_guide = app.user.configs|first.tourGuide %}
@@ -51,10 +57,6 @@
     	{% set entriesPerPage = 10 %}
     	{% set tour_guide = 'on' %}
     {% endif %}
-    {% if classes_length > 0 and subjects_length > 0 and child_subjects_length > 0
-		and students_length > 0 and exams_length > 0 and scores_length > 0 %}
-		{% set tour_guide = 'off' %}
-	{% endif %}
     <!-- javascripts -->
 	{% block body %}{% endblock %}
     <script src="{{asset('js/jquery.js')}}"></script>
@@ -127,6 +129,7 @@
             $.notiny({ text: '{{ message }}',  position: 'left-top' });
         </script>
     {% endfor %}
+    {% if app.user %}
 	<script type="text/javascript">
 		var tour = {
 			{% if tour_guide == "on" %}
@@ -183,6 +186,7 @@
 	    {% endif %}
 
 	</script>
+	{% endif %}
 	{% block javascripts %}{% endblock %}
 
   </body>

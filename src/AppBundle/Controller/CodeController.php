@@ -7,7 +7,9 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use AppBundle\Entity\Code;
+use AppBundle\Entity\Download;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 class CodeController extends Controller
 {
@@ -40,6 +42,58 @@ class CodeController extends Controller
         return $this->render('code/code.html.twig', $data);     
     }
 
+    /**
+     * @Route("/code/check", name="check_code_validity")
+     */
+    public function checkCodeAction(Request $request)
+    {
+        
+        $data = [];
+        $user = $this->user();
+        $tokens = $user->getTokens();
+        $now = new \DateTime("now");
+        $code = $request->request->get('code');
+        $link = $request->request->get('link');
+        $code_exists = $this->em()->getRepository('AppBundle:Code')->findByRandomCode($code);
+        $virgin_code_exists = $this->em()->getRepository('AppBundle:Code')
+          ->findOneBy(
+                array('randomCode' => $code, 'status' => 'virgin'),
+                array('id' => 'ASC')
+            );
+
+        if($code_exists){
+            //code exists
+            if($virgin_code_exists){
+                $added_token = $tokens + 1;
+                $user->setTokens($added_token);
+                $this->save($user);
+                $virgin_code_exists->setStatus("used");
+                $this->save($virgin_code_exists);
+                $download = new Download();
+                $download->setTimes("3");
+                $download->setStatus(1);
+                $download->setLink($link);
+                $download->setUser($user);
+                $download->setDescription($now);
+                $this->save($download);
+                $address = $this->generateUrl('my_downloads');
+                $data['address'] = $address;
+                $message = "Oh! thanks for purchasing the cup of tea for me. You now have $added_token active token(s). I feel encouraged :)";
+            } else {
+                $message = "You currently have $tokens active token(s). That code is already used. Please purchase another one.";
+            }
+            
+            $success = true;
+        } else {
+            //code doesn't exist
+            $message = "That code doesn't exist,  Please type correctly or purchase a code.";
+            $success = false;
+        }
+        $data['message'] = $message;
+        $data['success'] = $success;
+        return new JsonResponse($data);
+    }
+
 	public function getRandStr(){
 	  	$a = $b = '';
 
@@ -60,5 +114,10 @@ class CodeController extends Controller
         $this->em()->persist($entity);
         $this->em()->flush();        
     } 
+
+    private function user(){
+        $user = $this->container->get('security.token_storage')->getToken()->getUser();
+        return $user;
+    }
 
 }

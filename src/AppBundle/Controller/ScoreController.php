@@ -78,17 +78,6 @@ class ScoreController extends Controller
     }
 
     /**
-     * @Route("/scores/code/check", name="check_code_validity")
-     */
-    public function checkCodeAction(Request $request)
-    {
-        
-        $user = $this->user();
-        
-        return new JsonResponse($move);
-    }
-
-    /**
      * @Route("/scoreChildren/move", name="move_cursor_child")
      */
     public function moveChildAction(Request $request)
@@ -241,7 +230,7 @@ class ScoreController extends Controller
     }
 
     /**
-     * @Route("/scores/download/{classId}/{companyId}", name="download_exam")
+     * @Route("/scores/download/somefancyname/{classId}/{companyId}", name="download_exam")
      */
     public function downloadAction(Request $request, $classId, $companyId)
     {
@@ -291,7 +280,7 @@ class ScoreController extends Controller
     }
 
     /**
-     * @Route("/report/download/{classId}/{companyId}", name="download_report")
+     * @Route("/report/download/somefancyname/{classId}/{companyId}", name="download_report")
      */
     public function repotAction(Request $request, $classId, $companyId)
     {
@@ -529,7 +518,7 @@ class ScoreController extends Controller
             }
             $sum[$student->getId()] = array_sum($all_subjects_for_this_student_total);
             $student_list[$student->getId()] = $all_subjects_for_this_student;
-            if($limit_students && $count == 3){
+            if(isset($limit_students) && $count == 3){
                 break;
             }
         }

@@ -69,8 +69,12 @@ class ClasssController extends Controller
     {
         $user = $user = $this->user();
         $class = $this->find('Classs', $classId);
-        $examCompanies = findandlimit('ExamCompany', 'user', $user, 5, 'ASC');
-
+        $examCompanies = $this->findandlimit('ExamCompany', 'user', $user, 5, 'ASC');
+        $scores = $this->em()->getRepository('AppBundle:Score')
+            ->findBy(
+                array('user' => $user, 'class' => $class),
+                array('id' => 'ASC')
+            );
         $exams = [];
         $score_lst = [];
         $total_score = 0;

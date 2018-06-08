@@ -46,7 +46,7 @@
                       <h4>Exam Report Summary for {{exam.cTitle}} [ Class {{class.cTitle}} ]</h4>
                     {% else  %}
                       {% set img_path = "img/" ~ app.user.configs|first.letterhead %}
-                      <img style="width:100%; height:{{img_height}}px;" src="{{ absolute_url(asset(img_path)) }}" {# src="{{asset('img/{{app.user.configs|first.letterhead}}')}}" #} />
+                      <img style="width:100%; height:{{img_height}}px;" src="{{ absolute_url(asset(img_path)) }}" {# src="{{asset('img/{{app.user.configs|first.letterhead}}')}}" #} title="You can change this image at the settings." />
                       <h4>Exam Report Summary for {{exam.cTitle}} [ Class {{class.cTitle}} ]</h4>
                     {% endif %}
                   </td>
@@ -103,11 +103,13 @@
                           <label class="sr-only" for="exampleInputAmount">Amount (in dollars)</label>
                           <div class="input-group">
                             <div class="input-group-addon">Code</div>
-                            <input type="text" class="form-control" id="exampleInputAmount" placeholder="XXX-XXX">
+                            <input type="text" class="form-control" id="code_input" placeholder="XXX-XXX">
                           </div>
                         </div>
-                        <button type="submit" class="btn btn-primary">Submit Code!</button>
+                        <button type="button" id="check_code" class="btn btn-primary">Submit Code!</button>
                       </form>
+                      <p class="text-danger" id="error"></p>
+                      <p class="text-success" id="success"></p>
                     </div>
                   </td>
                   </tr>
@@ -186,5 +188,41 @@
       });
     });    
   </script>
+<script>
+  $(document).on('click', '[id="check_code"]', function(){
+
+      var code = $("#code_input").val();
+      var link = "{{class.id}}/{{exam.id}}";
+
+      $.ajax({
+          url:'{{ (path('check_code_validity')) }}',
+          type: "POST",
+          dataType: "json",
+          data: {
+              "code": code,
+              "link": link,
+          },
+          async: true,
+          success: function (data)
+          { 
+            if(data.success == true){
+              $("#error").text("");
+              $("#success").text(data.message);
+              $("#code_input").val("");
+              window.location.href = data.address;
+            } else {
+              $("#success").text("");
+              $("#error").text(data.message);
+            }
+            console.log(data);
+          },
+         error: function () {
+            $("#success").text("");
+            $("#error").text("something went wrong. Please call 0705285959 for assistance");
+          }
+      });
+
+  });
+</script>
 
 {% endblock %}
