@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 namespace AppBundle\Form;
 
@@ -47,8 +47,8 @@ class ConfigType extends AbstractType
 			))
 			->add('title_display', ChoiceType::class, array(
 			    'choices'  => array(
-			        'Letterhead Image' => 'img',
 			        'Basic Info Text' => 'txt',
+              'Letterhead Image' => 'img',
 			    ),
 			))
             ->add('letterhead', FileType::class, array('label' => 'jpg or png image', 'data_class' => null))
@@ -64,7 +64,7 @@ class ConfigType extends AbstractType
 	{
 	    $resolver->setDefaults(array(
 	        'data_class' => Config::class,
-        	'validation_groups' => false,	        
+        	'validation_groups' => false,
 	    ));
 	}
 

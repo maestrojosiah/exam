@@ -27,8 +27,9 @@ class ScoreChildController extends Controller
             $examCompanyId = $request->request->get('exam');
             $thisClass = $request->request->get('class');
             $marks = $request->request->get('marks');
+            $data['marks'] = $marks;
             $user = $this->get('security.token_storage')->getToken()->getUser();
-          
+
             $em = $this->getDoctrine()->getManager();
 
             $student = $em->getRepository('AppBundle:Student')
@@ -127,7 +128,7 @@ class ScoreChildController extends Controller
         }
 
         return new JsonResponse($data);
-    } 
+    }
 
 
 }

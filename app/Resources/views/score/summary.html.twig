@@ -3,28 +3,25 @@
 {% endblock %}
 {% block body %}
 <body>
-{% set info = "with_print_material" %}
-{{ include('templates/header.html.twig') }}        		
-{{ include('templates/aside.html.twig') }}        		
+{{ include('templates/header.html.twig') }}
+{{ include('templates/aside.html.twig') }}
 {% embed "templates/content_draft.html.twig" %}
 	{% block content %}
       {% if students is empty %}
         <div class="well">
           <h3>There are no students for class {{class.cTitle}}. Please <a href="{{path('choose_class', {'goto': 'new_student'})}}">add students</a></h3>
         </div>
-      {% elseif subjects is empty %}        
+      {% elseif subjects is empty %}
         <div class="well">
           <h3>You don't have any subjects added yet! Please <a href="{{path('new_subject')}}">add subjects</a></h3>
         </div>
-      {% else %}        
+      {% else %}
 			<div class="col-lg-12">
         <section class="panel">
             <header class="panel-heading">
               Exam Report Summary for {{exam.cTitle}} [{{class.cTitle}}]
               <div class="pull-right">
-              <a class="btn btn-sm btn-primary" {% if app.user.tokens < 1 %} href="#" {% else %} href="{{ path('download_exam', {'classId': class.id, 'companyId': exam.id}) }}"{% endif %}>Download PDF</a>
-              <a class="btn btn-sm btn-primary" {% if app.user.tokens < 1 %} href="#" {% else %} href="{{ path('download_exam_img', {'classId': class.id, 'companyId': exam.id}) }}"{% endif %}>Download Image</a>
-              <a {% if app.user.tokens < 1 %} href="#" {% else %} href="{{path('report_forms', {'classId': exam.class.id, 'companyId': exam.id})}}"{% endif %} class="btn btn-primary">Report Forms</a>
+								<a class="btn btn-sm btn-primary" href="{{path('my_downloads')}}"> My Downloads</a>
               </div>
               </header>
             {% set parents = [] %}
@@ -38,7 +35,7 @@
             <table id="printDiv" class="table table-striped table-advance table-hover">
              <tbody>
                 <tr>
-                  <td colspan="{{span}}"> 
+                  <td colspan="{{span}}">
                     {% if app.user.configs|first.titleDisplay == 'txt' %}
                       <h3>{{app.user.configs|first.schName}}<br />
                       {{app.user.configs|first.address}}<br />
@@ -92,7 +89,7 @@
               <tr>
                 {% if app.user.tokens < 1 %}
                   <tr>
-                  <td colspan="{{span}}"> 
+                  <td colspan="{{span}}">
                     <div class="col-lg-12 text-center" style="background-color:white; font-size:15px;">
                       <h2>Congratulations!</h2>
                       <p><strong>You are now ready to download your neat job. You need to buy me a cup of tea for making your work easier. Its only 100/= - less than a dollar.</strong></p>
@@ -167,7 +164,7 @@
     <script src="{{asset('printThis/printThis.js')}}"></script>
     <script type="text/javascript">
     $(document).ready(function() {
-      $( "#triggerPrint" ).click(function(e) {    
+      $( "#triggerPrint" ).click(function(e) {
         $("#printDiv").printThis({
           debug: false,               // show the iframe for debugging
           importCSS: true,            // import page CSS
@@ -186,7 +183,7 @@
           copyTagClasses: false       // copy classes from the html & body tag
       });
       });
-    });    
+    });
   </script>
 <script>
   $(document).on('click', '[id="check_code"]', function(){
@@ -204,7 +201,7 @@
           },
           async: true,
           success: function (data)
-          { 
+          {
             if(data.success == true){
               $("#error").text("");
               $("#success").text(data.message);

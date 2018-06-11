@@ -24,10 +24,11 @@ class ConfigController extends Controller
 
         $thisUser = $em->getRepository('AppBundle:Config')
         	->settingsForThisUser($user);
-        $originalName = $thisUser->getLetterHead();
+
 
         if($thisUser){
         	$config = $thisUser;
+          $originalName = $thisUser->getLetterHead();
         } else {
         	$config = new Config();
         }
@@ -42,10 +43,10 @@ class ConfigController extends Controller
                 $originalName = $user->getId()."_logo".'.'.$letterhead->guessExtension();;
                 $filepath = $this->get('kernel')->getProjectDir()."/web/img/";
                 $letterhead->move($filepath, $originalName);
-            } 
+            }
 
             $config->setLetterhead($originalName);
-            
+
             $em = $this->getDoctrine()->getManager();
 
             $config->setUser($user);
@@ -71,7 +72,7 @@ class ConfigController extends Controller
 			$data['form'] = $form_data;
 		}
 
-	
+
         // replace this example code with whatever you need
         return $this->render('config/configuration.html.twig',['form' => $form->createView()] );
     }

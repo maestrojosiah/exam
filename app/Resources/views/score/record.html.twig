@@ -1,24 +1,24 @@
 {% extends 'base.html.twig' %}
 {% block body %}
 <body>
-{{ include('templates/header.html.twig') }}        		
-{{ include('templates/aside.html.twig') }}        		
+{{ include('templates/header.html.twig') }}
+{{ include('templates/aside.html.twig') }}
 {% embed "templates/content_draft.html.twig" %}
 	{% block content %}
       {% if students is empty %}
         <div class="well">
           <h3>There are no students for class {{class.cTitle}}. Please <a href="{{path('choose_class', {'goto': 'new_student'})}}">add students</a></h3>
         </div>
-      {% elseif subjects is empty %}        
+      {% elseif subjects is empty %}
         <div class="well">
           <h3>You don't have any subjects added yet! Please <a href="{{path('new_subject')}}">add subjects</a></h3>
         </div>
-      {% else %}        
+      {% else %}
 			<div class="col-lg-12">
         <section class="panel">
             <header class="panel-heading">
               Exam Records for {{exam.cTitle}} [{{class.cTitle}}]
-              <a href="{{path('list_examCompanies', {'class': class.id})}}" class="btn btn-primary pull-right">List Exams</a>
+              <a href="{{path('choose_class_exam', {'goto': 'list_examCompanies'})}}" class="btn btn-primary pull-right">List Exams</a>
               <a href="{{path('record_summary', {'classId': exam.class.id, 'companyId': exam.id})}}" class="btn btn-primary">Class Report Summary</a>
               <a {% if app.user.tokens < 1 %} href="#" {% else %} href="{{path('report_forms', {'classId': exam.class.id, 'companyId': exam.id})}}" {% endif %} class="btn btn-primary">Report Forms</a>
               <a href="{{path('empty_print', {'classId': exam.class.id, 'companyId': exam.id})}}" class="btn btn-primary">Empty Form</a>
@@ -48,7 +48,7 @@
                    <td class="col-md-3">{{hush}}. {{student.names}}</td>
                     {% for subject in subjects %}
                       {% set key = student.id ~ '.' ~ subject.id ~ '.' ~ class.id %}
-                      {% if subject.sTitle in parents %}                        
+                      {% if subject.sTitle in parents %}
                         {% for c_subject in subject.childSubjects %}
                           {% set childKey = student.id ~ '.' ~ c_subject.id ~ '.' ~ class.id %}
                           <td><input value="{% if child_score_entries[childKey] is defined %}{{child_score_entries[childKey]}}{% endif %}" id="cSubject|{{c_subject.id}}_user|{{user.id}}_student|{{student.id}}_exam|{{exam.id}}_class|{{class.id}}" style="max-width:40px;" class="c_{{student.id}}_{{c_subject.id}}" type="text" /></td>
@@ -62,7 +62,7 @@
           </table>
         </section>
       </div>
-      
+
       {% endif %}
 
 {% endblock %}
@@ -80,10 +80,14 @@
       var student = fields[2].split('|')[1];
       var exam = fields[3].split('|')[1];
       var classs = fields[4].split('|')[1];
-      var marks = $(this).val();
-
+			if($(this).val() == ""){
+				var marks = 0;
+			} else {
+				var marks = $(this).val();
+			}
 
       // console.log('subject_id: ' + subject_id + ' student_id: ' + student_id);
+			$('#score_show').html('<button type="button" class="btn btn-warning btn-lg">Please Wait</button>');
 
       $.ajax({
           url:'{{ (path('record_exam_ajax')) }}',
@@ -100,10 +104,10 @@
           async: true,
           success: function (data)
           {
-            // $('#alert').html("<strong><small> Student: </small></strong> " + data.student + "<strong><small> Subject: </small></strong> "+ data.subject + "<strong><small> Marks: </small></strong>" + data.marks + "<strong><small> Exam Company: </small></strong>" + data.examCompany + "<strong><small> Term </small></strong>" + data.term + "<strong><small> Class: </small></strong>" + data.class );
-            // $('#alert').html("Test: " + data.test );
+						$('#score_show').html('<button type="button" class="btn btn-default btn-outline btn-lg">Recorded <span class="text-danger">' + data.marks + '</span></button> ');
           },
-         error: function () {
+         error: function (xhr, status, error) {
+					 console.log("status: " + status);
             $('#alert').removeClass('alert-info').addClass('alert-warning');
             $('#alert').html("Something went wrong. Make sure you are typing only numbers and that the values are valid. Please call 0705285959 for assistance");
         }
@@ -121,10 +125,14 @@
       var student = fields[2].split('|')[1];
       var exam = fields[3].split('|')[1];
       var classs = fields[4].split('|')[1];
-      var marks = $(this).val();
+			if($(this).val() == ""){
+				var marks = 0;
+			} else {
+				var marks = $(this).val();
+			}
 
       // console.log('subject_id: ' + subject_id + ' student_id: ' + student_id);
-
+			$('#score_show').html('<button type="button" class="btn btn-warning btn-lg">Please Wait</button>');
       $.ajax({
           url:'{{ (path('record_exam_ajax_child')) }}',
           type: "POST",
@@ -140,6 +148,7 @@
           async: true,
           success: function (data)
           {
+						$('#score_show').html('<button type="button" class="btn btn-default btn-outline btn-lg">Recorded <span class="text-danger">' + data.marks + '</span></button> ');
             console.log(data.uniqueId)
             $(data.uniqueId).text(data.percentage);
           },

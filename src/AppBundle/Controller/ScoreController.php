@@ -18,7 +18,7 @@ class ScoreController extends Controller
      */
     public function updateAction(Request $request, $classId, $companyId)
     {
-        
+
         $user = $this->user();
         $class = $this->find('Classs', $classId);
         $examCompany = $this->find('ExamCompany', $companyId);
@@ -57,7 +57,7 @@ class ScoreController extends Controller
         $data['score_entries'] = $score_entries;
 
         return $this->render('score/record.html.twig', $data );
-    
+
     }
 
 
@@ -66,7 +66,7 @@ class ScoreController extends Controller
      */
     public function moveAction(Request $request)
     {
-        
+
         $user = $this->user();
         $id = $request->request->get('id');
         $direction = $request->request->get('direction');
@@ -82,7 +82,7 @@ class ScoreController extends Controller
      */
     public function moveChildAction(Request $request)
     {
-        
+
         $user = $this->user();
         $id = $request->request->get('id');
         $direction = $request->request->get('direction');
@@ -100,7 +100,7 @@ class ScoreController extends Controller
      */
     public function summaryAction(Request $request, $classId, $companyId)
     {
-        
+
         $user = $this->user();
         $class = $this->find('Classs', $classId);
         $examCompany = $this->find('ExamCompany', $companyId);
@@ -130,9 +130,9 @@ class ScoreController extends Controller
         list($data['c_sum_sub'], $data['exam'], $data['key_list_s'], $data['key_list_c'], $data['user'], $data['subjects'])  = [$this->rank_sub_child($c_sum_sub), $examCompany, $key_list_s, $key_list_c, $user, $subjects];
         list($data['students'], $data['class'], $data['scores'], $data['childSubjects'], $data['student_list'])  = [$students, $class, $scores, $childSubjects, $student_list];
         list($data['subject_list'], $data['c_subject_list'], $data['child_score_entries'], $data['sum'], $data['sum_sub'])   = [$subject_list, $c_subject_list, $child_score_entries, $this->rank($sum), $this->rank_sub($sum_sub)];
-        
+
         return $this->render('score/summary.html.twig', $data);
-    
+
     }
 
     /**
@@ -140,7 +140,7 @@ class ScoreController extends Controller
      */
     public function emptyAction(Request $request, $classId, $companyId)
     {
-        
+
         $user = $this->user();
         $class = $this->find('Classs', $classId);
         $examCompany = $this->find('ExamCompany', $companyId);
@@ -153,7 +153,7 @@ class ScoreController extends Controller
         $data['students'] = $students;
         $data['class'] = $class;
         return $this->render('score/empty.html.twig', $data);
-    
+
     }
 
     /**
@@ -161,7 +161,7 @@ class ScoreController extends Controller
      */
     public function emptyPdfAction(Request $request, $classId, $companyId)
     {
-        
+
         $user = $this->user();
         $class = $this->find('Classs', $classId);
         $examCompany = $this->find('ExamCompany', $companyId);
@@ -185,8 +185,8 @@ class ScoreController extends Controller
                 'Content-Type'        => 'application/pdf',
                 'Content-Disposition' => sprintf('attachment; filename="%s"', $filename),
             ]
-        );    
-    
+        );
+
     }
 
     /**
@@ -194,7 +194,7 @@ class ScoreController extends Controller
      */
     public function reportAction(Request $request, $classId, $companyId)
     {
-        
+
         $user = $this->user();
         $class = $this->find('Classs', $classId);
         $examCompany = $this->find('ExamCompany', $companyId);
@@ -226,7 +226,7 @@ class ScoreController extends Controller
         list($data['subject_list'], $data['c_subject_list'], $data['child_score_entries'], $data['sum'], $data['sum_sub'])   = [$subject_list, $c_subject_list, $child_score_entries, $this->rank($sum), $this->rank_sub($sum_sub)];
 
         return $this->render('score/report.html.twig', $data);
-    
+
     }
 
     /**
@@ -234,7 +234,7 @@ class ScoreController extends Controller
      */
     public function downloadAction(Request $request, $classId, $companyId)
     {
-        
+
         $user = $this->user();
         $class = $this->find('Classs', $classId);
         $examCompany = $this->find('ExamCompany', $companyId);
@@ -276,7 +276,7 @@ class ScoreController extends Controller
                 'Content-Type'        => 'application/pdf',
                 'Content-Disposition' => sprintf('attachment; filename="%s"', $filename),
             ]
-        );    
+        );
     }
 
     /**
@@ -284,7 +284,7 @@ class ScoreController extends Controller
      */
     public function repotAction(Request $request, $classId, $companyId)
     {
-        
+
         $user = $this->user();
         $class = $this->find('Classs', $classId);
         $examCompany = $this->find('ExamCompany', $companyId);
@@ -326,7 +326,7 @@ class ScoreController extends Controller
                 'Content-Type'        => 'application/pdf',
                 'Content-Disposition' => sprintf('attachment; filename="%s"', $filename),
             ]
-        );    
+        );
     }
 
     /**
@@ -334,7 +334,7 @@ class ScoreController extends Controller
      */
     public function downloadImgAction(Request $request, $classId, $companyId)
     {
-        
+
         $user = $this->user();
         $class = $this->find('Classs', $classId);
         $examCompany = $this->find('ExamCompany', $companyId);
@@ -376,7 +376,7 @@ class ScoreController extends Controller
                 'Content-Type'        => 'image/jpeg',
                 'Content-Disposition' => sprintf('attachment; filename="%s"', $filename),
             ]
-        );    
+        );
     }
 
     public function rank ($arr) {
@@ -385,7 +385,7 @@ class ScoreController extends Controller
         $s = array();
         $i = 0;
         foreach ($arr as $k=>$v) {
-            
+
             $stude = $this->em()->getRepository('AppBundle:Student')
                 ->find($k);
             if (!isset($s[$v])) { $s[$v] = ++$i; } else { ++$i; }
@@ -393,14 +393,14 @@ class ScoreController extends Controller
         }
         return $ret;
     }
-    
+
     public function rank_sub ($arr) {
         arsort($arr);
         $ret = array();
         $s = array();
         $i = 0;
         foreach ($arr as $k=>$v) {
-            
+
             $stude = $this->em()->getRepository('AppBundle:Subject')
                 ->find($k);
             if (!isset($s[$v])) { $s[$v] = ++$i; } else { ++$i; }
@@ -408,14 +408,14 @@ class ScoreController extends Controller
         }
         return $ret;
     }
-    
+
     public function rank_sub_child ($arr) {
         arsort($arr);
         $ret = array();
         $s = array();
         $i = 0;
         foreach ($arr as $k=>$v) {
-            
+
             $stude = $this->em()->getRepository('AppBundle:ChildSubject')
                 ->find($k);
             if (!isset($s[$v])) { $s[$v] = ++$i; } else { ++$i; }
@@ -423,7 +423,7 @@ class ScoreController extends Controller
         }
         return $ret;
     }
-    
+
     /**
      * @Route("/exam/ajax/record", name="record_exam_ajax")
      */
@@ -438,9 +438,10 @@ class ScoreController extends Controller
             $examCompanyId = $request->request->get('exam');
             $thisClass = $request->request->get('class');
             $marks = $request->request->get('marks');
+            $data['marks'] = $marks;
             $user = $this->get('security.token_storage')->getToken()->getUser();
-          
-            
+
+
 
             $student = $this->em()->getRepository('AppBundle:Student')
                 ->find($student_id);
@@ -477,7 +478,7 @@ class ScoreController extends Controller
         }
 
         return new JsonResponse($data);
-    } 
+    }
 
     private function move($studentId, $cSubjectId, $direction){
         $move = "";
@@ -494,7 +495,7 @@ class ScoreController extends Controller
             $move = $studentId."_".$prev_subject->getId();
         } elseif ($direction == "right") {
             $move = $studentId."_".$next_subject->getId();
-        } 
+        }
         return $move;
     }
 
@@ -596,7 +597,7 @@ class ScoreController extends Controller
             $c_sum_sub[$c_subject->getId()] = array_sum($all_scores_for_this_c_subject_total);
             $c_subject_list[$c_subject->getId()] = $all_scores_for_this_c_subject;
         }
-        return [$c_subject_list, $c_sum_sub];        
+        return [$c_subject_list, $c_sum_sub];
     }
 
     private function em(){
@@ -636,14 +637,14 @@ class ScoreController extends Controller
 
     private function save($entity){
         $this->em()->persist($entity);
-        $this->em()->flush();   
-        return true;     
+        $this->em()->flush();
+        return true;
     }
 
     private function delete($entity){
         $this->em()->remove($entity);
-        $this->em()->flush();    
-        return true;    
+        $this->em()->flush();
+        return true;
     }
 
     private function user(){

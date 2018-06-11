@@ -15,7 +15,7 @@
 {% embed "templates/content_draft.html.twig" %}
 	{% block content %}
 
-		<div class="col-sm-8">
+		<div class="col-sm-12">
 		  <section class="panel">
 		      <header class="panel-heading">
 		          Your Downloads
@@ -37,14 +37,14 @@
 		          <tr>
 		              <td>{{download.description|date("d/m/Y")}}</td>
 		              <td>{{download.times}}</td>
-		              <td>{{ download.status ? 'Active':'Inactive' }}</td>        
+		              <td>{{ download.status ? 'Active':'Inactive' }}</td>
 					  <td>
 		                  <div class="btn-group">
 				              <a class="btn btn-sm btn-primary" href="{{ path('download', {'what': 'exam', 'a': classId, 'b': examId, 'c': download.id}) }}" style="margin-right:5px">Download PDF</a>
 				              <a class="btn btn-sm btn-primary" href="{{ path('download', {'what': 'exam_img', 'a': classId, 'b': examId, 'c': download.id}) }}" style="margin-right:5px">Download Image</a>
 				              <a class="btn btn-sm btn-primary" href="{{ path('download', {'what': 'report', 'a': classId, 'b': examId, 'c': download.id}) }}" style="margin-right:5px">Download Report Forms</a>
 		                  </div>
-		              </td>  
+		              </td>
 		          </tr>
 		      	  {% endfor %}
 		          </tbody>
@@ -76,7 +76,7 @@
 			          </div>
 			      </div>
 			  </div>
-			</div>		    
+			</div>
 		{% endfor %}
 	{% endblock %}
 {% endembed %}
@@ -93,7 +93,7 @@
         $('#dataTables-example').DataTable({
             responsive: true,
             "pageLength": {{entriesPerPage}}
-            
+
         });
     });
     </script>

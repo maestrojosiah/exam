@@ -7,23 +7,23 @@
             <!--logo start-->
             <a href="{{path('homepage')}}" class="logo"><span>Exam</span><span class="lite">Pro</span></a>
             <!--logo end-->
-            {% if info is defined and info == "with_print_material" %}
+            {% if info is defined and info == "with_print_material" and app.user.tokens > 0 %}
                 <button id="triggerPrint" class="btn btn-info btn-lg" style="margin-top:5;">Print</button>
             {% endif %}
             <div class="nav search-row" id="top_menu">
                 <!--  search form start -->
-                <ul class="nav top-menu">                    
+                <ul class="nav top-menu">
                     <li>
                         <a><span>{% if app.user.configs|first.schName is defined %} {{app.user.configs|first.schName}} {% endif %}</span></a>
-                    </li>                    
+                    </li>
                 </ul>
-                <!--  search form end -->                
+                <!--  search form end -->
             </div>
 
-            <div class="top-nav notification-row">                
+            <div class="top-nav notification-row">
                 <!-- notificatoin dropdown start-->
                 <ul class="nav pull-right top-menu">
-                    
+
                     <!-- task notificatoin start -->
                     <li id="task_notificatoin_bar" class="dropdown">
                     {% if score_list is defined and score_list is not empty %}
@@ -47,7 +47,7 @@
                             {% set notifications = notifications + 1 %}
                         {% endif %}
                         {% endif %}
-                    {% endfor %}  
+                    {% endfor %}
                     {% endif %}
                         <a data-toggle="dropdown" class="dropdown-toggle" href="#">
                             <i class="icon-task-l"></i>
@@ -99,7 +99,7 @@
                                             </li>
                                             {% endif %}
                                         {% endif %}
-                                    {% endfor %}  
+                                    {% endfor %}
                                 {% endif %}
                             <li class="external">
                                 <a href="{{path('choose_class_exam', {'goto': 'new_examCompany'})}}">See All Exams</a>
@@ -133,6 +133,5 @@
                 </ul>
                 <!-- notificatoin dropdown end-->
             </div>
-      </header>      
+      </header>
       <!--header end-->
-
