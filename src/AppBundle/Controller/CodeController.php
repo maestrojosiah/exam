@@ -16,12 +16,12 @@ class CodeController extends Controller
 
     /**
      * @Route("/code/generate/{qty}", name="generate_codes")
-     */ 
+     */
     public function feedAction(Request $request, $qty){
         $data = [];
 
         // uncomment lines below to add codes to database
-        for ($i=0; $i < $qty; $i++) { 
+        for ($i=0; $i < $qty; $i++) {
             $randomString = $this->getRandStr();
             $code = new Code();
             $code->setRandomCode($randomString);
@@ -39,7 +39,7 @@ class CodeController extends Controller
         $string_of_codes = implode(", ", $codes);
 
         $data['rand_str'] = $string_of_codes;
-        return $this->render('code/code.html.twig', $data);     
+        return $this->render('code/code.html.twig', $data);
     }
 
     /**
@@ -47,13 +47,16 @@ class CodeController extends Controller
      */
     public function checkCodeAction(Request $request)
     {
-        
+
         $data = [];
         $user = $this->user();
         $tokens = $user->getTokens();
         $now = new \DateTime("now");
+        $address = $this->generateUrl('my_downloads');
+        $data['address'] = $address;
         $code = $request->request->get('code');
         $link = $request->request->get('link');
+        $desc = $request->request->get('desc');
         $code_exists = $this->em()->getRepository('AppBundle:Code')->findByRandomCode($code);
         $virgin_code_exists = $this->em()->getRepository('AppBundle:Code')
           ->findOneBy(
@@ -74,15 +77,13 @@ class CodeController extends Controller
                 $download->setStatus(1);
                 $download->setLink($link);
                 $download->setUser($user);
-                $download->setDescription($now);
+                $download->setDescription($desc);
                 $this->save($download);
-                $address = $this->generateUrl('my_downloads');
-                $data['address'] = $address;
                 $message = "Oh! thanks for purchasing the cup of tea for me. You now have $added_token active token(s). I feel encouraged :)";
             } else {
                 $message = "You currently have $tokens active token(s). That code is already used. Please purchase another one.";
             }
-            
+
             $success = true;
         } else {
             //code doesn't exist
@@ -98,7 +99,7 @@ class CodeController extends Controller
 	  	$a = $b = '';
 
 	  	for($i = 0; $i < 3; $i++){
-		    $a .= chr(mt_rand(65, 90)); // see the ascii table why 65 to 90.    
+		    $a .= chr(mt_rand(65, 90)); // see the ascii table why 65 to 90.
 		    $b .= mt_rand(0, 9);
 		}
 
@@ -112,8 +113,8 @@ class CodeController extends Controller
 
     private function save($entity){
         $this->em()->persist($entity);
-        $this->em()->flush();        
-    } 
+        $this->em()->flush();
+    }
 
     private function user(){
         $user = $this->container->get('security.token_storage')->getToken()->getUser();

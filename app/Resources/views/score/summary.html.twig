@@ -92,9 +92,9 @@
                   <td colspan="{{span}}">
                     <div class="col-lg-12 text-center" style="background-color:white; font-size:15px;">
                       <h2>Congratulations!</h2>
-                      <p><strong>You are now ready to download your neat job. You need to buy me a cup of tea for making your work easier. Its only 100/= - less than a dollar.</strong></p>
-                      <p><strong>Its easy! send the cash through MPESA to this magic number: 0716339886 and you will receive a code. One code costs 100/= and can be used only once.</strong></p>
-                      <p><strong>Once you get the six-digit code, type it in the text box below and submit. You will then be able to see all your results and download the nice, neat document.</strong></p>
+                      <p><strong>Buy me tea - Ksh 100/=</strong></p>
+                      <p><strong>Send through MPESA to: 0716339886, receive code in 5 seconds.</strong></p>
+                      <p><strong>Enter Code Below to Download Your Stuff.</strong></p>
                       <form class="form-inline">
                         <div class="form-group">
                           <label class="sr-only" for="exampleInputAmount">Amount (in dollars)</label>
@@ -190,6 +190,7 @@
 
       var code = $("#code_input").val();
       var link = "{{class.id}}/{{exam.id}}";
+      var desc = "{{exam.cTitle}} [ Class {{class.cTitle}} ]";
 
       $.ajax({
           url:'{{ (path('check_code_validity')) }}',
@@ -198,6 +199,7 @@
           data: {
               "code": code,
               "link": link,
+              "desc": desc,
           },
           async: true,
           success: function (data)

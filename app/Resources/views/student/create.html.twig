@@ -1,61 +1,127 @@
 {% extends 'base.html.twig' %}
 {% block body %}
 <body>
-{{ include('templates/header.html.twig') }}        		
-{{ include('templates/aside.html.twig') }}        		
+{{ include('templates/header.html.twig') }}
+{{ include('templates/aside.html.twig') }}
 {% embed "templates/content_draft.html.twig" %}
 	{% block content %}
 	<div class="col-lg-6">
 	  <section class="panel">
 	      <header class="panel-heading">
-	          Add Student
-	          <a class="btn btn-xs btn-default btn-outline pull-right" href="{{path('students_upload', {'classId': data.class.id})}}">Upload from excel file (xls / xlsx)</a>
-				{% if not form.vars.valid %}
-	              <div class="alert alert-dangers">
-	              <p>Please check your entries below</p>
-	              </div>				
-          		{% endif %}	          
+	          Add Student to class {{class.cTitle}}
+	          <a class="btn btn-xs btn-default btn-outline pull-right" href="{{path('students_upload', {'classId': class.id})}}">Upload from excel file (xls / xlsx)</a>
 	      </header>
 	      <div class="panel-body">
 	      	{% if app.user.classes is not empty %}
-	          {{ form_start(form, {'method': 'post'} ) }}
+	          <form id="form" class="form">
 	              <div class="form-group">
-	                  <label for="student_names">Full Name</label>
-	                  {{ form_row(form.names, {'attr': {'class': 'form-control', 'placeholder': 'Full Name' }}) }}
+	                  <label for="name">Full Name</label>
+	                  <input class="form-control" type="text" id="name" placeholder="Full Name" />
 	              </div>
 	              <div class="form-group">
-	                  <label for="student_gender">Gender</label>
-	                  {{ form_row(form.gender, {'attr': {'class': 'form-control', 'placeholder': 'Gender' }}) }}
+	                  <label for="gender">Gender</label>
+	                  <input class="form-control" type="text" id="gender" placeholder="Gender" />
 	              </div>
-	              <div class="form-group">
-	                  <label for="student_class">Class</label>
-	                  {{ form_row(form.class, {'attr': {'class': 'form-control', 'placeholder': 'Class' }}) }}
-	              </div>
-	              <div class="form-group">
-	                  <label for="student_names">UPI Number</label>
-	                  {{ form_row(form.upi_number, {'attr': {'class': 'form-control', 'placeholder': 'UPI Number' }}) }}
-	              </div>
-	              {{ form_widget(form.saveAndAdd, {'attr': {'class': 'btn btn-info pull-left', 'style': 'margin-right: 5px' }} ) }}
-	              {{ form_row(form.save, {'attr': {'class': 'btn btn-primary pull-left margin-md'}}) }}
+	              <button class="btn btn-primary btn-outline" type="button" id="save">Save</button>
 	              <a href="{{path('homepage')}}" class="btn btn-danger pull-right" style="margin-left: 5px;">DONE</a>
-	              <a href="{{path('choose_class', {'goto': 'list_students'})}}" class="btn btn-danger pull-right">List</a>
-	              
-	          {{ form_end(form) }}
+	              <a href="{{path('list_students', {'classId': class.id})}}" class="btn btn-danger pull-right">List</a>
+
+	          </form>
 			{% else %}
 	            <div class="well">
 	              <h4>You need to  <a href="{{path('new_class')}}"> have at least one class </a> to add students </h4>
 	            </div>
-            {% endif %}	      </div>
+      {% endif %}	      </div>
 	  </section>
 	</div>
-	
+
+	{% if app.user.students is not empty %}
+	<div class="col-lg-6">
+	  <section class="panel">
+	      <header class="panel-heading">
+	          Added Students
+	      </header>
+	      <div class="panel-body">
+			<p>
+				<ol id="added_students">
+					{% for student in class.students %}
+						<li>{{student.names}} [ {{ student.gender }} ]</li>
+					{% endfor %}
+				</ol>
+			</p>
+	      </div>
+	  </section>
+	</div>
+	{% else %}
+	<div class="col-lg-6">
+		<section class="panel">
+				<header class="panel-heading">
+						Added Students
+				</header>
+				<div class="panel-body">
+			<p>
+				<ol id="added_students">
+
+				</ol>
+			</p>
+				</div>
+		</section>
+	</div>
+
+	{% endif %}
+
 {% endblock %}
 {% endembed %}
 {% endblock %}
 {% block javascripts %}
   <script type="text/javascript">
     $(function() {
-      $("#student_names").focus();
-    });    
+      $("#name").focus();
+    });
   </script>
+	<script>
+	  $(document).on('click', '#save', function(){
+			var name = $('#name').val();
+			var gender = $('#gender').val();
+			var class_id = {{class.id}};
+			$('#form').checkFields();
+			$('#save').html('Wait...');
+			$.ajax({
+	        url:'{{ (path('save_entity')) }}',
+	        type: "POST",
+	        dataType: "json",
+	        data: {
+						"return": 'getNames',
+						"entity": 'Student',
+						"fields": ['Names', 'Gender', 'class_id'],
+						"values": [name, gender, class_id],
+	        },
+	        async: true,
+	        success: function (data)
+	        {
+						console.log(data);
+						$("#name").val('').focus();
+						$("#added_students").append('<li>'+data+'</li>');
+						$("#gender").val('');
+						$('#save').html('SAVED').removeClass('btn-primary').addClass('btn-success');
+	        },
+		      error: function (xhr, status, error) {
+						console.log('error');
+		      }
+	    });
+
+	  });
+	</script>
+	<script>
+		$(document).on('keypress', '#gender', function(e){
+			 var key = e.which;
+			 if(key == 13){
+					$("#save").click();
+					e.preventDefault();
+				} else {
+					$('#save').html('Save').removeClass('btn-success').addClass('btn-primary');
+				}
+		});
+
+</script>
 {% endblock %}

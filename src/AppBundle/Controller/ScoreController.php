@@ -7,6 +7,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use AppBundle\Entity\Score;
+use AppBundle\Entity\ScoreChild;
 use AppBundle\Form\ScoreType;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
@@ -60,7 +61,6 @@ class ScoreController extends Controller
 
     }
 
-
     /**
      * @Route("/scores/move", name="move_cursor")
      */
@@ -75,6 +75,204 @@ class ScoreController extends Controller
         $studentId = explode("|", $parts[2])[1];
         $move = $this->move($studentId, $subjectId, $direction);
         return new JsonResponse($move);
+    }
+
+    /**
+     * @Route("/exam/ajax/record", name="record_exam_ajax")
+     */
+    public function recordAction(Request $request)
+    {
+        $data = [];
+
+        if(is_numeric($request->request->get('marks'))) {
+
+            $subject_id = $request->request->get('subject_id');
+            $student_id = $request->request->get('student_id');
+            $examCompanyId = $request->request->get('exam');
+            $thisClass = $request->request->get('class');
+            $marks = $request->request->get('marks');
+            $data['marks'] = $marks;
+            $user = $this->get('security.token_storage')->getToken()->getUser();
+
+
+
+            $student = $this->em()->getRepository('AppBundle:Student')
+                ->find($student_id);
+
+            $examCompany = $this->em()->getRepository('AppBundle:ExamCompany')
+                ->find($examCompanyId);
+
+            $class = $this->em()->getRepository('AppBundle:Classs')
+                ->find($thisClass);
+
+            $subject = $this->em()->getRepository('AppBundle:Subject')
+            ->find($subject_id);
+
+            $isAlreadyRecorded = $this->em()->getRepository('AppBundle:Score')
+                ->isAlreadyRecorded($student, $class, $subject, $examCompany);
+
+
+            if($isAlreadyRecorded){
+                $score = $isAlreadyRecorded;
+                $message = "[$marks] Edited successfully!";
+            } else {
+                $score = new Score();
+                $message = "[$marks] Created successfully!";
+            }
+
+            $score->setMarks($marks);
+            $score->setExamCompany($examCompany);
+            $score->setClass($class);
+            $score->setStudent($student);
+            $score->setSubject($subject);
+            $score->setUser($user);
+
+            $this->save($score);
+        }
+
+        return new JsonResponse($data);
+    }
+
+    /**
+     * @Route("/scores/save/all", name="save_all_entries")
+     */
+    public function saveAllAction(Request $request)
+    {
+
+        $user = $this->user();
+        $list = json_decode($request->request->get('list'));
+        $class_id = $request->request->get('class');
+        $class = $this->find('Classs', $class_id);
+        $exam_id = $request->request->get('exam');
+        $exam = $this->find('ExamCompany', $exam_id);
+
+        $test = [];
+        foreach($list as $item){
+          // get the parts
+          $parts = explode("_", $item);
+          // get the ids
+          $subject_id = explode("|", $parts[0])[1];
+          $student_id = explode("|", $parts[2])[1];
+          $marks = $parts[5];
+          $test[] = $marks;
+          $student = $this->find('Student', $student_id);
+          // get if subject or child subject
+          $subject_string = explode("|", $parts[0])[0];
+          if($subject_string == "subject"){
+            // subject
+            $subject = $this->find('Subject', $subject_id);
+            // check if already recorded
+            $isAlreadyRecorded = $this->em()->getRepository('AppBundle:Score')
+                ->isAlreadyRecorded($student, $class, $subject, $exam);
+
+            if($isAlreadyRecorded){
+                $score = $isAlreadyRecorded;
+                $message = "[$marks] Edited successfully!";
+            } else {
+                $score = new Score();
+                $message = "[$marks] Created successfully!";
+            }
+            $score->setMarks($marks);
+            $score->setExamCompany($exam);
+            $score->setClass($class);
+            $score->setStudent($student);
+            $score->setSubject($subject);
+            $score->setUser($user);
+
+            $this->save($score);
+
+          } else {
+            // child subject
+            $childSubject = $this->find('ChildSubject', $subject_id);
+            // parent
+            $parentSubject = $childSubject->getSubject();
+
+            //find other children of same parent
+            $scoreChildren = $this->em()->getRepository('AppBundle:ScoreChild')
+            	->findBy(
+            		array('user' => $user, 'student' => $student, 'examCompany' => $exam, 'class' => $class, 'subject' => $parentSubject),
+            		array('id' => 'ASC')
+            	);
+
+              $children = $parentSubject->getChildSubjects();
+              $data['children'] = $children;
+
+              $total_scored = 0;
+              $otherScore = 0;
+
+              // add child scores
+              foreach($scoreChildren as $scoreChild){
+              	if($scoreChild->getChildSubject() != $childSubject){
+              		$otherScore += (int)$scoreChild->getMarks();
+              	}
+              }
+              // total when added
+              $total_scored = (int)$otherScore + (int)$marks;
+
+              // get total possible out_of
+              $total_outof = 0;
+              foreach($children as $child){
+              	$total_outof += $child->getOutOf();
+              }
+              // calculate percentage
+              $percentage = ($total_scored / $total_outof) * 100;
+              // check if score exists
+              $isAlreadyRecorded = $this->em()->getRepository('AppBundle:ScoreChild')
+                  ->childIsAlreadyRecorded($student, $class, $childSubject, $exam);
+
+              $outOf = $childSubject->getOutOf();
+              $data['outof'] = $outOf;
+              $data['percentage'] = round($percentage);
+              $data['total_scored'] = $total_scored;
+
+              // $uniqueId = '#'.$parentSubject->getId().'_'.$user->getId().'_'.$student->getId().'_'.$exam->getId().'_'.$class->getId();
+
+              // $data['uniqueId'] = $uniqueId;
+
+              if($isAlreadyRecorded){
+                  $scoreChild = $isAlreadyRecorded;
+                  $message = "[$marks] Edited successfully!";
+              } else {
+                  $scoreChild = new ScoreChild();
+                  $message = "[$marks] Created successfully!";
+              }
+              // record score_child
+              $scoreChild->setMarks($marks);
+              $scoreChild->setExamCompany($exam);
+              $scoreChild->setClass($class);
+              $scoreChild->setStudent($student);
+              $scoreChild->setChildSubject($childSubject);
+              $scoreChild->setSubject($parentSubject);
+              $scoreChild->setUser($user);
+
+              $this->save($scoreChild);
+              // check if parent is recorded
+              $isAlreadyRecorded = $this->em()->getRepository('AppBundle:Score')
+                  ->isAlreadyRecorded($student, $class, $parentSubject, $exam);
+
+
+              if($isAlreadyRecorded){
+                  $score = $isAlreadyRecorded;
+                  $message = "[$marks] Edited successfully!";
+              } else {
+                  $score = new Score();
+                  $message = "[$marks] Created successfully!";
+              }
+
+              $score->setMarks(round($percentage));
+              $score->setExamCompany($exam);
+              $score->setClass($class);
+              $score->setStudent($student);
+              $score->setSubject($parentSubject);
+              $score->setUser($user);
+
+              $this->save($score);
+
+          }
+
+        }
+
+        return new JsonResponse($test);
     }
 
     /**
@@ -422,62 +620,6 @@ class ScoreController extends Controller
             $ret[$k]= array($v, $s[$v], $stude);
         }
         return $ret;
-    }
-
-    /**
-     * @Route("/exam/ajax/record", name="record_exam_ajax")
-     */
-    public function recordAction(Request $request)
-    {
-        $data = [];
-
-        if(is_numeric($request->request->get('marks'))) {
-
-            $subject_id = $request->request->get('subject_id');
-            $student_id = $request->request->get('student_id');
-            $examCompanyId = $request->request->get('exam');
-            $thisClass = $request->request->get('class');
-            $marks = $request->request->get('marks');
-            $data['marks'] = $marks;
-            $user = $this->get('security.token_storage')->getToken()->getUser();
-
-
-
-            $student = $this->em()->getRepository('AppBundle:Student')
-                ->find($student_id);
-
-            $examCompany = $this->em()->getRepository('AppBundle:ExamCompany')
-                ->find($examCompanyId);
-
-            $class = $this->em()->getRepository('AppBundle:Classs')
-                ->find($thisClass);
-
-            $subject = $this->em()->getRepository('AppBundle:Subject')
-            ->find($subject_id);
-
-            $isAlreadyRecorded = $this->em()->getRepository('AppBundle:Score')
-                ->isAlreadyRecorded($student, $class, $subject, $examCompany);
-
-
-            if($isAlreadyRecorded){
-                $score = $isAlreadyRecorded;
-                $message = "[$marks] Edited successfully!";
-            } else {
-                $score = new Score();
-                $message = "[$marks] Created successfully!";
-            }
-
-            $score->setMarks($marks);
-            $score->setExamCompany($examCompany);
-            $score->setClass($class);
-            $score->setStudent($student);
-            $score->setSubject($subject);
-            $score->setUser($user);
-
-            $this->save($score);
-        }
-
-        return new JsonResponse($data);
     }
 
     private function move($studentId, $cSubjectId, $direction){

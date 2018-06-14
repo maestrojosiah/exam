@@ -21,6 +21,7 @@
 		          Your Downloads
 		      </header>
 		      {% if downloads is not empty %}
+          <span id="notify"></span>
 		      <table class="table table-striped table-hover" id="dataTables-example">
 		          <thead>
 		          <tr>
@@ -35,14 +36,16 @@
 			      {% set classId = download.link|split("/")[0] %}
 			      {% set examId = download.link|split("/")[1] %}
 		          <tr>
-		              <td>{{download.description|date("d/m/Y")}}</td>
-		              <td>{{download.times}}</td>
-		              <td>{{ download.status ? 'Active':'Inactive' }}</td>
+		              <td style="white-space: nowrap;">{{download.description}}</td>
+		              <td style="white-space: nowrap;">{{download.times}}</td>
+		              <td style="white-space: nowrap;">{{ download.status ? 'Active':'Inactive' }}</td>
 					  <td>
 		                  <div class="btn-group">
-				              <a class="btn btn-sm btn-primary" href="{{ path('download', {'what': 'exam', 'a': classId, 'b': examId, 'c': download.id}) }}" style="margin-right:5px">Download PDF</a>
-				              <a class="btn btn-sm btn-primary" href="{{ path('download', {'what': 'exam_img', 'a': classId, 'b': examId, 'c': download.id}) }}" style="margin-right:5px">Download Image</a>
-				              <a class="btn btn-sm btn-primary" href="{{ path('download', {'what': 'report', 'a': classId, 'b': examId, 'c': download.id}) }}" style="margin-right:5px">Download Report Forms</a>
+				              <a id="trigger_notify" class="btn btn-sm btn-primary" href="{{ path('download', {'what': 'exam', 'a': classId, 'b': examId, 'c': download.id}) }}" style="margin-right:5px">Download PDF</a>
+				              <a id="trigger_notify" class="btn btn-sm btn-primary" href="{{ path('download', {'what': 'exam_img', 'a': classId, 'b': examId, 'c': download.id}) }}" style="margin-right:5px">Download Image</a>
+				              <a id="trigger_notify" class="btn btn-sm btn-primary" href="{{ path('download', {'what': 'report', 'a': classId, 'b': examId, 'c': download.id}) }}" style="margin-right:5px">Download Report Forms</a>
+				              <a class="btn btn-sm btn-primary" href="{{path('record_summary', {'classId': classId, 'companyId': examId})}}" style="margin-right:5px">Add Code</a>
+                      <button type="button" class="btn btn-sm btn-danger" data-toggle="modal" title="Delete Student" href="#deleteModal{{download.id}}">Delete</button>
 		                  </div>
 		              </td>
 		          </tr>
@@ -97,5 +100,10 @@
         });
     });
     </script>
+    <script>
+      $(document).on('click', '[id="trigger_notify"]', function(){
+          $("#notify").html('<p class="alert alert-success">Please wait. It will take a moment to generate the file for download.');
+      });
+     </script>
 
 {% endblock %}

@@ -17,34 +17,14 @@ class ClasssController extends Controller
     {
 
 	   	$data = [];
-        $user = $user = $this->user();
-        $classes = $this->findby('Classs', 'user', $user);
-
-        $class = new Classs();
-        $class->setUser($user);
-
-        $form = $this->createForm(ClasssType::class, $class);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-
-            $form_data = $form->getData();
-            $safe_class = trim(str_replace(" ", "-", $form_data->getCTitle()));
-            $class->setCTitle($safe_class);
-            $this->save($class);
-        	$this->addFlash('success', 'Classs created successfully!' );
-            $nextAction = $form->get('saveAndAdd')->isClicked()
-                ? 'new_class'
-                : 'list_classes';
-            return $this->redirectToRoute($nextAction);
-		} 
-
-        $data['classes'] = $classes;
-        $data['user'] = $user;
+      $user = $user = $this->user();
+      $classes = $this->findby('Classs', 'user', $user);
+      $data['classes'] = $classes;
+      $data['user'] = $user;
 
 
-	    return $this->render('class/create.html.twig',['form' => $form->createView(), 'data' => $data] );
-    
+	    return $this->render('class/create.html.twig', $data );
+
     }
 
     /**
@@ -115,13 +95,13 @@ class ClasssController extends Controller
                 $score_lst[] = $this_score;
                 $subject_list[] = $subject_score;
             }
-            
+
         }
 
         $manual_add_to_array = [];
         foreach($companyTotals as $a_total){
             foreach($a_total as $item){
-                $manual_add_to_array[$item] = $a_total;    
+                $manual_add_to_array[$item] = $a_total;
             }
         }
 
@@ -144,35 +124,8 @@ class ClasssController extends Controller
     {
         $data = [];
         $classs = $this->find('Classs', $classId);
-        $form = $this->createForm(ClasssType::class, $classs);
-        $form->handleRequest($request);
-
-        if($form->isSubmitted() && $form->isValid()) {
-
-            $form_data = $form->getData();
-            $data['form'] = $form_data;
-
-            $safe_class = trim(str_replace(" ", ".", $form_data->getCTitle()));
-            $classs->setCTitle($safe_class);
-
-            $this->save($classs);
-            $this->addFlash( 'success', 'Classs edited successfully!' );
-            $nextAction = $form->get('saveAndAdd')->isClicked()
-                ? 'new_class'
-                : 'list_classes';
-            return $this->redirectToRoute($nextAction);
-
-        } else {
-
-            $form_data['class_number'] = $classs->getCTitle();
-            $form_data['class_teacher'] = $classs->getClassTeacher();
-            $data['form'] = $form_data;
-
-        }
-
         $data['class'] = $classs;
-
-        return $this->render('class/edit.html.twig', ['form' => $form->createView(), $data,] );
+        return $this->render('class/edit.html.twig', $data );
 
     }
 
@@ -217,14 +170,14 @@ class ClasssController extends Controller
 
     private function save($entity){
         $this->em()->persist($entity);
-        $this->em()->flush();   
-        return true;     
+        $this->em()->flush();
+        return true;
     }
 
     private function delete($entity){
         $this->em()->remove($entity);
-        $this->em()->flush();    
-        return true;    
+        $this->em()->flush();
+        return true;
     }
 
     private function user(){

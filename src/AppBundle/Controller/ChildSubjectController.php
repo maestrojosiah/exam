@@ -18,31 +18,15 @@ class ChildSubjectController extends Controller
 
 	   	$data = [];
         $user = $this->user();
-        $childSubjects = $this->findby('ChildSubject', 'user', $user);
         $subject_id = $request->query->get('subjectId');
         $subject = $this->find('Subject', $subject_id);
-
-        $childSubject = new ChildSubject();
-        $childSubject->setUser($user);
-        $childSubject->setSubject($subject);
-
-        $form = $this->createForm(ChildSubjectType::class, $childSubject);
-
-        $form->handleRequest($request);
-        if ($form->isSubmitted() && $form->isValid()) {
-            $this->save($childSubject);
-        	$this->addFlash('success', 'ChildSubject created successfully!');
-            $nextAction = $form->get('saveAndAdd')->isClicked()
-                ? 'new_childSubject'
-                : 'list_childSubjects';
-            return $this->redirectToRoute($nextAction, ['subjectId' => $subject_id]);
-		} 
-
+        $childSubjects = $this->em()->getRepository('AppBundle:ChildSubject')->findBy(array('user' => $user, 'subject' => $subject));
         $data['childSubjects'] = $childSubjects;
+        $data['subject'] = $subject;
         $data['user'] = $user;
 
-	    return $this->render('childSubject/create.html.twig',['form' => $form->createView(), 'data' => $data] );
-    
+	    return $this->render('childSubject/create.html.twig', $data );
+
     }
 
     /**
@@ -81,30 +65,8 @@ class ChildSubjectController extends Controller
         $childSubjects = $this->find('childSubject', $childSubjectId);
         $subject_id = $childSubjects->getSubject()->getId();
 
-        $form = $this->createForm(ChildSubjectType::class, $childSubjects);
-        $form->handleRequest($request);
-
-        if($form->isSubmitted() && $form->isValid()) {
-
-            $form_data = $form->getData();
-            $data['form'] = $form_data;
-            $this->save($form_data);
-            $this->addFlash('success', 'ChildSubject edited successfully!' );
-            $nextAction = $form->get('saveAndAdd')->isClicked()
-                ? 'new_childSubject'
-                : 'list_childSubjects';
-            return $this->redirectToRoute($nextAction, ['subjectId' => $subject_id]);
-
-        } else {
-
-            $form_data['child_subject_c_s_title'] = $childSubjects->getCSTitle();
-            $form_data['child_subject_subject'] = $childSubjects->getSubject();
-            $data['form'] = $form_data;
-
-        }
-
         $data['childSubject'] = $childSubjects;
-        return $this->render('childSubject/edit.html.twig', ['form' => $form->createView(), $data,] );
+        return $this->render('childSubject/edit.html.twig', $data );
     }
 
     /**
@@ -138,14 +100,14 @@ class ChildSubjectController extends Controller
 
     private function save($entity){
         $this->em()->persist($entity);
-        $this->em()->flush();   
-        return true;     
+        $this->em()->flush();
+        return true;
     }
 
     private function delete($entity){
         $this->em()->remove($entity);
-        $this->em()->flush();    
-        return true;    
+        $this->em()->flush();
+        return true;
     }
 
     private function user(){

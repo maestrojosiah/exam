@@ -40,13 +40,6 @@ class Student
     private $gender;
 
     /**
-     * @var string
-     * @Assert\NotBlank()
-     * @ORM\Column(name="upi_number", type="string", length=60)
-     */
-    private $upi_number;
-
-    /**
      * @Assert\NotBlank()
      * @ORM\ManyToOne(targetEntity="User", inversedBy="students")
      * @ORM\JoinColumn(name="user_id", referencedColumnName="id", onDelete="CASCADE")
@@ -255,27 +248,4 @@ class Student
         return $this->scoreChildren;
     }
 
-    /**
-     * Set upiNumber
-     *
-     * @param string $upiNumber
-     *
-     * @return Student
-     */
-    public function setUpiNumber($upiNumber)
-    {
-        $this->upi_number = $upiNumber;
-
-        return $this;
-    }
-
-    /**
-     * Get upiNumber
-     *
-     * @return string
-     */
-    public function getUpiNumber()
-    {
-        return $this->upi_number;
-    }
 }

@@ -1,36 +1,78 @@
 {% extends 'base.html.twig' %}
 {% block body %}
 <body>
-{{ include('templates/header.html.twig') }}        		
-{{ include('templates/aside.html.twig') }}        		
+{{ include('templates/header.html.twig') }}
+{{ include('templates/aside.html.twig') }}
 {% embed "templates/content_draft.html.twig" %}
 	{% block content %}
 	<div class="col-lg-6">
 	  <section class="panel">
 	      <header class="panel-heading">
 	          Edit Subject
-				{% if not form.vars.valid %}
-	              <div class="alert alert-warning">
-	              <p>Please check your entries below</p>
-	              </div>				
-          		{% endif %}	          
 	      </header>
 	      <div class="panel-body">
-	          {{ form_start(form, {'method': 'post'} ) }}
+	          <form id="form">
 	              <div class="form-group">
 	                  <label for="subject_s_title">Subject Title</label>
-	                  {{ form_row(form.s_title, {'attr': {'class': 'form-control', 'placeholder': 'Subject Title' }}) }}
+	                  <input class="form-control" type="text" id="sTitle" value="{{subject.sTitle}}" placeholder="Subject Title" />
 	              </div>
-	              {{ form_row(form.save, {'attr': {'class': 'btn btn-primary pull-left margin-md', 'style': 'margin-right: 5px'}}) }}
-	              {{ form_widget(form.saveAndAdd, {'attr': {'class': 'btn btn-info pull-left' }} ) }}
+	              <button class="btn btn-primary btn-outline" type="button" id="save">Save</button>
 	              <a href="{{path('homepage')}}" class="btn btn-danger pull-right" style="margin-left: 5px;">DONE</a>
 	              <a href="{{path('list_subjects')}}" class="btn btn-danger pull-right">List</a>
-	              
-	          {{ form_end(form) }}
+
+	          </form>
 
 	      </div>
 	  </section>
 	</div>
 {% endblock %}
 {% endembed %}
+{% endblock %}
+{% block javascripts %}
+  <script type="text/javascript">
+    $(function() {
+      $("#sTitle").focus();
+    });
+  </script>
+	<script>
+	  $(document).on('click', '#save', function(){
+			var s_title = $('#sTitle').val();
+			$('#form').checkFields();
+			$('#save').html('Wait...');
+			$.ajax({
+	        url:'{{ (path('edit_entity')) }}',
+	        type: "POST",
+	        dataType: "json",
+	        data: {
+						"id": {{subject.id}},
+						"entity": 'Subject',
+						"fields": ['sTitle'],
+						"values": [s_title],
+	        },
+	        async: true,
+	        success: function (data)
+	        {
+						console.log(data);
+						$("#sTitle").focus();
+						$('#save').html('SAVED').removeClass('btn-primary').addClass('btn-success');
+	        },
+		      error: function (xhr, status, error) {
+						console.log('error');
+		      }
+	    });
+
+	  });
+	</script>
+	<script>
+		$(document).on('keypress', '#sTitle', function(e){
+			 var key = e.which;
+			 if(key == 13){
+					$("#save").click();
+					e.preventDefault();
+				} else {
+					$('#save').html('Save').removeClass('btn-success').addClass('btn-primary');
+				}
+		});
+
+</script>
 {% endblock %}

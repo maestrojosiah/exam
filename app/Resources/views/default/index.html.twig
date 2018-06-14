@@ -4,8 +4,8 @@
 {% endblock %}
 {% block body %}
 <body>
-{{ include('templates/header.html.twig') }}        		
-{{ include('templates/aside.html.twig') }}        		
+{{ include('templates/header.html.twig') }}
+{{ include('templates/aside.html.twig') }}
 {% embed "templates/content_draft.html.twig" %}
 	{% block content %}
         <!--overview start-->
@@ -16,14 +16,14 @@
                 <div class="profile-widget profile-widget-info">
                     <div class="panel-body">
                       <div class="col-lg-4 col-sm-4 profile-widget-name">
-                                      
+
                         <div style="margin-top:20px;" class="follow-ava">
                             <img src="img/mps.png" alt="">
                         </div>
                         <h6>milepostsolutions.co.ke</h6>
                       </div>
                       <div class="col-lg-8 col-sm-8 follow-info">
-                          <h4>Mile-Post Solutions</h4> 
+                          <h4>Mile-Post Solutions</h4>
                           <p>Welcome back {{app.user.fName}}, Let's make work easier and save time.</p>
                       </div>
                       <div class="weather-category twt-category">
@@ -130,31 +130,31 @@
                                                 <p>{{list_item[0][2].cTitle}}<br />[{{list_item[0][2].class.cTitle}}]</p>
                                             </a>
                                         </li>
-                                    {% else %} 
+                                    {% else %}
                                         <li>
                                             <a href="{{path('record_scores', {'classId': examCompanies|first.class.id, 'companyId': examCompanies|first.id})}}">
                                                 <input class="knob" data-readonly="true" data-width="80" data-height="80" data-displayPrevious=true  data-thickness=".1" value="0" data-fgColor="#007AFF" data-bgColor="#F7F7F7">
                                                 <p>{{examCompanies|first.cTitle}}</p>
                                             </a>
                                         </li>
-                                    {% endif %} 
-                                  {% endfor %} 
+                                    {% endif %}
+                                  {% endfor %}
                                 {% else %}
                                   <div class="well">
                                     <h4>Its lonely here! You can add some exams after you're done with adding <a href="{{path('new_class')}}">classes</a>, <a href="{{path('new_subject')}}">subjects</a> and <a id="add_student" href="{{path('choose_class', {'goto': 'new_student'})}}" style="background-color:white;"> students </a>.</h4>
                                   </div>
                                 {% endif %}
-                                {% if score_list|length < 5 %} 
+                                {% if score_list|length < 5 %}
                                   <li>
                                     <a id="add_exam" href="{{path('choose_class_exam', {'goto': 'new_examCompany'})}}" class="btn btn-default " style="padding:10px!important; margin-bottom:10px; color:black;"> Add New Exam </a>
-                                  </li>   
-                                {% endif %}                            
+                                  </li>
+                                {% endif %}
                                 </ul>
-                            </div>                                
+                            </div>
                       </div>
-                  </div>                        
+                  </div>
               </div>
-          </div>    
+          </div>
           <!-- statics end -->
         </div>
         <!--overview end-->
@@ -166,7 +166,7 @@
                 <section id='subjs' class="panel">
                   <div class="panel-body project-team">
                       <div class="task-progress">
-                            <h1>Subjects</h1>  
+                            <h1>Subjects</h1>
                       </div>
                   </div>
                   {% if app.user.subjects is not empty %}
@@ -205,7 +205,7 @@
                     <div class="panel-body progress-panel">
                       <div class="row">
                         <div class="col-lg-12 task-progress pull-left">
-                            <h1>Classes</h1>                                  
+                            <h1>Classes</h1>
                         </div>
                       </div>
                     </div>
@@ -238,11 +238,6 @@
                 </section>
                 <!--Project Activity end-->
             </div>
-            <div class="col-lg-8">
-              {% if classes_length < 1 %}
-                <div class="text-center"><a href="javascript:void(0);" class="btn btn-primary btn-outline btn-lg btn-block touring">Show Me Around</a></div>            </div>
-              {% endif %}
-            </div>
         <!-- project team & activity end -->
 {% endblock %}
 {% endembed %}
@@ -251,11 +246,11 @@
     <script src="{{asset('FlipClock/compiled/flipclock.js')}}"></script>
     <script type="text/javascript">
       var clock;
-      
+
       $(document).ready(function() {
         clock = $('.clock').FlipClock({
           clockFace: 'TwelveHourClock',
-          showSeconds: false        
+          showSeconds: false
         });
       });
     </script>    <script>

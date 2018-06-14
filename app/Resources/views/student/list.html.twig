@@ -26,7 +26,6 @@
 		          <tr>
 		              <th>Full Name</th>
 		              <th>Gender</th>
-		              <th>UPI Number</th>
 		              <th>Manage</th>
 		          </tr>
 		          </thead>
@@ -35,7 +34,6 @@
 		          <tr>
 		              <td><a href="{{path('student_profile', {'studentId': student.id})}}">{{student.names}}</a></td>
 		              <td>{{student.gender|capitalize}}</td>
-		              <td>{{student.upiNumber}}</td>        
 					  <td>
 		                  <div class="btn-group">
 		                      {# <a class="btn btn-primary" title="Add Student" href="{{path('choose_class', {'goto': 'new_student'})}}"><i class="icon_plus_alt2"></i></a> #}
@@ -43,7 +41,7 @@
 		                      <a class="btn btn-danger" data-toggle="modal" title="Delete Student" href="#deleteModal{{student.id}}"><i class="icon_close_alt2"></i></a>
 		                      <a class="btn btn-info" title="View Progress" href="{{path('student_profile', {'studentId': student.id})}}"><i class="arrow_carrot-right_alt"></i></a>
 		                  </div>
-		              </td>  
+		              </td>
 		          </tr>
 		      	  {% endfor %}
 		          </tbody>
@@ -75,7 +73,7 @@
 			          </div>
 			      </div>
 			  </div>
-			</div>		    
+			</div>
 		{% endfor %}
 	{% endblock %}
 {% endembed %}
@@ -92,7 +90,7 @@
         $('#dataTables-example').DataTable({
             responsive: true,
             "pageLength": {{entriesPerPage}}
-            
+
         });
     });
     </script>

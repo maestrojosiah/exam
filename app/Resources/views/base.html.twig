@@ -6,18 +6,16 @@
 	    <meta name="description" content="Karmanta - Bootstrap 3 Responsive Admin Template">
 	    <meta name="author" content="GeeksLabs">
 	    <meta name="keyword" content="Exam Pro System">
-	    {# <link rel="shortcut icon" href="{{asset('img/favicon.png"> #}
-
 	    <title>Exam Pro</title>
 
-	    <!-- Bootstrap CSS -->    
+	    <!-- Bootstrap CSS -->
 	    <link href="{{asset('css/bootstrap.min.css')}}" rel="stylesheet">
 	    <!-- bootstrap theme -->
 	    <link href="{{asset('css/bootstrap-theme.css')}}" rel="stylesheet">
 	    <!--external css-->
 	    <!-- font icon -->
 	    <link href="{{asset('css/elegant-icons-style.css')}}" rel="stylesheet" />
-	    <link href="{{asset('assets/font-awesome/css/font-awesome.css')}}" rel="stylesheet" />    
+	    <link href="{{asset('assets/font-awesome/css/font-awesome.css')}}" rel="stylesheet" />
 	    <!-- full calendar css-->
 	    <link href="{{asset('assets/fullcalendar/fullcalendar/bootstrap-fullcalendar.css')}}" rel="stylesheet" />
 	    <!-- easy pie chart-->
@@ -35,7 +33,7 @@
 	      <script src="{{asset('js/html5shiv.js')}}"></script>
 	      <script src="{{asset('js/respond.min.js')}}"></script>
 	      <script src="{{asset('js/lte-ie7.js')}}"></script>
-	    <![endif]-->    	
+	    <![endif]-->
 	    {% block stylesheets %}{% endblock %}
     </head>
 	{% if app.user %}
@@ -88,12 +86,29 @@
     <!-- Notification javascript - notiny -->
     <script src="{{ asset('notiny/notiny.min.js') }}"></script>
     <script src="{{ asset('custom/custom_tour.js') }}"></script>
+    <script>
+    (function( $ ) {
+
+      $.fn.checkFields = function() {
+
+          return this.find('input').each(function() {
+            if($(this).val() == "")
+      			{
+      				$(this).attr('placeholder', 'This Field is Required');
+      				die();
+      			}
+          });
+
+      };
+
+    }( jQuery ));
+    </script>
 	  <script>
 
 	      //knob
 	      $(function() {
 	        $(".knob").knob({
-	          'draw' : function () { 
+	          'draw' : function () {
 	            $(this.i).val(this.cv + '%')
 	          }
 	        })
@@ -117,7 +132,7 @@
 	      });
 
 	  </script>
-	  
+
     {% for message in app.flashes('success') %}
         <script type="text/javascript">
             $.notiny({ text: '{{ message }}',  position: 'left-top' });

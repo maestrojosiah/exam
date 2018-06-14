@@ -18,24 +18,9 @@ class SubjectController extends Controller
 	   	$data = [];
         $user = $this->user();
         $subjects = $this->findby('Subject', 'user', $user);
-        $subject = new Subject();
-        $subject->setUser($user);
-
-        $form = $this->createForm(SubjectType::class, $subject);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $this->save($subject);
-        	$this->addFlash( 'success', 'Subject created successfully!' );
-            $nextAction = $form->get('saveAndAdd')->isClicked()
-                ? 'new_subject'
-                : 'list_subjects';
-            return $this->redirectToRoute($nextAction);
-		} 
-
         $data['subjects'] = $subjects;
         $data['user'] = $user;
-	    return $this->render('subject/create.html.twig',['form' => $form->createView(), 'data' => $data] );
+	    return $this->render('subject/create.html.twig', $data );
     }
 
     /**
@@ -58,24 +43,8 @@ class SubjectController extends Controller
     {
         $data = [];
         $subjects = $this->find('Subject', $subjectId);
-        $form = $this->createForm(SubjectType::class, $subjects);
-        $form->handleRequest($request);
-
-        if($form->isSubmitted() && $form->isValid()) {
-            $form_data = $form->getData();
-            $data['form'] = $form_data;
-            $this->save($form_data);
-            $this->addFlash( 'success', 'Subject edited successfully!' );
-            $nextAction = $form->get('saveAndAdd')->isClicked()
-                ? 'new_subject'
-                : 'list_subjects';
-            return $this->redirectToRoute($nextAction);
-        } else {
-            $form_data['subject_number'] = $subjects->getSTitle();
-            $data['form'] = $form_data;
-        }
         $data['subject'] = $subjects;
-        return $this->render('subject/edit.html.twig', ['form' => $form->createView(), $data,] );
+        return $this->render('subject/edit.html.twig', $data );
     }
 
     /**
@@ -126,14 +95,14 @@ class SubjectController extends Controller
 
     private function save($entity){
         $this->em()->persist($entity);
-        $this->em()->flush();   
-        return true;     
+        $this->em()->flush();
+        return true;
     }
 
     private function delete($entity){
         $this->em()->remove($entity);
-        $this->em()->flush();    
-        return true;    
+        $this->em()->flush();
+        return true;
     }
 
     private function user(){

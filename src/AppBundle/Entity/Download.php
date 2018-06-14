@@ -43,9 +43,9 @@ class Download
     private $link;
 
     /**
-     * @var datetime
+     * @var string
      *
-     * @ORM\Column(name="description", type="datetime", length=255)
+     * @ORM\Column(name="description", type="string", length=255)
      */
     private $description;
 
@@ -161,10 +161,11 @@ class Download
         return $this->user;
     }
 
+
     /**
      * Set description
      *
-     * @param \DateTime $description
+     * @param string $description
      *
      * @return Download
      */
@@ -178,7 +179,7 @@ class Download
     /**
      * Get description
      *
-     * @return \DateTime
+     * @return string
      */
     public function getDescription()
     {

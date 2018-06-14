@@ -17,34 +17,17 @@ class StudentController extends Controller
     {
 
 	   	$data = [];
-        $user = $this->user();
-        $class_id = $request->query->get('classId');
-        $classs = $this->find('Classs', $class_id);
-        $students = $this->findby('Student', 'user', $user);
+      $user = $this->user();
+      $class_id = $request->query->get('classId');
+      $classs = $this->find('Classs', $class_id);
+      $classes = $this->em()->getRepository('AppBundle:Classs')->findBy(array('user' => $user), array('id' => 'ASC'));
+      $students = $this->em()->getRepository('AppBundle:Student')->findBy(array('user' => $user, 'class' => $classs), array('id' => 'ASC'));
+      $data['students'] = $students;
+      $data['user'] = $user;
+      $data['class'] = $classs;
+      $data['classes'] = $classes;
 
-        $student = new Student();
-        $student->setUser($user);
-        $student->setClass($classs);
-        $form = $this->createForm(StudentType::class, $student);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-
-            $this->save($student);
-        	$this->addFlash( 'success', 'Student created successfully!' );
-            if($form->get('saveAndAdd')->isClicked()){
-                return $this->redirectToRoute('new_student', ['classId' => $class_id ]);
-            } else {
-                return $this->redirectToRoute('list_students', ['classId' => $student->getClass()->getId()]);
-            }
-
-		} 
-
-        $data['students'] = $students;
-        $data['user'] = $user;
-        $data['class'] = $classs;
-
-	    return $this->render('student/create.html.twig',['form' => $form->createView(), 'data' => $data] );
+	    return $this->render('student/create.html.twig', $data );
     }
 
     /**
@@ -92,7 +75,7 @@ class StudentController extends Controller
             if(!empty($this_score)){
                 $score_lst[] = $this_score;
             }
-            
+
         }
 
         $data['student'] = $student;
@@ -127,32 +110,8 @@ class StudentController extends Controller
     {
         $data = [];
         $student = $this->find('Student', $studentId);
-        $form = $this->createForm(StudentType::class, $student);
-        $form->handleRequest($request);
-
-        if($form->isSubmitted() && $form->isValid()) {
-
-            $form_data = $form->getData();
-            $data['form'] = $form_data;
-            $class = $form_data->getClass();
-            $class_id = $class->getId();
-            $this->save($form_data);
-            $this->addFlash( 'success', 'Student edited successfully!');
-            if($form->get('saveAndAdd')->isClicked()){
-                return $this->redirectToRoute('new_student', ['classId' => $class_id ]);
-            } else {
-                return $this->redirectToRoute('list_students', ['classId' => $student->getClass()->getId()]);
-            }
-
-        } else {
-            $form_data['student_names'] = $student->getNames();
-            $form_data['student_class'] = $student->getClass();
-            $data['form'] = $form_data;
-        }
-
         $data['student'] = $student;
-
-        return $this->render('student/edit.html.twig', ['form' => $form->createView(), $data,] );
+        return $this->render('student/edit.html.twig', $data );
 
     }
 
@@ -204,14 +163,14 @@ class StudentController extends Controller
 
     private function save($entity){
         $this->em()->persist($entity);
-        $this->em()->flush();   
-        return true;     
+        $this->em()->flush();
+        return true;
     }
 
     private function delete($entity){
         $this->em()->remove($entity);
-        $this->em()->flush();    
-        return true;    
+        $this->em()->flush();
+        return true;
     }
 
     private function user(){

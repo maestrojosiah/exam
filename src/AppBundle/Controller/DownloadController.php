@@ -24,17 +24,17 @@ class DownloadController extends Controller
     		);
     	$data['downloads'] = $downloads;
 
-        return $this->render('AppBundle:Download:my_downloads.html.twig', $data);
+      return $this->render('AppBundle:Download:my_downloads.html.twig', $data);
     }
 
     /**
-     * @Route("/downloads/delete/{$downloadId}", name="delete_download")
+     * @Route("/downloads/delete/{downloadId}", name="delete_download")
      */
     public function deleteAction(Request $request, $downloadId)
     {
     	$download = $this->em()->getRepository('AppBundle:Download')->find($downloadId);
     	$this->delete($download);
-        return $this->render('AppBundle:Download:my_downloads.html.twig', $data);
+        return $this->redirectToRoute('my_downloads');
     }
 
     /**
@@ -66,7 +66,12 @@ class DownloadController extends Controller
     			$active = false;
     			$user->setTokens("0");
     			$this->save($user);
-    		} else {
+    		} else if ($times == 1){
+          $download->setStatus(0);
+          $active = true;
+          $user->setTokens("0");
+    			$this->save($user);
+        } else {
     			$active = true;
     		}
     		if($active == true){
@@ -78,6 +83,7 @@ class DownloadController extends Controller
 		    	$response = new RedirectResponse($url);
 				return $response;
     		} else {
+          $data['active'] = $active;
     			return $this->render('AppBundle:Download:my_downloads.html.twig', $data);
     		}
     	}
@@ -90,8 +96,8 @@ class DownloadController extends Controller
 
     private function save($entity){
         $this->em()->persist($entity);
-        $this->em()->flush();        
-    } 
+        $this->em()->flush();
+    }
 
     private function user(){
         $user = $this->container->get('security.token_storage')->getToken()->getUser();
@@ -100,8 +106,8 @@ class DownloadController extends Controller
 
     private function delete($entity){
         $this->em()->remove($entity);
-        $this->em()->flush();    
-        return true;    
+        $this->em()->flush();
+        return true;
     }
 
 }

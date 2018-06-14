@@ -17,6 +17,7 @@ class UploadController extends Controller
      * @Route("/upload", name="students_upload")
      */
     public function uploadAction(Request $request){
+        ini_set('memory_limit', '-1');
         $data = [];
         $upload = new Upload();
         $class_id = $request->query->get('classId');
@@ -37,10 +38,10 @@ class UploadController extends Controller
                 $this->save($upload);
                 return $this->redirectToRoute('list_students', ['classId' => $class_id]);
             } else {
-                $this->addFlash('error', "There is nothing in that excel file. Please add students with column A: name, column B: gender, column C: UPI number");
+                $this->addFlash('error', "There is nothing in that excel file. Please add students with column A: name, column B: gender");
                 return $this->redirectToRoute('students_upload');
             }
-            
+
         }
 
         return $this->render('upload/upload.html.twig', [
@@ -81,7 +82,7 @@ class UploadController extends Controller
 		    	if($cell->getValue() != NULL && $cell->getValue() != ""){
 		    		$col[] = $cell->getValue();
 		    	}
-		    	
+
 		    }
 
 		    $rows[] = $col;
@@ -94,11 +95,10 @@ class UploadController extends Controller
     private function addToDatabase($rows, $class){
     	if(isset($rows[0][0]) ){
             foreach($rows as $row){
-        		$contact = new Student;	
+        		$contact = new Student;
         		$contact->setNames($row[0]);
         		$contact->setGender($row[1]);
         		$contact->setClass($class);
-        		$contact->setUpiNumber($row[2]);
         		$contact->setUser($this->user());
         		$this->save($contact);
     	    }
@@ -115,8 +115,8 @@ class UploadController extends Controller
 
     private function save($entity){
         $this->em()->persist($entity);
-        $this->em()->flush();        
-    } 
+        $this->em()->flush();
+    }
 
     private function find($entity, $id){
         $entity = $this->em()->getRepository("AppBundle:$entity")->find($id);

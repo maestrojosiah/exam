@@ -1,8 +1,8 @@
 {% extends 'base.html.twig' %}
 {% block body %}
 <body>
-{{ include('templates/header.html.twig') }}        		
-{{ include('templates/aside.html.twig') }}        		
+{{ include('templates/header.html.twig') }}
+{{ include('templates/aside.html.twig') }}
 {% embed "templates/content_draft.html.twig" %}
 	{% block content %}
 	<div id="page-wrapper">
@@ -12,7 +12,7 @@
 	    <div class="col-lg-12">
 	        <div class="panel panel-default">
 	            <div class="panel-heading">
-	                <p>Upload from Excel (.xls / .xlsx) file. Format: Column A: Name, Column B: gender, Column C: UPI No; Example: <a href="{{path('download_file')}}">/web/excelFiles/example.xlsx</a></p>
+	                <p>Upload from Excel (.xls / .xlsx) file. Format: Column A: Name, Column B: gender; Example: <a href="{{path('download_file')}}">/web/excelFiles/example.xlsx</a></p>
 	            </div>
 	            <div class="panel-body">
 	                <div class="row">

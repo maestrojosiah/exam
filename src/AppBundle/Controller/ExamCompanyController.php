@@ -21,32 +21,12 @@ class ExamCompanyController extends Controller
         $examCompanies = $this->findby('ExamCompany', 'user', $user);
         $class_id = $request->query->get('classId');
         $classs = $this->find('Classs', $class_id);
-
-        $examCompany = new ExamCompany();
-        $examCompany->setUser($user);
-        $examCompany->setClass($classs);
-
-        $form = $this->createForm(ExamCompanyType::class, $examCompany);
-        $form->handleRequest($request);
-        if ($form->isSubmitted() && $form->isValid()) {
-
-            $this->save($examCompany);
-        	$this->addFlash( 'success', 'ExamCompany created successfully!' );
-            if($form->get('saveAndAdd')->isClicked()){
-                return $this->redirectToRoute('new_examCompany', ['classId' => $class_id ]);
-            } else {
-                return $this->redirectToRoute('list_examCompanies', ['classId' => $class_id]);
-            }
-
-            return $this->redirectToRoute($nextAction);
-		} 
-
         $data['examCompanies'] = $examCompanies;
         $data['class'] = $classs;
         $data['user'] = $user;
 
-	    return $this->render('examCompany/create.html.twig',['form' => $form->createView(), 'data' => $data] );
-    
+	    return $this->render('examCompany/create.html.twig', $data );
+
     }
 
     /**
@@ -86,28 +66,8 @@ class ExamCompanyController extends Controller
     {
         $data = [];
         $examCompany = $this->find('ExamCompany', $examCompanyId);
-        $form = $this->createForm(ExamCompanyType::class, $examCompany);
-        $form->handleRequest($request);
-        if($form->isSubmitted() && $form->isValid()) {
-
-            $form_data = $form->getData();
-            $data['form'] = $form_data;
-            $this->save($form_data);
-            $this->addFlash( 'success', 'ExamCompany edited successfully!' );
-            $nextAction = $form->get('saveAndAdd')->isClicked()
-                ? 'new_examCompany'
-                : 'list_examCompanies';
-            return $this->redirectToRoute($nextAction, ['classId' => $examCompany->getClass()->getId()]);
-
-        } else {
-            $form_data['exam_company_c_title'] = $examCompany->getCTitle();
-            $form_data['exam_company_class'] = $examCompany->getClass();
-            $data['form'] = $form_data;
-        }
-
         $data['examCompany'] = $examCompany;
-
-        return $this->render('examCompany/edit.html.twig', ['form' => $form->createView(), 'data' =>$data,] );
+        return $this->render('examCompany/edit.html.twig', $data );
     }
 
     /**
@@ -160,14 +120,14 @@ class ExamCompanyController extends Controller
 
     private function save($entity){
         $this->em()->persist($entity);
-        $this->em()->flush();   
-        return true;     
+        $this->em()->flush();
+        return true;
     }
 
     private function delete($entity){
         $this->em()->remove($entity);
-        $this->em()->flush();    
-        return true;    
+        $this->em()->flush();
+        return true;
     }
 
     private function user(){

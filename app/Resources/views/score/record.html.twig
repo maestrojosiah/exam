@@ -22,6 +22,7 @@
               <a href="{{path('record_summary', {'classId': exam.class.id, 'companyId': exam.id})}}" class="btn btn-primary">Class Report Summary</a>
               <a {% if app.user.tokens < 1 %} href="#" {% else %} href="{{path('report_forms', {'classId': exam.class.id, 'companyId': exam.id})}}" {% endif %} class="btn btn-primary">Report Forms</a>
               <a href="{{path('empty_print', {'classId': exam.class.id, 'companyId': exam.id})}}" class="btn btn-primary">Empty Form</a>
+							<button class="btn btn-primary save_everything">SAVE CHANGES</button>
             </header>
             {% set parents = [] %}
             {% for childSubject in childSubjects %}
@@ -29,7 +30,7 @@
                 {% set parents = parents|merge([childSubject.subject.sTitle]) %}
               {% endif %}
             {% endfor %}
-            <table class="table table-striped table-advance table-hover">
+            <table id="record_table" class="table table-striped table-advance table-hover">
              <tbody>
                 <tr>
                   <th class="col-md-3">Name</th>
@@ -60,6 +61,7 @@
               {% endfor %}
              </tbody>
           </table>
+					<button class="btn btn-primary btn-block btn-lg save_everything" type="button">SAVE CHANGES</button>
         </section>
       </div>
 
@@ -69,98 +71,58 @@
 {% endembed %}
 {% endblock %}
 {% block javascripts %}
-
 <script>
-  $(document).on('keyup', '[id^="subject|"]', function(){
-
-      var id = jQuery(this).attr("id");
-      var fields = id.split('_');
-      var subject = fields[0].split('|')[1];
-      var user = fields[1].split('|')[1];
-      var student = fields[2].split('|')[1];
-      var exam = fields[3].split('|')[1];
-      var classs = fields[4].split('|')[1];
-			if($(this).val() == ""){
-				var marks = 0;
-			} else {
-				var marks = $(this).val();
-			}
-
-      // console.log('subject_id: ' + subject_id + ' student_id: ' + student_id);
-			$('#score_show').html('<button type="button" class="btn btn-warning btn-lg">Please Wait</button>');
-
-      $.ajax({
-          url:'{{ (path('record_exam_ajax')) }}',
-          type: "POST",
-          dataType: "json",
-          data: {
-              "subject_id": subject,
-              "student_id": student,
-              "marks": marks,
-              "user": user,
-              "exam": exam,
-              "class": classs,
-          },
-          async: true,
-          success: function (data)
-          {
-						$('#score_show').html('<button type="button" class="btn btn-default btn-outline btn-lg">Recorded <span class="text-danger">' + data.marks + '</span></button> ');
-          },
-         error: function (xhr, status, error) {
-					 console.log("status: " + status);
-            $('#alert').removeClass('alert-info').addClass('alert-warning');
-            $('#alert').html("Something went wrong. Make sure you are typing only numbers and that the values are valid. Please call 0705285959 for assistance");
-        }
-      });
+  $(document).on('click', '.save_everything', function(){
+		var list = new Array();
+		$('#record_table').find('input').each(function()
+		{
+			var str = $(this).attr("id")+"_"+$(this).val()
+			list.push(str);
+		});
+		$('.save_everything').html('Please Wait... ');
+		console.log(list.length);
+		$.ajax({
+        url:'{{ (path('save_all_entries')) }}',
+        type: "POST",
+        dataType: "json",
+        data: {
+            "list": JSON.stringify(list),
+						"class": {{class.id}},
+						"exam": {{exam.id}},
+        },
+        async: true,
+        success: function (data)
+        {
+					console.log(data);
+					$('.save_everything').html('SAVED').removeClass('btn-primary').addClass('btn-success');
+        },
+	      error: function (xhr, status, error) {
+					console.log('error');
+	      }
+    });
 
   });
 </script>
 <script>
-  $(document).on('keyup', '[id^="cSubject|"]', function(){
-
-      var id = jQuery(this).attr("id");
-      var fields = id.split('_');
-      var cSubject = fields[0].split('|')[1];
-      var user = fields[1].split('|')[1];
-      var student = fields[2].split('|')[1];
-      var exam = fields[3].split('|')[1];
-      var classs = fields[4].split('|')[1];
-			if($(this).val() == ""){
-				var marks = 0;
-			} else {
-				var marks = $(this).val();
-			}
-
-      // console.log('subject_id: ' + subject_id + ' student_id: ' + student_id);
-			$('#score_show').html('<button type="button" class="btn btn-warning btn-lg">Please Wait</button>');
-      $.ajax({
-          url:'{{ (path('record_exam_ajax_child')) }}',
-          type: "POST",
-          dataType: "json",
-          data: {
-              "c_subject_id": cSubject,
-              "student_id": student,
-              "marks": marks,
-              "user": user,
-              "exam": exam,
-              "class": classs,
-          },
-          async: true,
-          success: function (data)
-          {
-						$('#score_show').html('<button type="button" class="btn btn-default btn-outline btn-lg">Recorded <span class="text-danger">' + data.marks + '</span></button> ');
-            console.log(data.uniqueId)
-            $(data.uniqueId).text(data.percentage);
-          },
-         error: function () {
-            $('#alert').removeClass('alert-info').addClass('alert-warning');
-            $('#alert').html("Something went wrong. Make sure you are typing only numbers and that the values are valid. Please call 0705285959 for assistance");
-        }
-      });
-
-  });
+$(document).on('keyup', '[id^="subject|"]',function (e){
+		var key = e.which;
+		if(key == 13){
+			 $(".save_everything").click();
+			 e.preventDefault();
+		 } else {
+			 $('.save_everything').html('SAVE CHANGES').removeClass('btn-success').addClass('btn-primary');
+		 }
+	});
+$(document).on('keyup', '[id^="cSubject|"]',function (e){
+		var key = e.which;
+		if(key == 13){
+			 $(".save_everything").click();
+			 e.preventDefault();
+		 } else {
+			 $('.save_everything').html('SAVE CHANGES').removeClass('btn-success').addClass('btn-primary');
+		 }
+	});
 </script>
-
 <script>
 $(document).on('keyup', '[id^="subject|"]',function (e){
     var id = jQuery(this).attr("id");
@@ -205,46 +167,6 @@ $(document).on('keyup', '[id^="subject|"]',function (e){
         }
       });
     }
-    if(e.keyCode == 37){
-        $.ajax({
-          url:'{{ (path('move_cursor')) }}',
-          type: "POST",
-          dataType: "json",
-          data: {
-              "id": id,
-              "direction": 'left'
-          },
-          async: true,
-          success: function (data)
-          {
-            console.log(data)
-            $(".s_"+data).focus();
-          },
-         error: function () {
-          console.log("something's wrong")
-        }
-      });
-      }
-    if(e.keyCode == 39){
-        $.ajax({
-          url:'{{ (path('move_cursor')) }}',
-          type: "POST",
-          dataType: "json",
-          data: {
-              "id": id,
-              "direction": 'right'
-          },
-          async: true,
-          success: function (data)
-          {
-            console.log(data)
-            $(".s_"+data).focus();
-          },
-         error: function () {
-          console.log("something's wrong")
-        }
-      });
-      }
 });
 </script>
 
@@ -292,46 +214,11 @@ $(document).on('keyup', '[id^="cSubject|"]',function (e){
         }
       });
     }
-    if(e.keyCode == 37){
-        $.ajax({
-          url:'{{ (path('move_cursor_child')) }}',
-          type: "POST",
-          dataType: "json",
-          data: {
-              "id": id,
-              "direction": 'left'
-          },
-          async: true,
-          success: function (data)
-          {
-            console.log(data)
-            $(".c_"+data).focus();
-          },
-         error: function () {
-          console.log("something's wrong")
-        }
-      });
-      }
-    if(e.keyCode == 39){
-        $.ajax({
-          url:'{{ (path('move_cursor_child')) }}',
-          type: "POST",
-          dataType: "json",
-          data: {
-              "id": id,
-              "direction": 'right'
-          },
-          async: true,
-          success: function (data)
-          {
-            console.log(data)
-            $(".c_"+data).focus();
-          },
-         error: function () {
-          console.log("something's wrong")
-        }
-      });
-      }
+});
+</script>
+<script>
+$(document).ready(function() {
+    $("input:text").focus(function() { $(this).select(); } );
 });
 </script>
 

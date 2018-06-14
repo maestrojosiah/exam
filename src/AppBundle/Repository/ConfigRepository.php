@@ -10,7 +10,13 @@ namespace AppBundle\Repository;
  */
 class ConfigRepository extends \Doctrine\ORM\EntityRepository
 {
-    public function settingsForThisUser($user)
+
+  public function findAll()
+  {
+      return $this->findBy(array(), array('schName' => 'ASC'));
+  }
+
+  public function settingsForThisUser($user)
     {
         return $this->createQueryBuilder('s')
             ->select('s')
@@ -19,5 +25,5 @@ class ConfigRepository extends \Doctrine\ORM\EntityRepository
             ->setMaxResults(1)
             ->getQuery()
             ->getOneOrNullResult();
-    }	
+    }
 }
