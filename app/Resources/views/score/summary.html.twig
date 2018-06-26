@@ -63,7 +63,7 @@
                 </tr>
 								{% set break = false %}
                 {% for key, item in sum if not break %}
-								{% if app.user.tokens < 1 and loop.index == 3 %}
+								{% if download == null and loop.index == 3 %}
 									{% set break = true %}
 								{% endif %}
                 <tr>
@@ -91,7 +91,7 @@
                 </tr>
                 {% endfor %}
               <tr>
-                {% if app.user.tokens < 1 %}
+                {% if download == null %}
                   <tr>
                   <td colspan="{{span}}">
                     <div class="col-lg-12 text-center" style="background-color:white; font-size:15px;">
@@ -194,6 +194,7 @@
 
       var code = $("#code_input").val();
       var link = "{{class.id}}/{{exam.id}}";
+      var exam_id = "{{exam.id}}";
       var desc = "{{exam.cTitle}} [ Class {{class.cTitle}} ]";
 
 			$('#check_code').html('Please Wait... ');
@@ -205,6 +206,7 @@
               "code": code,
               "link": link,
               "desc": desc,
+              "exam_id": exam_id,
           },
           async: true,
           success: function (data)

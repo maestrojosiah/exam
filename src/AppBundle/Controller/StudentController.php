@@ -52,7 +52,7 @@ class StudentController extends Controller
     {
         $user = $this->user();
         $student = $this->find('Student', $studentId);
-        $examCompanies = $this->findby('ExamCompany', 'user', $user);
+        $examCompanies = $this->findandlimit('ExamCompany', 'user', $user, 5, 'DESC');
         $scores = $this->findbyand('Score', 'user', $user, 'student', $student);
         $exams = [];
         $score_lst = [];

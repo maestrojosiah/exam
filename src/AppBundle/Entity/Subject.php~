@@ -36,7 +36,7 @@ class Subject
     private $user;
 
     /**
-     * @ORM\OneToMany(targetEntity="ChildSubject", mappedBy="subject")
+     * @ORM\OneToMany(targetEntity="ChildSubject", mappedBy="subject", fetch="EAGER")
      */
     private $childSubjects;
 
@@ -62,7 +62,7 @@ class Subject
     public function __toString() {
         return $this->sTitle;
     }
-    
+
 
     /**
      * Get id

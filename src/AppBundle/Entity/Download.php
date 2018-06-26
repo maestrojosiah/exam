@@ -54,6 +54,12 @@ class Download
      * @ORM\JoinColumn(name="user_id", referencedColumnName="id", onDelete="CASCADE")
      */
     private $user;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="ExamCompany", inversedBy="downloads")
+     * @ORM\JoinColumn(name="exam_id", referencedColumnName="id", onDelete="CASCADE")
+     */
+    private $exam;
     /**
      * Get id
      *
@@ -184,5 +190,29 @@ class Download
     public function getDescription()
     {
         return $this->description;
+    }
+
+    /**
+     * Set exam
+     *
+     * @param \AppBundle\Entity\ExamCompany $exam
+     *
+     * @return Download
+     */
+    public function setExam(\AppBundle\Entity\ExamCompany $exam = null)
+    {
+        $this->exam = $exam;
+
+        return $this;
+    }
+
+    /**
+     * Get exam
+     *
+     * @return \AppBundle\Entity\ExamCompany
+     */
+    public function getExam()
+    {
+        return $this->exam;
     }
 }

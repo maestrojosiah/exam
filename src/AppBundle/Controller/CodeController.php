@@ -57,7 +57,9 @@ class CodeController extends Controller
         $code = $request->request->get('code');
         $link = $request->request->get('link');
         $desc = $request->request->get('desc');
+        $exam_id = $request->request->get('exam_id');
         $code_exists = $this->em()->getRepository('AppBundle:Code')->findByRandomCode($code);
+        $exam = $this->em()->getRepository('AppBundle:ExamCompany')->find($exam_id);
         $virgin_code_exists = $this->em()->getRepository('AppBundle:Code')
           ->findOneBy(
                 array('randomCode' => $code, 'status' => 'virgin'),
@@ -78,6 +80,7 @@ class CodeController extends Controller
                 $download->setLink($link);
                 $download->setUser($user);
                 $download->setDescription($desc);
+                $download->setExam($exam);
                 $this->save($download);
                 $message = "Oh! thanks for purchasing the cup of tea for me. You now have $added_token active token(s). I feel encouraged :)";
             } else {

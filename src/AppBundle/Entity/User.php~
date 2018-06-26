@@ -97,7 +97,7 @@ class User implements AdvancedUserInterface, \Serializable
     private $childSubjects;
 
     /**
-     * @ORM\OneToMany(targetEntity="Config", mappedBy="user")
+     * @ORM\OneToMany(targetEntity="Config", mappedBy="user", fetch="EAGER")
      */
     private $configs;
 
@@ -131,14 +131,14 @@ class User implements AdvancedUserInterface, \Serializable
     {
         $this->active = true;
         $this->tokens = 0;
-        $this->configs = new \Doctrine\Common\Collections\ArrayCollection();    
-        $this->examCompanies = new \Doctrine\Common\Collections\ArrayCollection();    
-        $this->students = new \Doctrine\Common\Collections\ArrayCollection();    
-        $this->childSubjects = new \Doctrine\Common\Collections\ArrayCollection();    
-        $this->classes = new \Doctrine\Common\Collections\ArrayCollection();    
-        $this->scores = new \Doctrine\Common\Collections\ArrayCollection();    
-        $this->subjects = new \Doctrine\Common\Collections\ArrayCollection();    
-        $this->downloads = new \Doctrine\Common\Collections\ArrayCollection();    
+        $this->configs = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->examCompanies = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->students = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->childSubjects = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->classes = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->scores = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->subjects = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->downloads = new \Doctrine\Common\Collections\ArrayCollection();
     }
     /**
      * Get id
@@ -228,7 +228,7 @@ class User implements AdvancedUserInterface, \Serializable
 
         return $this;
     }
-    
+
     public function getPlainPassword()
     {
         return $this->plainPassword;
@@ -363,7 +363,7 @@ class User implements AdvancedUserInterface, \Serializable
     public function isEnabled()
     {
         return $this->active;
-    }    
+    }
 
     /**
      * Add subject
