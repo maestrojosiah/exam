@@ -61,7 +61,11 @@
                   <th>Total</th>
                   <th>Position</th>
                 </tr>
-                {% for key, item in sum %}
+								{% set break = false %}
+                {% for key, item in sum if not break %}
+								{% if app.user.tokens < 1 and loop.index == 3 %}
+									{% set break = true %}
+								{% endif %}
                 <tr>
                 	<td style="text-nowrap; white-space: nowrap; font-weight:bold; color:black;">{{item[2].names|title}}</td>
                     {% for subject in subjects %}
@@ -192,6 +196,7 @@
       var link = "{{class.id}}/{{exam.id}}";
       var desc = "{{exam.cTitle}} [ Class {{class.cTitle}} ]";
 
+			$('#check_code').html('Please Wait... ');
       $.ajax({
           url:'{{ (path('check_code_validity')) }}',
           type: "POST",
@@ -209,9 +214,11 @@
               $("#success").text(data.message);
               $("#code_input").val("");
               window.location.href = data.address;
+							$('#check_code').html('Nice!');
             } else {
               $("#success").text("");
               $("#error").text(data.message);
+							$('#check_code').html('Oops!');
             }
             console.log(data);
           },

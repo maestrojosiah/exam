@@ -42,7 +42,7 @@ class ExamCompany
     private $class;
 
     /**
-     * @ORM\OneToMany(targetEntity="Score", mappedBy="examCompany")
+     * @ORM\OneToMany(targetEntity="Score", mappedBy="examCompany", fetch="EAGER")
      */
     private $scores;
 

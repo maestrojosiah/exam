@@ -15,15 +15,7 @@ class ClasssController extends Controller
      */
     public function createAction(Request $request)
     {
-
-	   	$data = [];
-      $user = $user = $this->user();
-      $classes = $this->findby('Classs', 'user', $user);
-      $data['classes'] = $classes;
-      $data['user'] = $user;
-
-
-	    return $this->render('class/create.html.twig', $data );
+	    return $this->render('class/create.html.twig' );
 
     }
 

@@ -64,7 +64,7 @@
                             <i class="icon_document_alt"></i>
                         </div>
                         <div class="value">
-                            <h1>{{countExams[0][1]}}</h1>
+                            <h1>{{app.user.examCompanies|length}}</h1>
                             <p> Exams</p>
                         </div>
                     </section>
@@ -75,7 +75,7 @@
                             <i class="icon_lightbulb_alt"></i>
                         </div>
                         <div class="value">
-                            <h1>{{countClasses}}</h1>
+                            <h1>{{app.user.classes|length}}</h1>
                             <p> Classes</p>
                         </div>
                     </section>
@@ -86,7 +86,7 @@
                             <i class="icon_documents_alt"></i>
                         </div>
                         <div class="value">
-                            <h1>{{countSubjects}}</h1>
+                            <h1>{{app.user.subjects|length}}</h1>
                             <p> Subjects</p>
                         </div>
                     </section>
@@ -97,7 +97,7 @@
                             <i class="icon_group"></i>
                         </div>
                         <div class="value">
-                            <h1>{{countStudents}}</h1>
+                            <h1>{{app.user.students|length}}</h1>
                             <p> Students</p>
                         </div>
                     </section>
@@ -108,33 +108,35 @@
                       <div class="panel">
                           <div class="panel-body">
                                 <ul class="summary-list">
-                                {% if score_list is defined and score_list is not empty %}
-                                  {% for list_item in score_list %}
-                                    {% if list_item[0][1] is defined and list_item[0][1] is not empty %}
-                                      {% set no_of_students = list_item[0][1].students|length %}
+                                {% if app.user.examCompanies is defined and app.user.examCompanies is not empty %}
+                                {% set continue = true %}
+                                  {% for exam_company in app.user.examCompanies|sort|reverse if continue == true %}
+                                    {% if exam_company.class is defined and exam_company.class is not empty %}
+                                      {% set no_of_students = exam_company.class.students|length %}
                                       {% set no_of_subjects = app.user.subjects|length %}
-                                        {% set no_of_items = 0 %}
-                                        {% for item in list_item %}
-                                          {% if item[0].marks is defined and item[0].marks > 0 %}
-                                            {% set no_of_items = no_of_items + 1 %}
-                                            {% endif %}
+                                        {% set no_of_scores = 0 %}
+                                        {% for score in exam_company.scores %}
+                                          {% if score.marks is defined and score.marks > 0 %}
+                                            {% set no_of_scores = no_of_scores + 1 %}
+                                          {% endif %}
                                         {% endfor %}
-                                        {% if list_item[0][1].students|length > 0 %}
-                                          {% set percentage = (no_of_items / (no_of_students * no_of_subjects)) * 100 %}
+                                        {% if app.user.students|length > 0 %}
+                                          {% set percentage = (no_of_scores / (no_of_students * no_of_subjects)) * 100 %}
                                         {% else %}
                                           {% set percentage = 0 %}
                                         {% endif %}
                                         <li>
-                                            <a href="{{path('record_scores', {'classId': list_item[0][1].id, 'companyId':list_item[0][2].id})}}">
+                                          {% if loop.index == 5 %} {% set continue = false %} {% endif %}
+                                            <a href="{{path('record_scores', {'classId': exam_company.class.id, 'companyId':exam_company.id})}}">
                                                 <input class="knob" data-readonly="true" data-width="80" data-height="80" data-displayPrevious=true  data-thickness=".1" value="{{percentage|round}}" data-fgColor="#007AFF" data-bgColor="#F7F7F7">
-                                                <p>{{list_item[0][2].cTitle}}<br />[{{list_item[0][2].class.cTitle}}]</p>
+                                                <p>{{exam_company.cTitle}}<br />[{{exam_company.class.cTitle}}]</p>
                                             </a>
                                         </li>
                                     {% else %}
                                         <li>
-                                            <a href="{{path('record_scores', {'classId': examCompanies|first.class.id, 'companyId': examCompanies|first.id})}}">
+                                            <a href="{{path('record_scores', {'classId': app.user.examCompanies|first.class.id, 'companyId': app.user.examCompanies|first.id})}}">
                                                 <input class="knob" data-readonly="true" data-width="80" data-height="80" data-displayPrevious=true  data-thickness=".1" value="0" data-fgColor="#007AFF" data-bgColor="#F7F7F7">
-                                                <p>{{examCompanies|first.cTitle}}</p>
+                                                <p>{{app.user.examCompanies|first.cTitle}}</p>
                                             </a>
                                         </li>
                                     {% endif %}
@@ -144,7 +146,7 @@
                                     <h4>Its lonely here! You can add some exams after you're done with adding <a href="{{path('new_class')}}">classes</a>, <a href="{{path('new_subject')}}">subjects</a> and <a id="add_student" href="{{path('choose_class', {'goto': 'new_student'})}}" style="background-color:white;"> students </a>.</h4>
                                   </div>
                                 {% endif %}
-                                {% if score_list|length < 5 %}
+                                {% if app.user.examCompanies|length < 5 %}
                                   <li>
                                     <a id="add_exam" href="{{path('choose_class_exam', {'goto': 'new_examCompany'})}}" class="btn btn-default " style="padding:10px!important; margin-bottom:10px; color:black;"> Add New Exam </a>
                                   </li>
@@ -212,7 +214,9 @@
                     {% if app.user.classes is not empty %}
                     <table class="table table-hover personal-task">
                         <tbody>
-                        {% for class in classes %}
+                        {% set add_class = true %}
+                        {% for class in app.user.classes if add_class == true %}
+                        {% if loop.index == 15 %}{% set add_class = false %}{% endif %}
                           <tr>
                               <td>{{class.cTitle}}</td>
                               <td>
@@ -253,7 +257,8 @@
           showSeconds: false
         });
       });
-    </script>    <script>
+    </script>
+    <script>
       $( "#class_box" ).click(function() {
         $("#class_menu").click();
       });

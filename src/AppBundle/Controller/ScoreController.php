@@ -513,12 +513,14 @@ class ScoreController extends Controller
         list($data['students'], $data['class'], $data['scores'], $data['childSubjects'], $data['student_list'])  = [$students, $class, $scores, $childSubjects, $student_list];
         list($data['subject_list'], $data['c_subject_list'], $data['child_score_entries'], $data['sum'], $data['sum_sub'])   = [$subject_list, $c_subject_list, $child_score_entries, $this->rank($sum), $this->rank_sub($sum_sub)];
 
+        // return $this->render('pdf/report.html.twig', $data);
+
         $html = $this->renderView('pdf/report.html.twig', $data);
 
         $filename = sprintf("exam-%s.pdf", date('Ymd~his'));
 
         return new Response(
-            $this->get('knp_snappy.pdf')->getOutputFromHtml($html, array('orientation'=>'Portrait')),
+            $this->get('knp_snappy.pdf')->getOutputFromHtml($html, array('orientation'=>'Landscape')),
             200,
             [
                 'Content-Type'        => 'application/pdf',
@@ -645,12 +647,7 @@ class ScoreController extends Controller
         $sum = [];
         $student_list = [];
         $user = $this->user();
-        $count = 0;
-        if($user->getTokens() < $this->enoughTokens){
-            $limit_students = 3;
-        }
         foreach($students as $student){
-            $count ++;
             $all_subjects_for_this_student = [];
             $all_subjects_for_this_student_total = [];
             foreach($scores as $score){
@@ -661,9 +658,6 @@ class ScoreController extends Controller
             }
             $sum[$student->getId()] = array_sum($all_subjects_for_this_student_total);
             $student_list[$student->getId()] = $all_subjects_for_this_student;
-            if(isset($limit_students) && $count == 3){
-                break;
-            }
         }
         return [$student_list, $sum];
     }

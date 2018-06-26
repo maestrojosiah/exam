@@ -18,52 +18,50 @@ class ConfigController extends Controller
      */
     public function setAction(Request $request)
     {
-		$data = [];
-        $user = $this->container->get('security.token_storage')->getToken()->getUser();
-        $data['user'] = $user;
+      ini_set('memory_limit', '-1');
+	    $data = [];
+      $user = $this->container->get('security.token_storage')->getToken()->getUser();
+      $data['user'] = $user;
 
-        $em = $this->getDoctrine()->getManager();
+      $em = $this->getDoctrine()->getManager();
 
-        $thisUser = $em->getRepository('AppBundle:Config')
-        	->settingsForThisUser($user);
+      $thisUser = $em->getRepository('AppBundle:Config')
+      	->settingsForThisUser($user);
 
 
-        if($thisUser){
-        	$config = $thisUser;
-          $originalName = $thisUser->getLetterHead();
-        } else {
-        	$config = new Config();
-        }
+      if($thisUser){
+      	$config = $thisUser;
+        $originalName = $thisUser->getLetterHead();
+      } else {
+      	$config = new Config();
+      }
 
-        $config->setUser($user);
-        $form = $this->createForm(ConfigType::class, $config);
+      $config->setUser($user);
+      $form = $this->createForm(ConfigType::class, $config);
 
-        $form->handleRequest($request);
-        if ($form->isSubmitted() && $form->isValid()) {
-            $letterhead = $form->get('letterhead')->getData();
-            if($letterhead){
-                $originalName = $user->getId()."_logo".'.'.$letterhead->guessExtension();;
-                $filepath = $this->get('kernel')->getProjectDir()."/web/img/";
-                $letterhead->move($filepath, $originalName);
-                $config->setLetterhead($originalName);
-            }
+      $form->handleRequest($request);
+      if ($form->isSubmitted() && $form->isValid()) {
+          $letterhead = $form->get('letterhead')->getData();
+          if($letterhead){
+              $originalName = $user->getId()."_logo".'.'.$letterhead->guessExtension();;
+              $filepath = $this->get('kernel')->getProjectDir()."/web/img/";
+              $letterhead->move($filepath, $originalName);
+              $config->setLetterhead($originalName);
+          }
 
-            $em = $this->getDoctrine()->getManager();
+          $em = $this->getDoctrine()->getManager();
 
-            $config->setUser($user);
+          $config->setUser($user);
 
-            $em->persist($config);
-            $em->flush();
+          $em->persist($config);
+          $em->flush();
 
-        	$this->addFlash(
-	            'success',
-	            'You\'re ok now. Start working!'
-        	);
+      	$this->addFlash(
+            'success',
+            'Settings saved!'
+      	);
 
-            // ... do any other work - like sending them an email, etc
-            // maybe set a "flash" success message for the user
-
-            return $this->redirectToRoute('homepage');
+        return $this->redirectToRoute('homepage');
 		} else {
 			$form_data['sch_name'] = $config->getSchName();
 			$form_data['address'] = $config->getAddress();
@@ -103,6 +101,7 @@ class ConfigController extends Controller
      */
     public function importAction(Request $request)
     {
+      ini_set('memory_limit', '-1');
         $setting_id = $request->request->get('setting_id');
         $setting = $this->em()->getRepository('AppBundle:Config')->find($setting_id);
         $this_user = $this->user();
@@ -144,7 +143,6 @@ class ConfigController extends Controller
             $student = new Student();
             $student->setNames($sel_usr_student->getNames());
             $student->setGender($sel_usr_student->getGender());
-            $student->setUpiNumber($sel_usr_student->getUpiNumber());
             $student->setUser($this_user);
             $student->setClass($new_class);
             $this->save($student);

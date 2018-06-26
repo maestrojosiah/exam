@@ -35,9 +35,14 @@
 		          {% for download in downloads %}
 			      {% set classId = download.link|split("/")[0] %}
 			      {% set examId = download.link|split("/")[1] %}
+			      {% if download.times > 0 %}
+				      {% set times_rem = download.times - 1 %}
+				  {% else %}
+				      {% set times_rem = download.times %}
+			      {% endif %}
 		          <tr>
 		              <td style="white-space: nowrap;">{{download.description}}</td>
-		              <td style="white-space: nowrap;">{{download.times}}</td>
+		              <td style="white-space: nowrap;">{{times_rem}}</td>
 		              <td style="white-space: nowrap;">{{ download.status ? 'Active':'Inactive' }}</td>
 					  <td>
 		                  <div class="btn-group">

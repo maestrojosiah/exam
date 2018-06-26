@@ -53,7 +53,7 @@ class Classs
     private $scoreChildren;
 
     /**
-     * @ORM\OneToMany(targetEntity="Student", mappedBy="class")
+     * @ORM\OneToMany(targetEntity="Student", mappedBy="class", fetch="EAGER")
      */
     private $students;
 
@@ -65,7 +65,7 @@ class Classs
     public function __toString() {
         return $this->cTitle;
     }
-    
+
     /**
      * Constructor
      */

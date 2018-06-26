@@ -73,7 +73,7 @@ class CodeController extends Controller
                 $virgin_code_exists->setStatus("used");
                 $this->save($virgin_code_exists);
                 $download = new Download();
-                $download->setTimes("3");
+                $download->setTimes("4");
                 $download->setStatus(1);
                 $download->setLink($link);
                 $download->setUser($user);

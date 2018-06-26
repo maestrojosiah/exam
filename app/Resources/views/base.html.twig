@@ -3,8 +3,8 @@
     <head>
 	    <meta charset="utf-8">
 	    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-	    <meta name="description" content="Karmanta - Bootstrap 3 Responsive Admin Template">
-	    <meta name="author" content="GeeksLabs">
+	    <meta name="description" content="Make your exam recording for Primary Schools easy.">
+	    <meta name="author" content="Myle-Post Solutions">
 	    <meta name="keyword" content="Exam Pro System">
 	    <title>Exam Pro</title>
 
@@ -36,17 +36,17 @@
 	    <![endif]-->
 	    {% block stylesheets %}{% endblock %}
     </head>
-	{% if app.user %}
+	{% if app.user and app.request.get('_route') == 'homepage' and app.user.configs|first.tourGuide == 'on' %}
 	{% set classes_length = app.user.classes|length %}
 	{% set subjects_length = app.user.subjects|length %}
 	{% set child_subjects_length = app.user.childSubjects|length %}
 	{% set students_length = app.user.students|length %}
 	{% set exams_length = app.user.examCompanies|length %}
 	{% set scores_length = app.user.scores|length %}
-    {% if classes_length > 0 and subjects_length > 0 and child_subjects_length > 0
-		and students_length > 0 and exams_length > 0 and scores_length > 0 %}
-		{% set tour_guide = 'off' %}
-	{% endif %}
+     {% if classes_length > 0 and subjects_length > 0 and child_subjects_length > 0
+		 and students_length > 0 and exams_length > 0 and scores_length > 0 %}
+		 {% set tour_guide = 'off' %}
+	   {% endif %}
 	{% endif %}
 	{% if app.user.configs is defined and app.user.configs is not empty %}
     	{% set entriesPerPage = app.user.configs|first.resultsPerPage %}
@@ -153,31 +153,31 @@
 		    	autoStart: false,
 		    {% endif %}
 		    data : [
-		    	{% if classes_length < 1 %}
+		    	{% if classes_length is defined and classes_length < 1 %}
 		        { element : '#add_class', tooltip : 'This is the very first thing you need to do.', text: 'Click on "add some classes" to start adding classes', position: 'T' },
 		        {% endif %}
-		    	{% if subjects_length < 1 %}
+		    	{% if subjects_length is defined and subjects_length < 1 %}
 		        { element : '#add_subject', tooltip : 'Now add subjects. You really need them.', text: 'Click on "add some subjects" to start adding subjects', position: 'T' },
 		        {% endif %}
-		    	{% if students_length < 1 %}
+		    	{% if students_length is defined and students_length < 1 %}
 		        { element : '#add_student', tooltip : 'Now add some students. You can import from spreadsheet xls,xlsx file!', text: 'If you have at least one class and subjects added, now you can add students to any of your classes.', position: 'L' },
 		        {% endif %}
-		    	{% if exams_length < 1 %}
+		    	{% if exams_length is defined and exams_length < 1 %}
 		        { element : '#add_exam', tooltip : 'Now add some exam titles.', text: 'This can by the exam body title or anything like "End Term Exams".', position: 'L', location: "{{path('choose_class_cs', {'goto': 'new_childSubject'} ) }}" },
 		        {% endif %}
-		    	{% if child_subjects_length < 1 %}
+		    	{% if child_subjects_length is defined and child_subjects_length < 1 %}
 		        { element : '#subjs', tooltip : 'Check if some subjects will need children!', text: 'Example: Add Composition and Language child subjects to English Subject.', position: 'R', location: "{{path('choose_class_cs', {'goto': 'new_childSubject'} ) }}" },
 		        {% endif %}
-		    	{% if scores_length < 1 %}
+		    	{% if scores_length is defined and scores_length < 1 %}
 		        { element : '.knob-charts', tooltip : 'Click one of these to Start recording the scores!', text: 'Click one of the links over here to begin adding the scores.', position: 'L' },
 		        {% endif %}
 		    ],
-		    welcomeMessage: "It's all easy. I'll walk you through the process from beginning to end. If you are already familiar, you can turn off the website tour guide setting",
-		    controlsPosition : 'BL',
+		    welcomeMessage: "Wondering what to do next?",
+		    controlsPosition : 'BR',
 		    buttons: {
 		        next  : { text : 'Next &rarr;', class : 'btn btn-default'},
 		        prev  : { text : '&larr; Previous', class: 'btn btn-default' },
-		        start : { text : 'Start', class: 'btn btn-primary btn-lg' },
+		        start : { text : 'Show me!', class: 'btn btn-primary btn-lg' },
 		        end   : { text : 'End', class: 'btn btn-primary' }
 		    },
 		    controlsCss: {

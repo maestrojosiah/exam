@@ -4,7 +4,7 @@
 
     <div class="container">
 
-      {{ form_start(form, {'attr': {'class': 'login-form'}}) }}       
+      {{ form_start(form, {'attr': {'class': 'login-form'}}) }}
         <div class="login-wrap">
             <p class="login-img"><i class="arrow_carrot-right_alt "></i></p>
             <div class="input-group">
@@ -31,6 +31,7 @@
                 <span class="input-group-addon"><i class="icon_key_alt"></i></span>
                 {{ form_row(form.plainPassword.second, {'attr': {'class': 'form-control', 'id': 'passwrdrepeat', 'placeholder': 'Repeat Password' }}) }}
             </div>
+            <p>By Clicking 'Signup', you are agreing to the <a target="_blank" href="https://mylepostsolutions.co.ke/terms_of_service.html"> Terms of use </a></p>
             <button class="btn btn-primary btn-lg btn-block" type="submit">Signup</button>
             <a href="{{path('login')}}" class="btn btn-info btn-lg btn-block" >Log In</a>
         </div>
@@ -40,5 +41,5 @@
 
 
 
-		
+
 {% endblock %}

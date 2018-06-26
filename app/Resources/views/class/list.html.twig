@@ -11,7 +11,7 @@
 {% block body %}
 <body>
 {{ include('templates/header.html.twig') }}
-{{ include('templates/aside.html.twig') }}        		
+{{ include('templates/aside.html.twig') }}
 {% embed "templates/content_draft.html.twig" %}
 	{% block content %}
 
@@ -40,7 +40,7 @@
 		                      <a class="btn btn-danger" data-toggle="modal" title="Delete Class" href="#deleteModal{{class.id}}"><i class="icon_close_alt2"></i></a>
 		                      <a class="btn btn-info" title="View Progress" href="{{path('class_profile', {'classId': class.id})}}"><i class="arrow_carrot-right_alt"></i></a>
 		                  </div>
-		              </td>          
+		              </td>
 		          </tr>
 		      	  {% endfor %}
 		          </tbody>
@@ -57,11 +57,11 @@
 		              <h4 class="modal-title">Are you sure?</h4>
 		            </div>
 		            <div class="modal-body">
-		              
+
 		            </div>
 		            <div class="modal-footer">
 		              <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-		              
+
 		            </div>
 		          </div>
 		        </div>
@@ -84,7 +84,7 @@
 			          </div>
 			      </div>
 			  </div>
-			</div>		    
+			</div>
 		{% endfor %}
 	{% endblock %}
 {% endembed %}
@@ -101,7 +101,7 @@
         $('#dataTables-example').DataTable({
             responsive: true,
             "pageLength": {{entriesPerPage}}
-            
+
         });
     });
     </script>
