@@ -311,7 +311,7 @@ class ScoreController extends Controller
         $existing_download = $this->em()->getRepository('AppBundle:Download')
             ->findOneBy(
                 array('exam' => $examCompany),
-                array('id' => 'ASC')
+                array('id' => 'DESC')
             );
         $students = $this->findbyand('Student', 'user', $user, 'class', $class);
         $childSubjects = $this->findby('ChildSubject', 'user', $user);
@@ -467,7 +467,7 @@ class ScoreController extends Controller
         list($data['c_sum_sub'], $data['exam'], $data['key_list_s'], $data['key_list_c'], $data['user'], $data['subjects'])  = [$this->rank_sub_child($c_sum_sub), $examCompany, $key_list_s, $key_list_c, $user, $subjects];
         list($data['students'], $data['class'], $data['scores'], $data['childSubjects'], $data['student_list'])  = [$students, $class, $scores, $childSubjects, $student_list];
         list($data['subject_list'], $data['c_subject_list'], $data['child_score_entries'], $data['sum'], $data['sum_sub'])   = [$subject_list, $c_subject_list, $child_score_entries, $this->rank($sum), $this->rank_sub($sum_sub)];
-
+        // return $this->render('pdf/pdf.html.twig', $data);
         $html = $this->renderView('pdf/pdf.html.twig', $data);
 
         $filename = sprintf("exam-%s.pdf", date('Ymd~his'));

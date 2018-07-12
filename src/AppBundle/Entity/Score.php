@@ -28,7 +28,7 @@ class Score
      *     type="digit",
      *     message="The value {{ value }} is not a valid {{ type }}."
      * )
-     * @ORM\Column(name="marks", type="integer")
+	 *@ORM\Column(type="decimal", precision=5, scale=2)
      */
     private $marks;
 

@@ -126,7 +126,7 @@
                                           {% set percentage = 0 %}
                                         {% endif %}
                                         <li>
-                                          {% if loop.index == 5 %} {% set continue = false %} {% endif %}
+                                          {% if loop.index == 4 %} {% set continue = false %} {% endif %}
                                             <a href="{{path('record_scores', {'classId': exam_company.class.id, 'companyId':exam_company.id})}}">
                                                 <input class="knob" data-readonly="true" data-width="80" data-height="80" data-displayPrevious=true  data-thickness=".1" value="{{percentage|round}}" data-fgColor="#007AFF" data-bgColor="#F7F7F7">
                                                 <p>{{exam_company.cTitle}}<br />[{{exam_company.class.cTitle}}]</p>
@@ -146,11 +146,11 @@
                                     <h4>Its lonely here! You can add some exams after you're done with adding <a href="{{path('new_class')}}">classes</a>, <a href="{{path('new_subject')}}">subjects</a> and <a id="add_student" href="{{path('choose_class', {'goto': 'new_student'})}}" style="background-color:white;"> students </a>.</h4>
                                   </div>
                                 {% endif %}
-                                {% if app.user.examCompanies|length < 5 %}
+
                                   <li>
                                     <a id="add_exam" href="{{path('choose_class_exam', {'goto': 'new_examCompany'})}}" class="btn btn-default " style="padding:10px!important; margin-bottom:10px; color:black;"> Add New Exam </a>
                                   </li>
-                                {% endif %}
+
                                 </ul>
                             </div>
                       </div>

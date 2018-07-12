@@ -55,7 +55,7 @@ class DownloadController extends Controller
     			array('id' => 'DESC')
     		);
     	$data['downloads'] = $downloads;
-    	if($user->getTokens() < 1){
+    	if($download->getTimes() < 1){
     		$download->setStatus(0);
     		$this->save($download);
     		return $this->render('AppBundle:Download:my_downloads.html.twig', $data);

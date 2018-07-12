@@ -52,16 +52,25 @@ class StudentController extends Controller
     {
         $user = $this->user();
         $student = $this->find('Student', $studentId);
-        $examCompanies = $this->findandlimit('ExamCompany', 'user', $user, 5, 'DESC');
+        $count_exam_companies = $this->em()->getRepository('AppBundle:ExamCompany')
+            ->findBy(
+                    array('user' => $user, 'class' => $student->getClass()),
+                    array('id' => 'ASC')
+                );
+        if(count($count_exam_companies) > 5){
+            $offset = (count($count_exam_companies) + 1)  - 5;
+        } else {
+            $offset = 0;
+        }
+        $data['offset'] = $offset;
+        $examCompanies = $this->findbyandlimit('ExamCompany', 'user', $user, 'class', $student->getClass(), 5, $offset);
         $scores = $this->findbyand('Score', 'user', $user, 'student', $student);
         $exams = [];
         $score_lst = [];
         $list = [];
         $totalScore = [];
         foreach($examCompanies as $examCompany){
-            if($examCompany->getClass() == $student->getClass()){
-                $exams[] = $examCompany;
-            }
+            $exams[] = $examCompany;
             $this_score = [];
             $add = 0;
             foreach($scores as $score){
@@ -69,7 +78,7 @@ class StudentController extends Controller
                     $this_score[] = $score;
                     $add += $score->getMarks();
                 }
-                $list[] = $score->getMarks();
+                $list[] = (int)$score->getMarks();
             }
             $totalScore[$examCompany->getId()] = $add;
             if(!empty($this_score)){
@@ -79,7 +88,7 @@ class StudentController extends Controller
         }
 
         $data['student'] = $student;
-        $data['exams'] = $exams;
+        $data['exams'] = $exams; 
         $data['scores'] = $scores;
         $data['score_lst'] = $score_lst;
         $data['list'] = $list;
@@ -160,6 +169,17 @@ class StudentController extends Controller
             );
         return $entity;
     }
+    
+    private function findbyandlimit($entity, $by, $actual, $by2, $actual2, $limit, $offset){
+        $entity = $this->em()->getRepository("AppBundle:$entity")
+            ->findBy(
+                array($by => $actual, $by2 => $actual2),
+                array('id' => 'ASC'),
+                $limit,
+                $offset
+            );
+        return $entity;
+    }
 
     private function save($entity){
         $this->em()->persist($entity);
@@ -179,3 +199,4 @@ class StudentController extends Controller
     }
 
 }
+

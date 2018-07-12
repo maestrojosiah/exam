@@ -15,7 +15,15 @@ class ClasssController extends Controller
      */
     public function createAction(Request $request)
     {
-	    return $this->render('class/create.html.twig' );
+
+	   	$data = [];
+      $user = $user = $this->user();
+      $classes = $this->findby('Classs', 'user', $user);
+      $data['classes'] = $classes;
+      $data['user'] = $user;
+
+
+	    return $this->render('class/create.html.twig', $data );
 
     }
 
@@ -41,7 +49,17 @@ class ClasssController extends Controller
     {
         $user = $user = $this->user();
         $class = $this->find('Classs', $classId);
-        $examCompanies = $this->findandlimit('ExamCompany', 'user', $user, 5, 'DESC');
+        $count_exam_companies = $this->em()->getRepository('AppBundle:ExamCompany')
+            ->findBy(
+                    array('user' => $user, 'class' => $class),
+                    array('id' => 'ASC')
+                );
+        if(count($count_exam_companies) > 5){
+            $offset = (count($count_exam_companies) + 1)  - 5;
+        } else {
+            $offset = 0;
+        }
+        $examCompanies = $this->findbyandlimit('ExamCompany', 'user', $user, 'class', $class, 5, $offset);
         $scores = $this->em()->getRepository('AppBundle:Score')
             ->findBy(
                 array('user' => $user, 'class' => $class),
@@ -159,6 +177,17 @@ class ClasssController extends Controller
             );
         return $entity;
     }
+    
+    private function findbyandlimit($entity, $by, $actual, $by2, $actual2, $limit, $offset){
+        $entity = $this->em()->getRepository("AppBundle:$entity")
+            ->findBy(
+                array($by => $actual, $by2 => $actual2),
+                array('id' => 'ASC'),
+                $limit,
+                $offset
+            );
+        return $entity;
+    }
 
     private function save($entity){
         $this->em()->persist($entity);
@@ -178,3 +207,4 @@ class ClasssController extends Controller
     }
 
 }
+

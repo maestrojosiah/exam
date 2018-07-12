@@ -63,7 +63,7 @@
                 </tr>
 								{% set break = false %}
                 {% for key, item in sum if not break %}
-								{% if download == null and loop.index == 3 %}
+								{% if (download == null and loop.index == 3) or (download and download.times <= 1 and loop.index == 3) %}
 									{% set break = true %}
 								{% endif %}
                 <tr>
@@ -91,7 +91,7 @@
                 </tr>
                 {% endfor %}
               <tr>
-                {% if download == null %}
+                {% if (download == null) or (download and download.times <= 1) %}
                   <tr>
                   <td colspan="{{span}}">
                     <div class="col-lg-12 text-center" style="background-color:white; font-size:15px;">
@@ -101,7 +101,7 @@
                       <p><strong>Enter Code Below to Download Your Stuff.</strong></p>
                       <form class="form-inline">
                         <div class="form-group">
-                          <label class="sr-only" for="exampleInputAmount">Amount (in dollars)</label>
+                          <label class="sr-only" for="exampleInputAmount">Amount (in Kshs)</label>
                           <div class="input-group">
                             <div class="input-group-addon">Code</div>
                             <input type="text" class="form-control" id="code_input" placeholder="XXX-XXX">
@@ -231,6 +231,18 @@
       });
 
   });
+</script>
+<script>
+	$(document).on('keypress', '#code_input', function(e){
+		 var key = e.which;
+		 if(key == 13){
+				$("#check_code").click();
+				e.preventDefault();
+			} else {
+				$('#check_code').html('Submit Code').removeClass('btn-success').addClass('btn-primary');
+			}
+	});
+
 </script>
 
 {% endblock %}
