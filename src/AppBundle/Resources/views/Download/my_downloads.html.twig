@@ -14,13 +14,16 @@
 {{ include('templates/aside.html.twig') }}
 {% embed "templates/content_draft.html.twig" %}
 	{% block content %}
-
+	
 		<div class="col-sm-12">
 		  <section class="panel">
 		      <header class="panel-heading">
 		          Your Downloads. You can always come to this page by clicking on your username [top right] then choosing 'My Downloads'.
 		      </header>
-		      {% if downloads is not empty %}
+	      {% if app.user.configs|first.titleDisplay == "img" and app.user.configs|first.letterhead == NULL %}
+	      	<p class="alert alert-danger">Please review these settings to make your downloads possible. You have set your Title display as letterhead image, but you have not uploaded your letterhead image. <br />Solution: Change your "What to display as Title" settings to be "Basic info text" or just upload a letterhead as an image. <a href="{{path('update_config')}}">Go to settings</a></p>
+	  	  {% else %}
+		  {% if downloads is not empty %}
           <span id="notify"></span>
 		      <table class="table table-striped table-hover" id="dataTables-example">
 		          <thead>
@@ -62,6 +65,7 @@
                   <h4>Hmm! You have got no downloads so far</h4>
                 </div>
               {% endif %}
+            {% endif %}
 	  </section>
 		</div>
 		{% for download in downloads %}
@@ -107,7 +111,7 @@
     </script>
     <script>
       $(document).on('click', '[id="trigger_notify"]', function(){
-          $("#notify").html('<p class="alert alert-success">Please wait. It will take a moment to generate the file for download.');
+          $("#notify").html('<p class="alert alert-success">Please wait. It will take a moment to generate the file for download.</p>');
       });
      </script>
 

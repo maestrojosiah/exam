@@ -1,0 +1,31 @@
+{% extends 'base.html.twig' %}
+{% block body %}
+<body>
+{{ include('templates/header.html.twig') }}        		
+{{ include('templates/aside.html.twig') }}        		
+{% embed "templates/content_draft.html.twig" %}
+	{% block content %}
+	<div class="col-lg-6">
+	  <section class="panel">
+	      <header class="panel-heading">
+	          Graph: Choose a Class 
+	      </header>
+	      <div class="panel-body">
+	      {% if classes is not empty %}
+			<div class="list-group">
+			{% for class in classes %}
+			  <a href="{{path( goto, {'classId':class.id})}}" class="list-group-item">{{class}}</a>
+			{% endfor %}
+			</div>			
+          {% else %}
+            <div class="well">
+              <h4>Its lonely here! You should  <a href="{{path('new_class')}}"> add a class </a> then add students to it </h4>
+            </div>
+          {% endif %}
+
+	      </div>
+	  </section>
+	</div>
+{% endblock %}
+{% endembed %}
+{% endblock %}

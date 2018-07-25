@@ -214,4 +214,38 @@ class ExamCompany
     {
         return $this->scoreChildren;
     }
+
+    /**
+     * Add download
+     *
+     * @param \AppBundle\Entity\Download $download
+     *
+     * @return ExamCompany
+     */
+    public function addDownload(\AppBundle\Entity\Download $download)
+    {
+        $this->downloads[] = $download;
+
+        return $this;
+    }
+
+    /**
+     * Remove download
+     *
+     * @param \AppBundle\Entity\Download $download
+     */
+    public function removeDownload(\AppBundle\Entity\Download $download)
+    {
+        $this->downloads->removeElement($download);
+    }
+
+    /**
+     * Get downloads
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getDownloads()
+    {
+        return $this->downloads;
+    }
 }

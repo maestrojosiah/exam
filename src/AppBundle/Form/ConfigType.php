@@ -20,6 +20,7 @@ class ConfigType extends AbstractType
             ->add('sch_name', TextType::class)
             ->add('address', TextType::class)
             ->add('telephone', TextType::class)
+            ->add('chart_limit', TextType::class)
 			      ->add('results_per_page', ChoiceType::class, array(
       			    'choices'  => array(
       			        '10' => 10,

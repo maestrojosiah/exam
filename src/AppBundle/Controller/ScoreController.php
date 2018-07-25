@@ -440,6 +440,7 @@ class ScoreController extends Controller
 
         $user = $this->user();
         $class = $this->find('Classs', $classId);
+        $class_name = $class->getCTitle();
         $examCompany = $this->find('ExamCompany', $companyId);
         $subjects = $this->findby('Subject', 'user', $user);
         $scores = $this->em()->getRepository('AppBundle:Score')
@@ -470,7 +471,7 @@ class ScoreController extends Controller
         // return $this->render('pdf/pdf.html.twig', $data);
         $html = $this->renderView('pdf/pdf.html.twig', $data);
 
-        $filename = sprintf("exam-%s.pdf", date('Ymd~his'));
+        $filename = sprintf("exam-$class_name-%s.pdf", date('Ymd~his'));
 
         return new Response(
             $this->get('knp_snappy.pdf')->getOutputFromHtml($html, array('orientation'=>'Portrait')),
@@ -490,6 +491,7 @@ class ScoreController extends Controller
 
         $user = $this->user();
         $class = $this->find('Classs', $classId);
+        $class_name = $class->getCTitle();
         $examCompany = $this->find('ExamCompany', $companyId);
         $subjects = $this->findby('Subject', 'user', $user);
         $scores = $this->em()->getRepository('AppBundle:Score')
@@ -522,7 +524,7 @@ class ScoreController extends Controller
 
         $html = $this->renderView('pdf/report.html.twig', $data);
 
-        $filename = sprintf("exam-%s.pdf", date('Ymd~his'));
+        $filename = sprintf("report-$class_name-%s.pdf", date('Ymd~his'));
 
         return new Response(
             $this->get('knp_snappy.pdf')->getOutputFromHtml($html, array('orientation'=>'Landscape')),
@@ -542,6 +544,7 @@ class ScoreController extends Controller
 
         $user = $this->user();
         $class = $this->find('Classs', $classId);
+        $class_name = $class->getCTitle();
         $examCompany = $this->find('ExamCompany', $companyId);
         $subjects = $this->findby('Subject', 'user', $user);
         $scores = $this->em()->getRepository('AppBundle:Score')
@@ -572,7 +575,7 @@ class ScoreController extends Controller
 
         $html = $this->renderView('pdf/image.html.twig', $data);
 
-        $filename = sprintf("exam-%s.jpg", date('Ymd~his'));
+        $filename = sprintf("exam_img-$class_name-%s.jpg", date('Ymd~his'));
 
         return new Response(
             $this->get('knp_snappy.image')->getOutputFromHtml($html),

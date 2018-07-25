@@ -123,6 +123,16 @@ class User implements AdvancedUserInterface, \Serializable
     private $downloads;
 
     /**
+     * @ORM\OneToMany(targetEntity="Graph", mappedBy="user")
+     */
+    private $graphs;
+
+    /**
+     * @ORM\OneToMany(targetEntity="Timeline", mappedBy="user")
+     */
+    private $timelines;
+
+    /**
      * @ORM\OneToMany(targetEntity="ScoreChild", mappedBy="user")
      */
     private $scoreChildren;
@@ -139,6 +149,8 @@ class User implements AdvancedUserInterface, \Serializable
         $this->scores = new \Doctrine\Common\Collections\ArrayCollection();
         $this->subjects = new \Doctrine\Common\Collections\ArrayCollection();
         $this->downloads = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->graphs = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->timelines = new \Doctrine\Common\Collections\ArrayCollection();
     }
     /**
      * Get id
@@ -693,5 +705,73 @@ class User implements AdvancedUserInterface, \Serializable
     public function getDownloads()
     {
         return $this->downloads;
+    }
+
+    /**
+     * Add graph
+     *
+     * @param \AppBundle\Entity\Graph $graph
+     *
+     * @return User
+     */
+    public function addGraph(\AppBundle\Entity\Graph $graph)
+    {
+        $this->graphs[] = $graph;
+
+        return $this;
+    }
+
+    /**
+     * Remove graph
+     *
+     * @param \AppBundle\Entity\Graph $graph
+     */
+    public function removeGraph(\AppBundle\Entity\Graph $graph)
+    {
+        $this->graphs->removeElement($graph);
+    }
+
+    /**
+     * Get graphs
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getGraphs()
+    {
+        return $this->graphs;
+    }
+
+    /**
+     * Add timeline
+     *
+     * @param \AppBundle\Entity\Timeline $timeline
+     *
+     * @return User
+     */
+    public function addTimeline(\AppBundle\Entity\Timeline $timeline)
+    {
+        $this->timelines[] = $timeline;
+
+        return $this;
+    }
+
+    /**
+     * Remove timeline
+     *
+     * @param \AppBundle\Entity\Timeline $timeline
+     */
+    public function removeTimeline(\AppBundle\Entity\Timeline $timeline)
+    {
+        $this->timelines->removeElement($timeline);
+    }
+
+    /**
+     * Get timelines
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getTimelines()
+    {
+        return $this->timelines;
     }
 }

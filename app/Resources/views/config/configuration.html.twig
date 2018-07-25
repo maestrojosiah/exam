@@ -58,6 +58,10 @@
       </div>
       <div class="col-lg-6" style="background-color:white;">
           <div class="form-group">
+              <label for="classs_c_title">Charts/Graphs Exam Entries Limit</label>
+            {{ form_widget(form.chart_limit, {'attr': {'class': 'form-control', 'value': '5'}} ) }}
+          </div>
+          <div class="form-group">
               <label for="classs_c_title">Letterhead Image [optional]</label>
             {{ form_widget(form.letterhead, {'attr': {'class': 'form-control', 'novalidate': 'novalidate' }} ) }}
           </div>

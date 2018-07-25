@@ -65,6 +65,12 @@ class Config
 
     /**
      * @var string
+     * @ORM\Column(name="chart_limit", type="string", length=255, nullable=true)
+     */
+    private $chartLimit;
+
+    /**
+     * @var string
      * @Assert\NotBlank()
      * @ORM\Column(name="letterhead_height", type="string", length=255)
      */
@@ -308,5 +314,29 @@ class Config
     public function getTitleDisplay()
     {
         return $this->titleDisplay;
+    }
+
+    /**
+     * Set chartLimit
+     *
+     * @param string $chartLimit
+     *
+     * @return Config
+     */
+    public function setChartLimit($chartLimit)
+    {
+        $this->chartLimit = $chartLimit;
+
+        return $this;
+    }
+
+    /**
+     * Get chartLimit
+     *
+     * @return string
+     */
+    public function getChartLimit()
+    {
+        return $this->chartLimit;
     }
 }

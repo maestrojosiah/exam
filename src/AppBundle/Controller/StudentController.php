@@ -7,6 +7,8 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use AppBundle\Entity\Student;
 use AppBundle\Form\StudentType;
+use AppBundle\Entity\Graph;
+use AppBundle\Entity\Timeline;
 
 class StudentController extends Controller
 {
@@ -50,49 +52,27 @@ class StudentController extends Controller
      */
     public function profileAction(Request $request, $studentId)
     {
-        $user = $this->user();
+        $data = [];
+        $user = $user = $this->user();
+        $configs = $user->getConfigs();
+        $config = $configs[0];
+        $limit = (int)$config->getChartLimit();
         $student = $this->find('Student', $studentId);
-        $count_exam_companies = $this->em()->getRepository('AppBundle:ExamCompany')
-            ->findBy(
-                    array('user' => $user, 'class' => $student->getClass()),
-                    array('id' => 'ASC')
-                );
-        if(count($count_exam_companies) > 5){
-            $offset = (count($count_exam_companies) + 1)  - 5;
+        $relation = 'STUDENT_'.$student->getId();
+        $graphs = $this->em()->getRepository('AppBundle:Graph')->findByRelation($relation);
+        if($graphs){
+            //do nothing
         } else {
-            $offset = 0;
-        }
-        $data['offset'] = $offset;
-        $examCompanies = $this->findbyandlimit('ExamCompany', 'user', $user, 'class', $student->getClass(), 5, $offset);
-        $scores = $this->findbyand('Score', 'user', $user, 'student', $student);
-        $exams = [];
-        $score_lst = [];
-        $list = [];
-        $totalScore = [];
-        foreach($examCompanies as $examCompany){
-            $exams[] = $examCompany;
-            $this_score = [];
-            $add = 0;
-            foreach($scores as $score){
-                if($score->getExamCompany() == $examCompany){
-                    $this_score[] = $score;
-                    $add += $score->getMarks();
-                }
-                $list[] = (int)$score->getMarks();
-            }
-            $totalScore[$examCompany->getId()] = $add;
-            if(!empty($this_score)){
-                $score_lst[] = $this_score;
-            }
-
+            $data['message'] = "No graphs generated for this student.";
         }
 
+        if($request->query->get('n') and $request->query->get('n') == 't') {
+            $result = $this->generateGraphAndEntries($student, $user, $limit, $relation);
+            return $this->redirectToRoute('graph_index');
+        }
+
+        $data['graphs'] = $graphs;
         $data['student'] = $student;
-        $data['exams'] = $exams; 
-        $data['scores'] = $scores;
-        $data['score_lst'] = $score_lst;
-        $data['list'] = $list;
-        $data['totalScore'] = array_values($totalScore);
 
         return $this->render('student/profile.html.twig', $data);
 
@@ -196,6 +176,106 @@ class StudentController extends Controller
     private function user(){
         $user = $this->container->get('security.token_storage')->getToken()->getUser();
         return $user;
+    }
+
+    private function generateGraphAndEntries($student, $user, $limit, $relation){
+
+        $count_exam_companies = $this->em()->getRepository('AppBundle:ExamCompany')
+            ->findBy(
+                    array('user' => $user, 'class' => $student->getClass()),
+                    array('id' => 'ASC')
+                );
+        $grouping = count($count_exam_companies) > 1 ? count($user->getSubjects()) : 0;
+        $maximum = 100;
+
+        if(count($count_exam_companies) > $limit){
+            $offset = count($count_exam_companies)  - $limit;
+        } else {
+            $offset = 0;
+        }
+
+        $examCompanies = $this->findbyandlimit('ExamCompany', 'user', $user, 'class', $student->getClass(), $limit, $offset);
+        $groups_for_graph = "";
+        foreach($examCompanies as $key => $examCompany){
+            $groups_for_graph .= $key > 0 ? "|".$examCompany->getCTitle() : $examCompany->getCTitle();            
+        }
+
+        $scores = $this->findbyand('Score', 'user', $user, 'class', $student->getClass());
+        $twenty_random_colors = ['#8928EC', '#FB8B73', '#DBF682', '#8FF6C8', '#10F5A2', '#5AB5A9', '#F1E981', '#A9B9BD', '#D19469', '#B67907', '#7C73D9', '#00ADB7', '#74116B', '#BFDD13', '#9ED559', '#F61595', '#D6F6C2', '#0C019A', '#1A35E7', '#006122',];
+        $colors_to_use = array_slice($twenty_random_colors, 0, $limit, true);
+        $counted_exams = count($count_exam_companies);
+
+        //declarations
+        $graph_title = $student->getNames().": Last $counted_exams Exams Summary";
+        $graph_x_title = "Subjects";
+        $graph_y_title = "Marks";
+        $graph_maximum = $maximum;
+        $graph_x_interval = $maximum / 5;
+        $graph_grouping = $grouping;
+        $graph_label_height = 60;
+        $label_angle = 70;
+        $group_angle = 0;
+        $graph_show_labels = $grouping > 0 ? 'no' : 'yes';
+        $graph_relation = "STUDENT_".$student->getId();
+
+        //create graph
+        $graph = new Graph();
+        $graph->setTitle($graph_title);
+        $graph->setXAxisTitle($graph_x_title);
+        $graph->setYAxisTitle($graph_y_title);
+        $graph->setXInterval($graph_x_interval);
+        $graph->setGrouping($graph_grouping);
+        $graph->setMaximum($maximum);
+        $graph->setXLabelHeight($graph_label_height);
+        $graph->setAngle($label_angle);
+        $graph->setRelation($graph_relation);
+        $graph->setUser($user);
+        $graph->setGroupAngle($group_angle);
+        $graph->setGraphGroups($groups_for_graph);
+        $graph->setShowGroups('yes');
+        $graph->setShowLabels($graph_show_labels);
+        $this->save($graph);
+
+        $list = [];
+        foreach($examCompanies as $key => $examCompany){
+
+            $subject_score = [];
+            foreach($user->getSubjects() as $key =>  $subject){
+                $this_subject = 0;
+                $company = [];
+                foreach($scores as $score){
+                    if($subject == $score->getSubject() && $score->getExamCompany() == $examCompany && $score->getStudent() == $student){
+                        $this_subject = $score->getMarks();
+                    }
+                }
+
+                $subject_score[$subject->getSTitle()] = $this_subject;
+
+                //declarations
+                $timeline_description = $subject->getSTitle();
+                $timeline_figure = $this_subject;
+                $timeline_color = $colors_to_use[$key];
+
+                //save timeline
+                $timeline = new Timeline();
+                $timeline->setDescription($timeline_description);
+                $timeline->setFigure($timeline_figure);
+                $timeline->setColor($timeline_color);
+                $timeline->setUser($user);
+                $timeline->setGraph($graph);
+                $this->save($timeline);
+
+            }
+
+            if(!empty($this_score)){
+                $score_lst[] = $this_score;
+                $subject_list[] = $subject_score;
+            }
+            $list[] = $subject_score;
+
+        }
+
+        return $list;
     }
 
 }

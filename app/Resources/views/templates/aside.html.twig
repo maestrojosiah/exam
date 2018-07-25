@@ -66,6 +66,19 @@
                       </ul>
                   </li>
                   <li class="sub-menu">
+                      <a href="javascript:;" class="" id="exam_menu">
+                          <i class="icon_datareport_alt"></i>
+                          <span>Graphs</span>
+                          <span class="menu-arrow arrow_carrot-right"></span>
+                      </a>
+                      <ul class="sub">
+                          <li><a class="add_graph" href="{{path('graph_new')}}">Add Graph</a></li>
+                          <li><a class="add_graph" href="{{path('list_classes')}}">New Class Graph</a></li>
+                          <li><a class="add_graph" href="{{path('choose_class', {'goto': 'list_students'})}}">New Student Graph</a></li>
+                          <li><a class="list_graphs" href="{{path('graph_index')}}"><span>List Graphs</span></a></li>
+                      </ul>
+                  </li>
+                  <li class="sub-menu">
                       <a class="go_to_timetabler" href="http://timetable.local">
                           <i class="icon_house_alt"></i>
                           <span>Timetabler</span>

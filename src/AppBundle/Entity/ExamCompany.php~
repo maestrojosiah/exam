@@ -47,7 +47,7 @@ class ExamCompany
     private $scores;
 
     /**
-     * @ORM\OneToMany(targetEntity="Download", mappedBy="examCompany", fetch="EAGER")
+     * @ORM\OneToMany(targetEntity="Download", mappedBy="exam", fetch="EAGER")
      */
     private $downloads;
 

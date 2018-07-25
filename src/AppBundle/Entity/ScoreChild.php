@@ -23,12 +23,12 @@ class ScoreChild
     private $id;
 
     /**
-     * @var int
+     * @var string
      * @Assert\Type(
      *     type="digit",
      *     message="The value {{ value }} is not a valid {{ type }}."
      * )
-     * @ORM\Column(name="marks", type="integer")
+     *@ORM\Column(name="marks", type="string", length=255)
      */
     private $marks;
 

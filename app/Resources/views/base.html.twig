@@ -71,7 +71,6 @@
     <!-- charts scripts -->
     <script src="{{asset('assets/jquery-knob/js/jquery.knob.js')}}"></script>
     <script src="{{asset('js/jquery.sparkline.js')}}" type="text/javascript"></script>
-    <script src="{{asset('assets/jquery-easy-pie-chart/jquery.easy-pie-chart.js')}}"></script>
     <script src="{{asset('js/owl.carousel.js')}}" ></script>
     <!-- jQuery full calendar -->
     <script src="{{asset('assets/fullcalendar/fullcalendar/fullcalendar.min.js')}}"></script>
@@ -83,10 +82,14 @@
     <script src="{{asset('js/scripts.js')}}"></script>
     <!-- custom script for this page-->
     <script src="{{asset('js/sparkline-chart.js')}}"></script>
-    <script src="{{asset('js/easy-pie-chart.js')}}"></script>
     <!-- Notification javascript - notiny -->
     <script src="{{ asset('notiny/notiny.min.js') }}"></script>
     <script src="{{ asset('custom/custom_tour.js') }}"></script>
+    <script type="text/javascript">
+        $(window).on('load',function(){
+            $('#page_modal').modal({backdrop: 'static', keyboard: false})              
+        });
+    </script>
     <script>
     (function( $ ) {
 

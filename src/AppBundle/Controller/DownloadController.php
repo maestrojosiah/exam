@@ -41,6 +41,7 @@ class DownloadController extends Controller
      * @Route("/downloads/{what}", name="download")
      */
     public function downloadItAction(Request $request, $what){
+        ini_set('memory_limit','-1');
     	$user = $this->user();
     	$string = "download_$what";
         $a = $request->query->get('a');

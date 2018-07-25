@@ -23,12 +23,12 @@ class Score
     private $id;
 
     /**
-     * @var int
+     * @var string
      * @Assert\Type(
      *     type="digit",
      *     message="The value {{ value }} is not a valid {{ type }}."
      * )
-	 *@ORM\Column(type="decimal", precision=5, scale=2)
+     *@ORM\Column(name="marks", type="string", length=255)
      */
     private $marks;
 

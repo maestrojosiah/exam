@@ -68,6 +68,7 @@ class ConfigController extends Controller
 			$form_data['telephone'] = $config->getTelephone();
       $form_data['results_per_page'] = $config->getResultsPerPage();
 			$form_data['tour_guide'] = $config->getTourGuide();
+      $form_data['chart_limit'] = $config->getChartLimit();
 			$form_data['letterhead_height'] = $config->getLetterHeadHeight();
 			$form_data['title_display'] = $config->getTitleDisplay();
 			$form_data['letterhead'] = $config->getLetterHead();
