@@ -40,6 +40,7 @@
                       <ul class="sub">
                           <li><a class="add_child_subject" href="{{path('choose_class_cs', {'goto': 'new_childSubject'})}}">Add Child Subject</a></li>
                           <li><a class="list_child_subjects" href="{{path('choose_class_cs', {'goto': 'list_childSubjects'})}}">List Child Subjects</a></li>
+                          <li><a class="calculate_child_subjects" href="{{path('choose_class_cs', {'goto': 'calculate_childSubjects'})}}">Child Formulas</a></li>
                       </ul>
                   </li>
 
@@ -63,6 +64,17 @@
                       <ul class="sub">
                           <li><a class="add_exam" href="{{path('choose_class_exam', {'goto': 'new_examCompany'})}}">Add Exam</a></li>
                           <li><a class="list_exams" href="{{path('choose_class_exam', {'goto': 'list_examCompanies'})}}"><span>List Exams</span></a></li>
+                      </ul>
+                  </li>
+                  <li class="sub-menu">
+                      <a href="javascript:;" class="" id="exam_menu">
+                          <i class="icon_document_alt"></i>
+                          <span>Gradings</span>
+                          <span class="menu-arrow arrow_carrot-right"></span>
+                      </a>
+                      <ul class="sub">
+                          <li><a class="add_exam" href="{{path('grading_new')}}">Add Grading</a></li>
+                          <li><a class="add_exam" href="{{path('grading_index')}}">List Grading</a></li>
                       </ul>
                   </li>
                   <li class="sub-menu">

@@ -71,6 +71,12 @@ class Config
 
     /**
      * @var string
+     * @ORM\Column(name="report_orientation", type="string", length=255, nullable=true)
+     */
+    private $reportOrientation;
+
+    /**
+     * @var string
      * @Assert\NotBlank()
      * @ORM\Column(name="letterhead_height", type="string", length=255)
      */

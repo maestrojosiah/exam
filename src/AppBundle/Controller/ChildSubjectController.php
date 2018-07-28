@@ -36,10 +36,65 @@ class ChildSubjectController extends Controller
     {
         $data = [];
         $user = $this->user();
-        $childSubjects = $this->findby('ChildSubject', 'user', $user);
+        $subject_id = $request->query->get('subjectId');
+        $subject = $this->find('Subject', $subject_id);
+        $childSubjects = $this->em()->getRepository('AppBundle:ChildSubject')
+            ->findBy(
+                array('user' => $user, 'subject' => $subject),
+                array('id' => 'ASC')
+            );
+        $data['subject'] = $subject;
         $data['childSubjects'] = $childSubjects;
         $data['user'] = $user;
         return $this->render('childSubject/list.html.twig', $data );
+    }
+
+    /**
+     * @Route("/childSubject/formula", name="calculate_childSubjects")
+     */
+    public function formulaAction(Request $request)
+    {
+        $data = [];
+        $user = $this->user();
+        $subject_id = $request->query->get('subjectId');
+        $subject = $this->find('Subject', $subject_id);
+        $childSubjects = $this->em()->getRepository('AppBundle:ChildSubject')
+            ->findBy(
+                array('user' => $user, 'subject' => $subject),
+                array('id' => 'ASC')
+            );
+
+          // find if there's formula for this subject
+          $formula_for_this_subject = $this->em()->getRepository('AppBundle:Formula')
+            ->findOneBy(
+              array('subject' => $subject),
+              array('id' => 'DESC')
+            );
+
+          if($formula_for_this_subject){
+            $formula = $formula_for_this_subject->getCalculation();
+            list($signs, $out_of, $to_percentage) = $this->analyze_formula($formula);
+
+          } else {
+            $string = "";
+            $out_of = 0;
+            foreach ($childSubjects as $childSubject) {
+                $string .= "plus-".$childSubject->getId().":";
+                $out_of += $childSubject->getOutOf();
+            }
+            $string .= "/".$out_of."x100";
+            list($signs, $out_of, $to_percentage) = $this->analyze_formula($string);
+
+          }
+
+
+        $data['child_subjects'] = $childSubjects;
+        $data['subject'] = $subject;
+        $data['user'] = $user;
+        $data['signs'] = $signs;
+        $data['out_of'] = $out_of;
+        $data['to_percentage'] = $to_percentage;
+        return $this->render('childSubject/formula.html.twig', $data );
     }
 
     /**
@@ -80,6 +135,43 @@ class ChildSubjectController extends Controller
         $this->delete($childSubject);
         return $this->redirectToRoute('list_childSubjects', ['subjectId' => $subject_id]);
 
+    }
+
+    private function  analyze_formula($formula){
+
+      // plus-46:plus-47:ignore-48:/100x100
+      $whole_formula_string = $formula;
+      $top_part = explode("/", $whole_formula_string)[0]; // plus-46:plus-47:ignore-48:
+      $remaining_two = explode("/", $whole_formula_string)[1]; // 100x100
+      $bottom_part = explode("x", $remaining_two)[0]; // 100
+      $right_part = explode("x", $remaining_two)[1];  // 100
+      $exploded_top_part = explode(":", $whole_formula_string);
+      $top_part_as_array = array_pop($exploded_top_part); // [plus-46, plus-47, ignore-48]
+      $children = 0;
+      $signs = [];
+
+      foreach($exploded_top_part as $array_item){
+        $split_str = explode("-", $array_item); // [plus, 46]
+        $sign = $split_str[0]; // plus
+
+            // make real signs
+            switch ($sign) {
+              case 'plus':
+                $signs[] = "+";
+                break;
+              case 'minus':
+                $signs[] = "-";
+                break;
+              case 'ignore':
+                $signs[] = "";
+                break;
+              default:
+                $signs[] = "+";
+                break;
+            }
+
+        }
+        return [$signs, $bottom_part, $right_part];
     }
 
     private function em(){

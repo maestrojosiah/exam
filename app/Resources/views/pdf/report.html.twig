@@ -66,13 +66,19 @@ html{font-family:sans-serif;-webkit-text-size-adjust:100%;-ms-text-size-adjust:1
           {% endif %}
         {% endfor %}
         {% set total_possible = app.user.subjects|length * 100 %}
+        {% if app.user.configs|first.reportOrientation == "portrait" %}
+          {% set width_class = 'col-xs-8 col-xs-offset-2' %}
+        {% else %}
+          {% set width_class = 'col-xs-6' %}
+        {% endif %}
         {% for key, item in sum %}
-        <div class="col-xs-6" style="color:black; height: 100%;">
+        <div class="{{width_class}}" style="color:black; height: 100%;">
         <div style=" text-align:center;">
           <h4>{{app.user.configs|first.schName|upper}}</h4>
           <p style="color:black; font-weight:bold">
             {{app.user.configs|first.address|upper}}, Telephone: {{app.user.configs|first.telephone|upper}}
           </p>
+          <p style="color:black; font-style:italic">{{exam.cTitle}} [{{class.cTitle}}]</p>
         </div>
         <div>
           <p class="col-xs-8">NAME: <span style="font-weight:bold;">{{item[2].names|title}}</span></p>
@@ -93,20 +99,40 @@ html{font-family:sans-serif;-webkit-text-size-adjust:100%;-ms-text-size-adjust:1
           </thead>
          <tbody>
                 {% for subject in subjects %}
-                <tr>
-                {% set st_sub_key = item[2].id ~ "." ~ subject.id ~ "." ~ "s" %}
-                  {% if key_list_s[st_sub_key][st_sub_key] is defined %}
-                    <td>{{subject.sTitle|title}}</td>
-                    <td>{{key_list_s[st_sub_key][st_sub_key].marks}}</td>
-                    <td></td>
-                    <td></td>
-                  {% else %}
-                    <td>{{subject.sTitle|title}}</td>
-                    <td>_</td>
-                    <td></td>
-                    <td></td>
-                  {% endif %}
-                </tr>
+                    <tr>
+                    {% set st_sub_key = item[2].id ~ "." ~ subject.id ~ "." ~ "s" %}
+                      {% set closest = 0 %}
+                      {% set this_score = key_list_s[st_sub_key][st_sub_key].marks %}
+                      {% set arrNums = {} %}
+                      {% for grading in subject.gradings %}
+                          {% set key = grading.grade ~ "|" ~ grading.remark %}
+                          {% set arrNums = arrNums|merge({ (key): (grading.minimum) }) %}
+                      {% endfor %}
+                      {% set distances = {} %}
+                      {% for key, num in arrNums %}
+                          {% set figure = this_score - num|number_format %}
+                          {% set distances = distances|merge({ (key): (figure) }) %}
+                      {% endfor %}
+                      {% set measurer = 100 %}
+                      {% set smart_measurer = [] %}
+                      {% for key, distance in distances %}
+                        {% if distance > 0 and distance < measurer %}
+                          {% set measurer = distance %}
+                          {% set smart_measurer = key %}
+                        {% endif %}
+                      {% endfor %}
+                      {% if key_list_s[st_sub_key][st_sub_key] is defined %}
+                        <td>{{subject.sTitle|title}}</td>
+                        <td>{{this_score}}</td>
+                        <td>{{smart_measurer|split("|")[0]}}</td>
+                        <td>{{smart_measurer|split("|")[1]}}</td>
+                      {% else %}
+                        <td>{{subject.sTitle|title}}</td>
+                        <td>_</td>
+                        <td></td>
+                        <td></td>
+                      {% endif %}
+                    </tr>
                 {% endfor %}
             <tr style="font-weight:bold">
               <td>TOTAL MARKS</td>

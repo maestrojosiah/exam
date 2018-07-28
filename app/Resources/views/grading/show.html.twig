@@ -1,0 +1,49 @@
+{% extends 'base.html.twig' %}
+{% block body %}
+<body>
+{{ include('templates/header.html.twig') }}
+{{ include('templates/aside.html.twig') }}
+{% embed "templates/content_draft.html.twig" %}
+    {% block content %}
+    <table>
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ grading.id }}</td>
+            </tr>
+            <tr>
+                <th>Minimum</th>
+                <td>{{ grading.minimum }}</td>
+            </tr>
+            <tr>
+                <th>Maximum</th>
+                <td>{{ grading.maximum }}</td>
+            </tr>
+            <tr>
+                <th>Grade</th>
+                <td>{{ grading.grade }}</td>
+            </tr>
+            <tr>
+                <th>Remark</th>
+                <td>{{ grading.remark }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <ul>
+        <li>
+            <a href="{{ path('grading_index') }}">Back to the list</a>
+        </li>
+        <li>
+            <a href="{{ path('grading_edit', { 'id': grading.id }) }}">Edit</a>
+        </li>
+        <li>
+            {{ form_start(delete_form) }}
+                <input type="submit" value="Delete">
+            {{ form_end(delete_form) }}
+        </li>
+    </ul>
+
+{% endblock %}
+{% endembed %}
+{% endblock %}

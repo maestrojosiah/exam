@@ -23,6 +23,7 @@
 	              <button class="btn btn-primary btn-outline" type="button" id="save">Save</button>
 	              <a href="{{path('homepage')}}" class="btn btn-danger pull-right" style="margin-left: 5px;">DONE</a>
 	              <a href="{{path('list_childSubjects')}}" class="btn btn-danger pull-right">List</a>
+		  		  <a class="btn btn-info pull-right"  href="{{path('calculate_childSubjects', {'subjectId': subject.id})}}" onclick="window.location.href=window.location.href">Formula</a>
 
 	          </form>
 
@@ -49,21 +50,21 @@
 	        type: "POST",
 	        dataType: "json",
 	        data: {
-						"id": {{childSubject.id}},
-						"entity": 'ChildSubject',
-						"fields": ['cSTitle', 'outOf'],
-						"values": [c_s_title, out_of],
+				"id": {{childSubject.id}},
+				"entity": 'ChildSubject',
+				"fields": ['cSTitle', 'outOf'],
+				"values": [c_s_title, out_of],
 	        },
 	        async: true,
 	        success: function (data)
 	        {
-						console.log(data);
-						$("#cSTitle").focus();
-						$('#save').html('SAVED').removeClass('btn-primary').addClass('btn-success');
+				console.log(data);
+				$("#cSTitle").focus();
+				$('#save').html('SAVED').removeClass('btn-primary').addClass('btn-success');
 	        },
-		      error: function (xhr, status, error) {
-						console.log('error');
-		      }
+		    error: function (xhr, status, error) {
+				console.log('error');
+		    }
 	    });
 
 	  });

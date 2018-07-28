@@ -489,4 +489,28 @@ class Graph
     {
         return $this->showLabels;
     }
+
+    /**
+     * Set groupAngle
+     *
+     * @param string $groupAngle
+     *
+     * @return Graph
+     */
+    public function setGroupAngle($groupAngle)
+    {
+        $this->groupAngle = $groupAngle;
+
+        return $this;
+    }
+
+    /**
+     * Get groupAngle
+     *
+     * @return string
+     */
+    public function getGroupAngle()
+    {
+        return $this->groupAngle;
+    }
 }

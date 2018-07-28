@@ -22,7 +22,8 @@
 	              </div>
 	              <button class="btn btn-primary btn-outline" type="button" id="save">Save</button>
 	              <a href="{{path('homepage')}}" class="btn btn-danger pull-right" style="margin-left: 5px;">DONE</a>
-	              <a href="{{path('list_childSubjects')}}" class="btn btn-danger pull-right">List</a>
+	              <a href="{{path('list_childSubjects')}}" class="btn btn-danger pull-right" style="margin-left: 5px;">List</a>
+		  		  <a class="btn btn-info pull-right"  href="{{path('calculate_childSubjects', {'subjectId': subject.id})}}" onclick="window.location.href=window.location.href">Formula</a>
 
 	          </form>
 

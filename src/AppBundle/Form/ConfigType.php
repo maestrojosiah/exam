@@ -21,12 +21,18 @@ class ConfigType extends AbstractType
             ->add('address', TextType::class)
             ->add('telephone', TextType::class)
             ->add('chart_limit', TextType::class)
-			      ->add('results_per_page', ChoiceType::class, array(
+            ->add('results_per_page', ChoiceType::class, array(
+                'choices'  => array(
+                    '10' => 10,
+                    '25' => 25,
+                    '50' => 50,
+                    '100' => 100,
+                ),
+            ))
+			      ->add('reportOrientation', ChoiceType::class, array(
       			    'choices'  => array(
-      			        '10' => 10,
-      			        '25' => 25,
-      			        '50' => 50,
-      			        '100' => 100,
+      			        'Landscape [A5]' => 'landscape',
+      			        'Portrait [A4]' => 'portrait',
       			    ),
       			))
       			->add('letterhead_height', ChoiceType::class, array(

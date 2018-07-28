@@ -1,0 +1,140 @@
+{% extends 'base.html.twig' %}
+{% block body %}
+<body>
+{{ include('templates/header.html.twig') }}
+{{ include('templates/aside.html.twig') }}
+{% embed "templates/content_draft.html.twig" %}
+    {% block content %}
+    <div class="col-lg-6">
+      <section class="panel">
+          <header class="panel-heading">
+              Create New Grading
+          </header>
+          <div class="panel-body">
+
+            <form id="form">
+              <div class="form-group">
+                <label>Minimum Score</label>
+                <input class="form-control" type="text" id="minimum" placeholder="Minimum Score" />
+              </div>
+              <div class="form-group">
+                <label>Maximum Score</label>
+                <input class="form-control" type="text" id="maximum" placeholder="Maximum Score" />
+              </div>
+              <div class="form-group">
+                <label>Grade</label>
+                <input class="form-control" type="text" id="grade" placeholder="Grade" />
+              </div>
+              <div class="form-group">
+                <label>Remark</label>
+                <input class="form-control" type="text" id="remark" placeholder="Remark" />
+              </div>
+              <div class="form-group">
+                <label>Subjects</label>
+                <select id="select_subject" class="form-control">
+                  <option value="all">All Subjects</option>
+                  {% for subject in subjects %}
+                    <option value="{{subject.id}}">{{subject.sTitle}}</option>
+                  {% endfor %}
+                </select>
+              </div>
+              <button type="button" id="save" class="btn btn-default">Save</button>
+              <a class="btn btn-info pull-right" href="{{ path('grading_index') }}">LIst</a>
+            </form>
+          </div>
+      </section>
+    </div>
+    {% if app.user.gradings is not empty %}
+    <div class="col-lg-6">
+      <section class="panel">
+          <header class="panel-heading">
+              Added Gradings
+          </header>
+          <div class="panel-body">
+            <p>
+                <ol id="added_gradings">
+                    {% for grading in gradings %}
+                        <li>{{grading.minimum}} to {{grading.maximum}} - [{{grading.grade}}] - {{grading.subject}}</li>
+                    {% endfor %}
+                </ol>
+            </p>
+          </div>
+      </section>
+    </div>
+    {% else %}
+    <div class="col-lg-6">
+      <section class="panel">
+          <header class="panel-heading">
+              Added Child Subjects
+          </header>
+          <div class="panel-body">
+            <p>
+                <ol id="added_gradings">
+                </ol>
+            </p>
+          </div>
+      </section>
+    </div>
+    {% endif %}
+
+{% endblock %}
+{% endembed %}
+{% endblock %}
+{% block javascripts %}
+  <script type="text/javascript">
+    $(function() {
+      $("#child_grading_c_s_title").focus();
+    });
+  </script>
+    <script>
+      $(document).on('click', '#save', function(){
+            var minimum = $('#minimum').val();
+            var maximum = $('#maximum').val();
+            var grade = $('#grade').val();
+            var remark = $('#remark').val();
+            var subject_id = $('#select_subject').val();
+            $('#form').checkFields();
+            $('#save').html('Wait...');
+            $.ajax({
+            url:'{{ (path('save_entity')) }}',
+            type: "POST",
+            dataType: "json",
+            data: {
+                "return": 'getGrade',
+                "entity": 'Grading',
+                "fields": ['minimum', 'maximum', 'grade', 'remark', 'subject_id'],
+                "values": [minimum, maximum, grade, remark, subject_id],
+            },
+            async: true,
+            success: function (data)
+            {
+                console.log(data);
+                $("#cTitle").val('').focus();
+                $("#added_gradings").append('<li>'+data+'</li>');
+                $('#save').html('SAVED').removeClass('btn-primary').addClass('btn-success');
+            },
+              error: function (xhr, status, error) {
+                        console.log('error');
+              }
+        });
+
+      });
+    </script>
+    <script>
+    $(document).on('keyup', '.form-control',function (e){
+            $('#save').html('Save').removeClass('btn-success').addClass('btn-primary');
+    });
+    </script>
+    <script>
+        $(document).on('keypress', '#remark', function(e){
+             var key = e.which;
+             if(key == 13){
+                    $("#save").click();
+                    e.preventDefault();
+                } else {
+                    $('#save').html('Save').removeClass('btn-success').addClass('btn-primary');
+                }
+        });
+
+</script>
+{% endblock %}

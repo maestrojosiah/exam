@@ -51,6 +51,16 @@ class Subject
     private $scoreChildren;
 
     /**
+     * @ORM\OneToOne(targetEntity="Formula", mappedBy="subject")
+     */
+    protected $formula;    
+
+    /**
+     * @ORM\OneToMany(targetEntity="Grading", mappedBy="subject")
+     */
+    protected $gradings;    
+
+    /**
      * Constructor
      */
     public function __construct()
@@ -222,5 +232,63 @@ class Subject
     public function getScoreChildren()
     {
         return $this->scoreChildren;
+    }
+
+    /**
+     * Set formula
+     *
+     * @param \AppBundle\Entity\Formula $formula
+     *
+     * @return Subject
+     */
+    public function setFormula(\AppBundle\Entity\Formula $formula = null)
+    {
+        $this->formula = $formula;
+
+        return $this;
+    }
+
+    /**
+     * Get formula
+     *
+     * @return \AppBundle\Entity\Formula
+     */
+    public function getFormula()
+    {
+        return $this->formula;
+    }
+
+    /**
+     * Add grading
+     *
+     * @param \AppBundle\Entity\Grading $grading
+     *
+     * @return Subject
+     */
+    public function addGrading(\AppBundle\Entity\Grading $grading)
+    {
+        $this->gradings[] = $grading;
+
+        return $this;
+    }
+
+    /**
+     * Remove grading
+     *
+     * @param \AppBundle\Entity\Grading $grading
+     */
+    public function removeGrading(\AppBundle\Entity\Grading $grading)
+    {
+        $this->gradings->removeElement($grading);
+    }
+
+    /**
+     * Get gradings
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getGradings()
+    {
+        return $this->gradings;
     }
 }

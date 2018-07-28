@@ -24,74 +24,79 @@ class ConfigController extends Controller
       $data['user'] = $user;
 
       $em = $this->getDoctrine()->getManager();
-
+      // look for settings for this user.
       $thisUser = $em->getRepository('AppBundle:Config')
       	->settingsForThisUser($user);
 
-
+      // if found, the update this setting, don't create a new one.
       if($thisUser){
       	$config = $thisUser;
-        $originalName = $thisUser->getLetterHead();
-      } else {
+        $formerFileName = $config->getLetterHead();
+      } else { // if not found, create a new entity.
       	$config = new Config();
+        // assing user to the setting.
+        $config->setUser($user);
       }
-
-      $config->setUser($user);
+      // initialize a form.
       $form = $this->createForm(ConfigType::class, $config);
-
       $form->handleRequest($request);
+
       if ($form->isSubmitted() && $form->isValid()) {
           $letterhead = $form->get('letterhead')->getData();
-          if($letterhead){
+          if (is_object($letterhead)){
               $originalName = $user->getId()."_logo".'.'.$letterhead->guessExtension();;
               $filepath = $this->get('kernel')->getProjectDir()."/web/img/";
               $letterhead->move($filepath, $originalName);
               $config->setLetterhead($originalName);
+          } else {
+            $config->setLetterhead($formerFileName);
           }
 
           $em = $this->getDoctrine()->getManager();
-
+          
           $config->setUser($user);
 
           $em->persist($config);
           $em->flush();
 
-      	$this->addFlash(
-            'success',
-            'Settings saved!'
-      	);
+        	$this->addFlash(
+              'success',
+              'Settings saved!'
+        	);
 
-        return $this->redirectToRoute('homepage');
-		} else {
-			$form_data['sch_name'] = $config->getSchName();
-			$form_data['address'] = $config->getAddress();
-			$form_data['telephone'] = $config->getTelephone();
-      $form_data['results_per_page'] = $config->getResultsPerPage();
-			$form_data['tour_guide'] = $config->getTourGuide();
-      $form_data['chart_limit'] = $config->getChartLimit();
-			$form_data['letterhead_height'] = $config->getLetterHeadHeight();
-			$form_data['title_display'] = $config->getTitleDisplay();
-			$form_data['letterhead'] = $config->getLetterHead();
-			$data['form'] = $form_data;
-		}
+          return $this->redirectToRoute('update_config');
 
-    $all_settings = $em->getRepository('AppBundle:Config')->findAll();
-    $schools_list = [];
-    foreach ($all_settings as $key => $setting) {
-      $user = $setting->getUser();
-      $classes_for_user = $user->getClasses();
-      $classes_list = $setting->getSchName() . " => ";
-      foreach ($classes_for_user as $key => $classs) {
-        if($user != $this->user()){
-          $classes_list .= " class ". $classs->getCTitle().": [". count($classs->getStudents()). " students], ";
+  		} else {
+
+  			$form_data['sch_name'] = $config->getSchName();
+  			$form_data['address'] = $config->getAddress();
+  			$form_data['telephone'] = $config->getTelephone();
+        $form_data['results_per_page'] = $config->getResultsPerPage();
+  			$form_data['tour_guide'] = $config->getTourGuide();
+        $form_data['chart_limit'] = $config->getChartLimit();
+  			$form_data['letterhead_height'] = $config->getLetterHeadHeight();
+  			$form_data['title_display'] = $config->getTitleDisplay();
+  			$form_data['letterhead'] = $config->getLetterHead();
+  			$data['form'] = $form_data;
+  		}
+
+      $all_settings = $em->getRepository('AppBundle:Config')->findAll();
+      $schools_list = [];
+      foreach ($all_settings as $key => $setting) {
+        $user = $setting->getUser();
+        $classes_for_user = $user->getClasses();
+        $classes_list = $setting->getSchName() . " => ";
+        foreach ($classes_for_user as $key => $classs) {
+          if($user != $this->user()){
+            $classes_list .= " class ". $classs->getCTitle().": [". count($classs->getStudents()). " students], ";
+          }
         }
+        if($user == $this->user()){
+            $classes_list .= "You created this.";
+        }
+        $schools_list[$setting->getId()] = $classes_list;
       }
-      if($user == $this->user()){
-          $classes_list .= "You created this.";
-      }
-      $schools_list[$setting->getId()] = $classes_list;
-    }
-    $data['schools'] = $schools_list;
+      $data['schools'] = $schools_list;
 
         // replace this example code with whatever you need
         return $this->render('config/configuration.html.twig',['form' => $form->createView(), 'data' => $data] );

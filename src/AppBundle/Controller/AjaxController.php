@@ -12,6 +12,8 @@ use AppBundle\Entity\Subject;
 use AppBundle\Entity\Student;
 use AppBundle\Entity\ExamCompany;
 use AppBundle\Entity\ChildSubject;
+use AppBundle\Entity\Formula;
+use AppBundle\Entity\Grading;
 
 class AjaxController extends Controller
 {
@@ -49,8 +51,45 @@ class AjaxController extends Controller
           $this_entity = new ExamCompany();
           $this_entity->setClass($this->find('Classs', $fields_with_values['class_id']));
           break;
+        case 'Grading':
+          if($fields_with_values['subject_id'] != 'all'){
+            $subject = $this->find('Subject', $fields_with_values['subject_id']);
+            $this_entity = $this->findForThisSubject($subject, $fields_with_values['minimum'], $fields_with_values['maximum']);
+            $this_entity->setSubject($subject);
+          } else {
+            foreach($user->getSubjects() as $subject){
+              $this_entity = $this->findForThisSubject($subject, $fields_with_values['minimum'], $fields_with_values['maximum']);
+              $this_entity->setSubject($subject);
+              foreach ($fields_with_values as $key => $value) {
+                if (strpos($key, '_id') == false) {
+                  $str = "set$key";
+                  $this_entity->$str($value);
+                }
+              }
+              $this_entity->setUser($user);
+              $this->save($this_entity);
+            }
+          }
+          break;
+        case 'Formula':
+          $subject = $this->find('Subject', $fields_with_values['subject_id']);
+          $found_one_for_this_subject = $this->em()->getRepository('AppBundle:Formula')
+            ->findOneBy(
+              array('subject' => $subject),
+              array('id' => 'DESC')
+            );
+          if($found_one_for_this_subject){
+            $this_entity = $found_one_for_this_subject;
+          } else {
+            $this_entity = new Formula();
+          }
+          $this_entity->setSubject($subject);
+          break;
       }
-      $this_entity->setUser($this->user());
+      if($entity != "Formula"){
+        $this_entity->setUser($this->user());
+      }
+      
       foreach ($fields_with_values as $key => $value) {
         if (strpos($key, '_id') == false) {
           $str = "set$key";
@@ -123,5 +162,17 @@ class AjaxController extends Controller
       return $user;
   }
 
-
+  private function findForThisSubject($subject, $minimum, $maximum){
+    $found_one_for_this_subject = $this->em()->getRepository("AppBundle:Grading")
+      ->findOneBy(
+        array('subject' => $subject, 'minimum' => $minimum, 'maximum' => $maximum),
+        array('id' => 'DESC')
+      );
+    if($found_one_for_this_subject){
+      $this_entity = $found_one_for_this_subject;
+    } else {
+      $this_entity = new Grading();
+    }
+    return $this_entity;
+  }
 }

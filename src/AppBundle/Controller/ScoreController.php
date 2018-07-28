@@ -7,6 +7,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use AppBundle\Entity\Score;
+use AppBundle\Entity\Formula;
 use AppBundle\Entity\ScoreChild;
 use AppBundle\Form\ScoreType;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -154,7 +155,7 @@ class ScoreController extends Controller
           $subject_id = explode("|", $parts[0])[1];
           $student_id = explode("|", $parts[2])[1];
           $marks = $parts[5];
-          $test[] = $marks;
+          // $test[] = $marks;
           $student = $this->find('Student', $student_id);
           // get if subject or child subject
           $subject_string = explode("|", $parts[0])[0];
@@ -172,6 +173,7 @@ class ScoreController extends Controller
                 $score = new Score();
                 $message = "[$marks] Created successfully!";
             }
+            $percentage = $marks;
             $score->setMarks($marks);
             $score->setExamCompany($exam);
             $score->setClass($class);
@@ -187,43 +189,21 @@ class ScoreController extends Controller
             // parent
             $parentSubject = $childSubject->getSubject();
 
-            //find other children of same parent
+            $children = $parentSubject->getChildSubjects();
+            $data['children'] = $children;
+
+            //find other children of same score
             $scoreChildren = $this->em()->getRepository('AppBundle:ScoreChild')
             	->findBy(
             		array('user' => $user, 'student' => $student, 'examCompany' => $exam, 'class' => $class, 'subject' => $parentSubject),
             		array('id' => 'ASC')
             	);
 
-              $children = $parentSubject->getChildSubjects();
-              $data['children'] = $children;
-
-              $total_scored = 0;
-              $otherScore = 0;
-
-              // add child scores
-              foreach($scoreChildren as $scoreChild){
-              	if($scoreChild->getChildSubject() != $childSubject){
-              		$otherScore += (int)$scoreChild->getMarks();
-              	}
-              }
-              // total when added
-              $total_scored = (int)$otherScore + (int)$marks;
-
-              // get total possible out_of
-              $total_outof = 0;
-              foreach($children as $child){
-              	$total_outof += $child->getOutOf();
-              }
-              // calculate percentage
-              $percentage = ($total_scored / $total_outof) * 100;
               // check if score exists
               $isAlreadyRecorded = $this->em()->getRepository('AppBundle:ScoreChild')
                   ->childIsAlreadyRecorded($student, $class, $childSubject, $exam);
 
               $outOf = $childSubject->getOutOf();
-              $data['outof'] = $outOf;
-              $data['percentage'] = round($percentage);
-              $data['total_scored'] = $total_scored;
 
               // $uniqueId = '#'.$parentSubject->getId().'_'.$user->getId().'_'.$student->getId().'_'.$exam->getId().'_'.$class->getId();
 
@@ -246,6 +226,9 @@ class ScoreController extends Controller
               $scoreChild->setUser($user);
 
               $this->save($scoreChild);
+              // calculate percentage
+              list($total_scored, $percentage, $outof) = $this->calculateScore($childSubject, $marks, $children, $scoreChildren, $parentSubject);
+
               // check if parent is recorded
               $isAlreadyRecorded = $this->em()->getRepository('AppBundle:Score')
                   ->isAlreadyRecorded($student, $class, $parentSubject, $exam);
@@ -258,6 +241,8 @@ class ScoreController extends Controller
                   $score = new Score();
                   $message = "[$marks] Created successfully!";
               }
+
+              $test[] = $percentage;
 
               $score->setMarks(round($percentage));
               $score->setExamCompany($exam);
@@ -427,7 +412,7 @@ class ScoreController extends Controller
         list($data['c_sum_sub'], $data['exam'], $data['key_list_s'], $data['key_list_c'], $data['user'], $data['subjects'])  = [$this->rank_sub_child($c_sum_sub), $examCompany, $key_list_s, $key_list_c, $user, $subjects];
         list($data['students'], $data['class'], $data['scores'], $data['childSubjects'], $data['student_list'])  = [$students, $class, $scores, $childSubjects, $student_list];
         list($data['subject_list'], $data['c_subject_list'], $data['child_score_entries'], $data['sum'], $data['sum_sub'])   = [$subject_list, $c_subject_list, $child_score_entries, $this->rank($sum), $this->rank_sub($sum_sub)];
-
+        // $data['test'] = readGrade($subject, $score);
         return $this->render('score/report.html.twig', $data);
 
     }
@@ -726,6 +711,110 @@ class ScoreController extends Controller
         return [$subject_list, $sum_sub];
     }
 
+    private function calculateScore($childSubject, $this_child, $children, $scoreChildren, $subject){
+
+      // find if there's formula for this subject
+      $formula_for_this_subject = $this->em()->getRepository('AppBundle:Formula')
+        ->findOneBy(
+          array('subject' => $subject),
+          array('id' => 'DESC')
+        );
+
+      if($formula_for_this_subject){
+
+        $formula = $formula_for_this_subject->getCalculation();
+        list($total_scored, $provided_out_of, $multiply_by, $pass) = $this->analyze_formula($formula, $this_child, $scoreChildren);
+
+        // if it has a formula
+        $total_outof = $provided_out_of;
+        $to_percentage = $multiply_by;
+
+      } else {
+
+        $other_children = 0;
+
+        // add child scores
+        foreach($scoreChildren as $scoreChild){
+          if($scoreChild->getChildSubject() != $childSubject){
+            $other_children += (int)$scoreChild->getMarks();
+          }
+        }
+        // total when added
+        $total_scored = (int)$other_children + (int)$this_child;
+
+        // get total possible out_of
+        $total_outof = 0;
+        foreach($children as $child){
+          $total_outof += $child->getOutOf();
+        }
+        $to_percentage = 100;
+
+      }
+
+      // calculate percentage
+      $percentage = ($total_scored / $total_outof) * $to_percentage;
+
+      return [$total_scored, $percentage, $total_outof]; //change the middle one to percentage
+    }
+
+    private function  analyze_formula($formula, $this_child, $scoreChildren){
+
+      // plus-46:plus-47:ignore-48:/100x100
+      $whole_formula_string = $formula;
+      $top_part = explode("/", $whole_formula_string)[0]; // plus-46:plus-47:ignore-48:
+      $remaining_two = explode("/", $whole_formula_string)[1]; // 100x100
+      $bottom_part = explode("x", $remaining_two)[0]; // 100
+      $right_part = explode("x", $remaining_two)[1];  // 100
+      $exploded_top_part = explode(":", $whole_formula_string);
+      $top_part_as_array = array_pop($exploded_top_part); // [plus-46, plus-47, ignore-48]
+      $total_scored = 0;
+      $signs = [];
+      foreach($exploded_top_part as $array_item){
+        $split_str = explode("-", $array_item); // [plus, 46]
+        $sign = $split_str[0]; // plus
+        $child_id = $split_str[1]; // 46
+
+        // add child scores
+        switch ($sign) {
+          case 'plus':
+            $signs[$child_id] = "+";
+            break;
+          case 'minus':
+            $signs[$child_id] = "-";
+            break;
+          case 'ignore':
+            $signs[$child_id] = "";
+            break;
+          default:
+            $signs[] = "+";
+            break;
+        }
+
+      }
+      $str = "";
+        foreach ($scoreChildren as $key => $scoreChild) {
+          switch ($signs[$scoreChild->getChildSubject()->getId()]) {
+            case '+':
+                $total_scored += $scoreChild->getMarks();
+              break;
+            case '-':
+                $total_scored -= $scoreChild->getMarks();
+              break;
+            case '':
+                $total_scored += 0;
+              break;
+            default:
+                $total_scored += $scoreChild->getMarks();
+              break;
+          }
+        }
+      $total_scored = (int)$total_scored;
+      $pass = $signs;
+
+      return [$total_scored, $bottom_part, $right_part, $pass];
+
+    }
+
     private function getCSubjectSumAndList($childSubjects, $scoreChildren){
         $c_subject_list = [];
         $c_sum_sub = [];
@@ -794,6 +883,15 @@ class ScoreController extends Controller
     private function user(){
         $user = $this->container->get('security.token_storage')->getToken()->getUser();
         return $user;
+    }
+
+    private function provideGrade(){
+        $entityRepository = $thi->em()->getRepository('AppBundle:Grading');
+        $criteria = new \Doctrine\Common\Collections\Criteria();
+        $criteria->where($criteria->expr()->gt('prize', 200));
+
+        $result = $entityRepository->matching($criteria);
+        // expr()->between('u.id', 1, 10)
     }
 
 }

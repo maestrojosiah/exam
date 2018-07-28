@@ -71,6 +71,12 @@ class Config
 
     /**
      * @var string
+     * @ORM\Column(name="report_orientation", type="string", length=255, nullable=true)
+     */
+    private $reportOrientation;
+
+    /**
+     * @var string
      * @Assert\NotBlank()
      * @ORM\Column(name="letterhead_height", type="string", length=255)
      */
@@ -338,5 +344,29 @@ class Config
     public function getChartLimit()
     {
         return $this->chartLimit;
+    }
+
+    /**
+     * Set reportOrientation
+     *
+     * @param string $reportOrientation
+     *
+     * @return Config
+     */
+    public function setReportOrientation($reportOrientation)
+    {
+        $this->reportOrientation = $reportOrientation;
+
+        return $this;
+    }
+
+    /**
+     * Get reportOrientation
+     *
+     * @return string
+     */
+    public function getReportOrientation()
+    {
+        return $this->reportOrientation;
     }
 }

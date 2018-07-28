@@ -133,6 +133,11 @@ class User implements AdvancedUserInterface, \Serializable
     private $timelines;
 
     /**
+     * @ORM\OneToMany(targetEntity="Grading", mappedBy="user")
+     */
+    private $gradings;
+
+    /**
      * @ORM\OneToMany(targetEntity="ScoreChild", mappedBy="user")
      */
     private $scoreChildren;
@@ -773,5 +778,39 @@ class User implements AdvancedUserInterface, \Serializable
     public function getTimelines()
     {
         return $this->timelines;
+    }
+
+    /**
+     * Add grading
+     *
+     * @param \AppBundle\Entity\Grading $grading
+     *
+     * @return User
+     */
+    public function addGrading(\AppBundle\Entity\Grading $grading)
+    {
+        $this->gradings[] = $grading;
+
+        return $this;
+    }
+
+    /**
+     * Remove grading
+     *
+     * @param \AppBundle\Entity\Grading $grading
+     */
+    public function removeGrading(\AppBundle\Entity\Grading $grading)
+    {
+        $this->gradings->removeElement($grading);
+    }
+
+    /**
+     * Get gradings
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getGradings()
+    {
+        return $this->gradings;
     }
 }
