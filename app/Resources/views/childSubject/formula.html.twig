@@ -38,7 +38,7 @@
 		</div>
 		</div>
 		  <div class="form-group">
-		  	<button id="save_formula" type="button" class="btn btn-default">Save Formula</button>
+		  	<button id="save_formula" type="button" class="btn btn-primary">Save Formula</button>
 		  </div>
 	</form>
 	{% endblock %}
@@ -59,6 +59,7 @@
     	var id = split_id[1];
     	var subject_id = '{{subject.id}}';
     	var this_value = $(this).val();
+    	$("#save_formula").html('Save Formula').removeClass('btn-success').addClass('btn-primary');
 
     	if(this_value == 'plus-'+id)
     		$("#formula_sign-"+id).show().text('+');
@@ -84,7 +85,7 @@
 			formula_string = formula_string + "/" + divide_by + "x" + to_percentage;
 
 			console.log(formula_string);
-
+			$("#save_formula").text("Saving");
 			$.ajax({
 		        url:'{{ (path('save_entity')) }}',
 		        type: "POST",
@@ -99,6 +100,7 @@
 		        success: function (data)
 		        {
 					console.log(data);
+					$("#save_formula").html('SAVED').removeClass('btn-primary').addClass('btn-success');
 		        },
 			      error: function (xhr, status, error) {
 			      	console.log("error");

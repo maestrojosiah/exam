@@ -1,0 +1,23 @@
+{% extends 'base.html.twig' %}
+{% block body %}
+<body>
+{{ include('templates/header.html.twig') }}
+{{ include('templates/aside.html.twig') }}
+{% embed "templates/content_draft.html.twig" %}
+	{% block content %}
+	<div class="col-lg-6">
+	  <section class="panel">
+	      <header class="panel-heading">
+	          <h4>Thanks For Creating an Account</h4>
+	      </header>
+	      <div class="panel-body">
+	      	<p>Please check your email to verify your account email address. Check both inbox and spam folder.</p>
+	      </div>
+	  </section>
+	</div>
+
+
+{% endblock %}
+{% endembed %}
+{% endblock %}
+

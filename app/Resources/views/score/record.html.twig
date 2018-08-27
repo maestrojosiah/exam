@@ -126,95 +126,97 @@ $(document).on('keyup', '[id^="cSubject|"]',function (e){
 	});
 </script>
 <script>
-$(document).on('keyup', '[id^="subject|"]',function (e){
-    var id = jQuery(this).attr("id");
+    // $('td:first-child').each(function() {
+    //     console.log("row" + $(this).text());
+    // });
 
+    // Left: 37
+    // Up: 38
+    // Right: 39
+    // Down: 40
+
+$(document).on('keyup', '[id^="subject|"]',function (e){
+    var thisRow = $(this).closest('tr');
+    var thisTd = $(this).closest('td');
+    var thisTdIndex = thisTd.index() + 1;
+    var nextTr = thisRow.next('tr');
+    var prevTr = thisRow.prev('tr');
+    var nextTdInputDown = nextTr.find("td:nth-child("+thisTdIndex+")").find('input').attr('id');
+    var prevTdInputUp = prevTr.find("td:nth-child("+thisTdIndex+")").find('input').attr('id');
+    var nextTdInputRight = thisTd.next('td').find('input').attr('id');
+    var prevTdInputLeft = thisTd.prev('td').find('input').attr('id');
+    var nextTdRight = thisTd.next('td');
+    var skippedTdInputRight = nextTdRight.next('td').find('input').attr('id');
+    var prevTdLeft = thisTd.prev('td');
+    var skippedTdInputLeft = prevTdLeft.prev('td').find('input').attr('id');
+
+    
+    
     if(e.keyCode == 38){
-        $.ajax({
-          url:'{{ (path('move_cursor')) }}',
-          type: "POST",
-          dataType: "json",
-          data: {
-              "id": id,
-              "direction": 'up'
-          },
-          async: true,
-          success: function (data)
-          {
-            console.log(data)
-            $(".s_"+data).focus();
-          },
-         error: function () {
-          console.log("something's wrong")
-        }
-      });
+      $( jq( prevTdInputUp ) ).focus();
     }
     if(e.keyCode == 40){
-        $.ajax({
-          url:'{{ (path('move_cursor')) }}',
-          type: "POST",
-          dataType: "json",
-          data: {
-              "id": id,
-              "direction": 'down'
-          },
-          async: true,
-          success: function (data)
-          {
-            console.log(data)
-            $(".s_"+data).focus();
-          },
-         error: function () {
-          console.log("something's wrong")
-        }
-      });
+      $( jq( nextTdInputDown ) ).focus();
+    }
+    if(e.keyCode == 37){
+      if( $(jq( prevTdInputLeft) ).length ) {
+        $( jq( prevTdInputLeft ) ).focus();
+      } else {
+        $( jq( skippedTdInputLeft ) ).focus();
+      }
+    }
+    if(e.keyCode == 39){
+      if( $(jq( nextTdInputRight) ).length ) {
+        $( jq( nextTdInputRight ) ).focus();
+      } else {
+        $( jq( skippedTdInputRight ) ).focus();
+      }
     }
 });
+
+function jq( myid ) {
+    if(myid !== undefined){
+      return "#" + myid.replace( /(:|\.|\[|\]|,|=|@|!|\#|\$|%|&|\'|\*|\+|\-|\/|\?|\^|\{|\||\}|~|;)/g, "\\$1" );
+    }
+}
 </script>
 
 <script>
 $(document).on('keyup', '[id^="cSubject|"]',function (e){
-    var id = jQuery(this).attr("id");
+    var thisRow = $(this).closest('tr');
+    var thisTd = $(this).closest('td');
+    var thisTdIndex = thisTd.index() + 1;
+    var nextTr = thisRow.next('tr');
+    var prevTr = thisRow.prev('tr');
+    var nextTdInputDown = nextTr.find("td:nth-child("+thisTdIndex+")").find('input').attr('id');
+    var prevTdInputUp = prevTr.find("td:nth-child("+thisTdIndex+")").find('input').attr('id');
+    var nextTdInputRight = thisTd.next('td').find('input').attr('id');
+    var prevTdInputLeft = thisTd.prev('td').find('input').attr('id');
+    var nextTdRight = thisTd.next('td');
+    var skippedTdInputRight = nextTdRight.next('td').find('input').attr('id');
+    var prevTdLeft = thisTd.prev('td');
+    var skippedTdInputLeft = prevTdLeft.prev('td').find('input').attr('id');
 
+    
     if(e.keyCode == 38){
-        $.ajax({
-          url:'{{ (path('move_cursor_child')) }}',
-          type: "POST",
-          dataType: "json",
-          data: {
-              "id": id,
-              "direction": 'up'
-          },
-          async: true,
-          success: function (data)
-          {
-            console.log(data)
-            $(".c_"+data).focus();
-          },
-         error: function () {
-          console.log("something's wrong")
-        }
-      });
+      $( jq( prevTdInputUp ) ).focus();
     }
     if(e.keyCode == 40){
-        $.ajax({
-          url:'{{ (path('move_cursor_child')) }}',
-          type: "POST",
-          dataType: "json",
-          data: {
-              "id": id,
-              "direction": 'down'
-          },
-          async: true,
-          success: function (data)
-          {
-            console.log(data)
-            $(".c_"+data).focus();
-          },
-         error: function () {
-          console.log("something's wrong")
-        }
-      });
+      $( jq( nextTdInputDown ) ).focus();
+    }
+    if(e.keyCode == 37){
+      if( $(jq( prevTdInputLeft) ).length ) {
+        $( jq( prevTdInputLeft ) ).focus();
+      } else {
+        $( jq( skippedTdInputLeft ) ).focus();
+      }
+    }
+    if(e.keyCode == 39){
+      if( $(jq( nextTdInputRight) ).length ) {
+        $( jq( nextTdInputRight ) ).focus();
+      } else {
+        $( jq( skippedTdInputRight ) ).focus();
+      }
     }
 });
 </script>

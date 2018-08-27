@@ -144,7 +144,7 @@ class User implements AdvancedUserInterface, \Serializable
 
     public function __construct()
     {
-        $this->active = true;
+        $this->active = false;
         $this->tokens = 0;
         $this->configs = new \Doctrine\Common\Collections\ArrayCollection();
         $this->examCompanies = new \Doctrine\Common\Collections\ArrayCollection();

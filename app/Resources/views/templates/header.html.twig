@@ -14,12 +14,12 @@
                 <!--  search form start -->
                 <ul class="nav top-menu">
                     <li>
-                        <a><span>{% if app.user.configs|first.schName is defined %} {{app.user.configs|first.schName}} {% endif %}</span></a>
+                        <a><span>{% if app.user and app.user.configs|first.schName is defined %} {{app.user.configs|first.schName}} {% endif %}</span></a>
                     </li>
                 </ul>
                 <!--  search form end -->
             </div>
-
+            {% if app.user %}
             <div class="top-nav notification-row">
                 <!-- notificatoin dropdown start-->
                 <ul class="nav pull-right top-menu">
@@ -49,5 +49,6 @@
                 </ul>
                 <!-- notificatoin dropdown end-->
             </div>
+            {% endif %}
       </header>
       <!--header end-->
