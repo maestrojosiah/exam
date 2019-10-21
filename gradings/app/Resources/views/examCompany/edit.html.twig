@@ -1,0 +1,83 @@
+{% extends 'base.html.twig' %}
+{% block body %}
+<body>
+{{ include('templates/header.html.twig') }}
+{{ include('templates/aside.html.twig') }}
+{% embed "templates/content_draft.html.twig" %}
+	{% block content %}
+	<div class="col-lg-6">
+	  <section class="panel">
+	      <header class="panel-heading">
+	          Edit Exam
+	      </header>
+	      <div class="panel-body">
+	      	{% if app.user.classes is not empty %}
+	          <form id="form">
+	              <div class="form-group">
+	                  <label for="exam_company_c_title">Exam Company Title</label>
+	                  <input class="form-control" type="text" value="{{examCompany.cTitle}}" id="cTitle" placeholder="Exam Title" />
+	              </div>
+	              <button class="btn btn-primary btn-outline" type="button" id="save">Save</button>
+	              <a href="{{path('homepage')}}" class="btn btn-danger pull-right" style="margin-left: 5px;">DONE</a>
+	              <a href="{{path('list_examCompanies', {'classId': examCompany.class.id })}}" class="btn btn-danger pull-right">List</a>
+
+	          </form>
+						{% else %}
+	            <div class="well">
+	              <h4>You need to  <a href="{{path('new_class')}}"> have at least one class </a> to add an exam </h4>
+	            </div>
+            {% endif %}
+	      </div>
+	  </section>
+	</div>
+{% endblock %}
+{% endembed %}
+{% endblock %}
+{% block javascripts %}
+  <script type="text/javascript">
+    $(function() {
+      $("#cTitle").focus();
+    });
+  </script>
+	<script>
+	  $(document).on('click', '#save', function(){
+			var c_title = $('#cTitle').val();
+			$('#form').checkFields();
+			$('#save').html('Wait...');
+			$.ajax({
+	        url:'{{ (path('edit_entity')) }}',
+	        type: "POST",
+	        dataType: "json",
+	        data: {
+						"id": {{examCompany.id}},
+						"entity": 'ExamCompany',
+						"fields": ['cTitle'],
+						"values": [c_title],
+	        },
+	        async: true,
+	        success: function (data)
+	        {
+						console.log(data);
+						$("#cTitle").focus();
+						$('#save').html('SAVED').removeClass('btn-primary').addClass('btn-success');
+	        },
+		      error: function (xhr, status, error) {
+						console.log('error');
+		      }
+	    });
+
+	  });
+	</script>
+	<script>
+		$(document).on('keypress', '#cTitle', function(e){
+			 var key = e.which;
+			 if(key == 13){
+					$("#save").click();
+					e.preventDefault();
+				} else {
+					$('#save').html('Save').removeClass('btn-success').addClass('btn-primary');
+				}
+		});
+
+</script>
+{% endblock %}

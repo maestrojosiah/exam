@@ -1,0 +1,297 @@
+<?php
+
+namespace AppBundle\Entity;
+
+use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
+
+/**
+ * Classs
+ *
+ * @ORM\Table(name="classs")
+ * @ORM\Entity(repositoryClass="AppBundle\Repository\ClasssRepository")
+ */
+class Classs
+{
+    /**
+     * @var int
+     *
+     * @ORM\Column(name="id", type="integer")
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="AUTO")
+     */
+    private $id;
+
+    /**
+     * @var string
+     * @Assert\NotBlank()
+     * @ORM\Column(name="c_title", type="string", length=50)
+     */
+    private $cTitle;
+
+    /**
+     * @var string
+     * @Assert\NotBlank()
+     * @ORM\Column(name="class_teacher", type="string", length=100)
+     */
+    private $classTeacher;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="User", inversedBy="classes")
+     * @ORM\JoinColumn(name="user_id", referencedColumnName="id", onDelete="CASCADE")
+     */
+    private $user;
+
+    /**
+     * @ORM\OneToMany(targetEntity="Score", mappedBy="class")
+     */
+    private $scores;
+
+    /**
+     * @ORM\OneToMany(targetEntity="ScoreChild", mappedBy="class")
+     */
+    private $scoreChildren;
+
+    /**
+     * @ORM\OneToMany(targetEntity="Student", mappedBy="class", fetch="EAGER")
+     */
+    private $students;
+
+    /**
+     * @ORM\OneToMany(targetEntity="ExamCompany", mappedBy="class")
+     */
+    private $examCompanies;
+
+    public function __toString() {
+        return $this->cTitle;
+    }
+
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->scores = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->students = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->examCompanies = new \Doctrine\Common\Collections\ArrayCollection();
+    }
+
+
+    /**
+     * Get id
+     *
+     * @return int
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * Set cTitle
+     *
+     * @param string $cTitle
+     *
+     * @return Classs
+     */
+    public function setCTitle($cTitle)
+    {
+        $this->cTitle = $cTitle;
+
+        return $this;
+    }
+
+    /**
+     * Get cTitle
+     *
+     * @return string
+     */
+    public function getCTitle()
+    {
+        return $this->cTitle;
+    }
+
+    /**
+     * Set user
+     *
+     * @param \AppBundle\Entity\User $user
+     *
+     * @return Classs
+     */
+    public function setUser(\AppBundle\Entity\User $user = null)
+    {
+        $this->user = $user;
+
+        return $this;
+    }
+
+    /**
+     * Get user
+     *
+     * @return \AppBundle\Entity\User
+     */
+    public function getUser()
+    {
+        return $this->user;
+    }
+
+    /**
+     * Add score
+     *
+     * @param \AppBundle\Entity\Score $score
+     *
+     * @return Classs
+     */
+    public function addScore(\AppBundle\Entity\Score $score)
+    {
+        $this->scores[] = $score;
+
+        return $this;
+    }
+
+    /**
+     * Remove score
+     *
+     * @param \AppBundle\Entity\Score $score
+     */
+    public function removeScore(\AppBundle\Entity\Score $score)
+    {
+        $this->scores->removeElement($score);
+    }
+
+    /**
+     * Get scores
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getScores()
+    {
+        return $this->scores;
+    }
+
+    /**
+     * Add student
+     *
+     * @param \AppBundle\Entity\Student $student
+     *
+     * @return Classs
+     */
+    public function addStudent(\AppBundle\Entity\Student $student)
+    {
+        $this->students[] = $student;
+
+        return $this;
+    }
+
+    /**
+     * Remove student
+     *
+     * @param \AppBundle\Entity\Student $student
+     */
+    public function removeStudent(\AppBundle\Entity\Student $student)
+    {
+        $this->students->removeElement($student);
+    }
+
+    /**
+     * Get students
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getStudents()
+    {
+        return $this->students;
+    }
+
+    /**
+     * Add examCompany
+     *
+     * @param \AppBundle\Entity\ExamCompany $examCompany
+     *
+     * @return Classs
+     */
+    public function addExamCompany(\AppBundle\Entity\ExamCompany $examCompany)
+    {
+        $this->examCompanies[] = $examCompany;
+
+        return $this;
+    }
+
+    /**
+     * Remove examCompany
+     *
+     * @param \AppBundle\Entity\ExamCompany $examCompany
+     */
+    public function removeExamCompany(\AppBundle\Entity\ExamCompany $examCompany)
+    {
+        $this->examCompanies->removeElement($examCompany);
+    }
+
+    /**
+     * Get examCompanies
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getExamCompanies()
+    {
+        return $this->examCompanies;
+    }
+
+    /**
+     * Set classTeacher
+     *
+     * @param string $classTeacher
+     *
+     * @return Classs
+     */
+    public function setClassTeacher($classTeacher)
+    {
+        $this->classTeacher = $classTeacher;
+
+        return $this;
+    }
+
+    /**
+     * Get classTeacher
+     *
+     * @return string
+     */
+    public function getClassTeacher()
+    {
+        return $this->classTeacher;
+    }
+
+    /**
+     * Add scoreChild
+     *
+     * @param \AppBundle\Entity\ScoreChild $scoreChild
+     *
+     * @return Classs
+     */
+    public function addScoreChild(\AppBundle\Entity\ScoreChild $scoreChild)
+    {
+        $this->scoreChildren[] = $scoreChild;
+
+        return $this;
+    }
+
+    /**
+     * Remove scoreChild
+     *
+     * @param \AppBundle\Entity\ScoreChild $scoreChild
+     */
+    public function removeScoreChild(\AppBundle\Entity\ScoreChild $scoreChild)
+    {
+        $this->scoreChildren->removeElement($scoreChild);
+    }
+
+    /**
+     * Get scoreChildren
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getScoreChildren()
+    {
+        return $this->scoreChildren;
+    }
+}

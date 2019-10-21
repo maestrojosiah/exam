@@ -1,0 +1,32 @@
+{% extends 'base.html.twig' %}
+{% block body %}
+<body>
+{{ include('templates/header.html.twig') }}        		
+{{ include('templates/aside.html.twig') }}        		
+{% embed "templates/content_draft.html.twig" %}
+	{% block content %}
+	<div class="col-lg-6">
+	  <section class="panel">
+	      <header class="panel-heading">
+	          Choose a Subject
+	      </header>
+	      <div class="panel-body">
+	      <p>Select a subject.</p>
+	      {% if subjects is not empty %}
+			<div class="list-group">
+			{% for subject in subjects %}
+			  <a href="{{path( goto, {'subjectId':subject.id})}}" class="list-group-item">{{subject}}</a>
+			{% endfor %}
+			</div>			
+          {% else %}
+            <div class="well">
+              <h4>Its lonely here! You should  <a href="{{path('new_subject')}}"> add a subject </a> to add child subjects to it </h4>
+            </div>
+          {% endif %}
+
+	      </div>
+	  </section>
+	</div>
+{% endblock %}
+{% endembed %}
+{% endblock %}

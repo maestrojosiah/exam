@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html>
+    <head>
+	    <meta charset="utf-8">
+	    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	    <meta name="description" content="Make your exam recording for Primary Schools easy.">
+	    <meta name="author" content="Myle-Post Solutions">
+	    <meta name="keyword" content="Exam Pro System">
+	    <title>Exam Pro</title>
+
+	    <!-- Bootstrap CSS -->
+	    <link href="{{asset('css/bootstrap.min.css')}}" rel="stylesheet">
+	    <!-- bootstrap theme -->
+	    <link href="{{asset('css/bootstrap-theme.css')}}" rel="stylesheet">
+	    <!--external css-->
+	    <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('favicon.png') }}">
+	    <!-- font icon -->
+	    <link href="{{asset('css/elegant-icons-style.css')}}" rel="stylesheet" />
+	    <link href="{{asset('assets/font-awesome/css/font-awesome.css')}}" rel="stylesheet" />
+	    <!-- full calendar css-->
+	    <link href="{{asset('assets/fullcalendar/fullcalendar/bootstrap-fullcalendar.css')}}" rel="stylesheet" />
+	    <!-- easy pie chart-->
+	    <link href="{{asset('assets/jquery-easy-pie-chart/jquery.easy-pie-chart.css')}}" rel="stylesheet" type="text/css" media="screen"/>
+	    <!-- owl carousel -->
+	    <link rel="stylesheet" href="{{asset('css/owl.carousel.css')}}" type="text/css">
+	    <!-- notiny CSS -->
+	    <link href="{{ asset('notiny/notiny.min.css') }}" rel="stylesheet">
+	    <!-- Custom styles -->
+	    <link href="{{asset('css/style.css')}}" rel="stylesheet">
+	    <link href="{{asset('css/style-responsive.css')}}" rel="stylesheet" />
+
+	    <!-- HTML5 shim and Respond.js IE8 support of HTML5 -->
+	    <!--[if lt IE 9]>
+	      <script src="{{asset('js/html5shiv.js')}}"></script>
+	      <script src="{{asset('js/respond.min.js')}}"></script>
+	      <script src="{{asset('js/lte-ie7.js')}}"></script>
+	    <![endif]-->
+	    {% block stylesheets %}{% endblock %}
+    </head>
+	{% if app.user and app.request.get('_route') == 'homepage' and app.user.configs|first.tourGuide == 'on' %}
+	{% set classes_length = app.user.classes|length %}
+	{% set subjects_length = app.user.subjects|length %}
+	{% set child_subjects_length = app.user.childSubjects|length %}
+	{% set students_length = app.user.students|length %}
+	{% set exams_length = app.user.examCompanies|length %}
+	{% set scores_length = app.user.scores|length %}
+     {% if classes_length > 0 and subjects_length > 0 and child_subjects_length > 0
+		 and students_length > 0 and exams_length > 0 and scores_length > 0 %}
+		 {% set tour_guide = 'off' %}
+	   {% endif %}
+	{% endif %}
+	{% if app.user.configs is defined and app.user.configs is not empty %}
+    	{% set entriesPerPage = app.user.configs|first.resultsPerPage %}
+    	{% set tour_guide = app.user.configs|first.tourGuide %}
+    {% else %}
+    	{% set entriesPerPage = 10 %}
+    	{% set tour_guide = 'on' %}
+    {% endif %}
+    <!-- javascripts -->
+	{% block body %}{% endblock %}
+    <script src="{{asset('js/jquery.js')}}"></script>
+    <script src="{{asset('js/jquery-1.8.3.min.js')}}"></script>
+    <script type="text/javascript" src="{{asset('js/jquery-ui-1.9.2.custom.min.js')}}"></script>
+    <!-- bootstrap -->
+    <script src="{{asset('js/bootstrap.min.js')}}"></script>
+    <!-- aSimpleTour -->
+    <script src="{{asset('aSimpleTour/jquery.aSimpleTour.min.js')}}"></script>
+    <!-- nice scroll -->
+    <script src="{{asset('js/jquery.scrollTo.min.js')}}"></script>
+    <script src="{{asset('js/jquery.nicescroll.js')}}" type="text/javascript"></script>
+    <!-- charts scripts -->
+    <script src="{{asset('assets/jquery-knob/js/jquery.knob.js')}}"></script>
+    <script src="{{asset('js/jquery.sparkline.js')}}" type="text/javascript"></script>
+    <script src="{{asset('js/owl.carousel.js')}}" ></script>
+    <!-- jQuery full calendar -->
+    <script src="{{asset('assets/fullcalendar/fullcalendar/fullcalendar.min.js')}}"></script>
+    <!--script for this page only-->
+    <script src="{{asset('js/calendar-custom.js')}}"></script>
+    <!-- custom select -->
+    <script src="{{asset('js/jquery.customSelect.min.js')}}" ></script>
+    <!--custome script for all page-->
+    <script src="{{asset('js/scripts.js')}}"></script>
+    <!-- custom script for this page-->
+    <script src="{{asset('js/sparkline-chart.js')}}"></script>
+    <!-- Notification javascript - notiny -->
+    <script src="{{ asset('notiny/notiny.min.js') }}"></script>
+    <script src="{{ asset('custom/custom_tour.js') }}"></script>
+    <script type="text/javascript">
+        $(window).on('load',function(){
+            $('#page_modal').modal({backdrop: 'static', keyboard: false})              
+        });
+    </script>
+    <script>
+    (function( $ ) {
+
+      $.fn.checkFields = function() {
+
+          return this.find('input').each(function() {
+            if($(this).val() == "")
+      			{
+      				$(this).attr('placeholder', 'This Field is Required');
+      				die();
+      			}
+          });
+
+      };
+
+    }( jQuery ));
+    </script>
+	  <script>
+
+	      //knob
+	      $(function() {
+	        $(".knob").knob({
+	          'draw' : function () {
+	            $(this.i).val(this.cv + '%')
+	          }
+	        })
+	      });
+
+	      //carousel
+	      $(document).ready(function() {
+	          $("#owl-slider").owlCarousel({
+	              navigation : true,
+	              slideSpeed : 300,
+	              paginationSpeed : 400,
+	              singleItem : true
+
+	          });
+	      });
+
+	      //custom select box
+
+	      $(function(){
+	          $('select.styled').customSelect();
+	      });
+
+	  </script>
+
+    {% for message in app.flashes('success') %}
+        <script type="text/javascript">
+            $.notiny({ text: '{{ message }}',  position: 'left-top' });
+        </script>
+    {% endfor %}
+
+    {% for message in app.flashes('error') %}
+        <script type="text/javascript">
+            $.notiny({ text: '{{ message }}',  position: 'left-top' });
+        </script>
+    {% endfor %}
+    {% if app.user %}
+	<script type="text/javascript">
+		var tour = {
+			{% if tour_guide == "on" %}
+				autoStart: true,
+			{% else %}
+		    	autoStart: false,
+		    {% endif %}
+		    data : [
+		    	{% if classes_length is defined and classes_length < 1 %}
+		        { element : '#add_class', tooltip : 'This is the very first thing you need to do.', text: 'Click on "add some classes" to start adding classes', position: 'T' },
+		        {% endif %}
+		    	{% if subjects_length is defined and subjects_length < 1 %}
+		        { element : '#add_subject', tooltip : 'Now add subjects. You really need them.', text: 'Click on "add some subjects" to start adding subjects', position: 'T' },
+		        {% endif %}
+		    	{% if students_length is defined and students_length < 1 %}
+		        { element : '#add_student', tooltip : 'Now add some students. You can import from spreadsheet xls,xlsx file!', text: 'If you have at least one class and subjects added, now you can add students to any of your classes.', position: 'L' },
+		        {% endif %}
+		    	{% if exams_length is defined and exams_length < 1 %}
+		        { element : '#add_exam', tooltip : 'Now add some exam titles.', text: 'This can by the exam body title or anything like "End Term Exams".', position: 'L', location: "{{path('choose_class_cs', {'goto': 'new_childSubject'} ) }}" },
+		        {% endif %}
+		    	{% if child_subjects_length is defined and child_subjects_length < 1 %}
+		        { element : '#subjs', tooltip : 'Check if some subjects will need children!', text: 'Example: Add Composition and Language child subjects to English Subject.', position: 'R', location: "{{path('choose_class_cs', {'goto': 'new_childSubject'} ) }}" },
+		        {% endif %}
+		    	{% if scores_length is defined and scores_length < 1 %}
+		        { element : '.knob-charts', tooltip : 'Click one of these to Start recording the scores!', text: 'Click one of the links over here to begin adding the scores.', position: 'L' },
+		        {% endif %}
+		    ],
+		    welcomeMessage: "Wondering what to do next?",
+		    controlsPosition : 'BR',
+		    buttons: {
+		        next  : { text : 'Next &rarr;', class : 'btn btn-default'},
+		        prev  : { text : '&larr; Previous', class: 'btn btn-default' },
+		        start : { text : 'Show me!', class: 'btn btn-primary btn-lg' },
+		        end   : { text : 'End', class: 'btn btn-primary' }
+		    },
+		    controlsCss: {
+		        background: 'rgba(124, 124, 124, 0.9)',
+		        color: '#fff',
+		        width: '400px',
+		        'border-radius': 0
+		    }
+		};
+
+		{% if tour_guide == "on" and app.request.get('_route') == 'homepage' %}
+			$(document).ready(function(){
+			   $.aSimpleTour(tour);
+			});
+		{% else %}
+			$(document).ready(function(){
+			    $('.touring').on('click', function(){
+			        $.aSimpleTour(tour);
+			    });
+			});
+	    {% endif %}
+
+	</script>
+	{% endif %}
+	{% block javascripts %}{% endblock %}
+
+  </body>
+</html>

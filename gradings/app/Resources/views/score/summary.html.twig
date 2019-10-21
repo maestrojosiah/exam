@@ -1,0 +1,251 @@
+{% extends 'base.html.twig' %}
+{% block stylesheets %}
+{% endblock %}
+{% block body %}
+<body>
+{{ include('templates/header.html.twig') }}
+{{ include('templates/aside.html.twig') }}
+{% embed "templates/content_draft.html.twig" %}
+	{% block content %}
+      {% set colforthis = ['blue', 'red'] %}
+      {% if students is empty %}
+        <div class="well">
+          <h3>There are no students for class {{class.cTitle}}. Please <a href="{{path('choose_class', {'goto': 'new_student'})}}">add students</a></h3>
+        </div>
+      {% elseif subjects is empty %}
+        <div class="well">
+          <h3>You don't have any subjects added yet! Please <a href="{{path('new_subject')}}">add subjects</a></h3>
+        </div>
+      {% else %}
+			<div class="col-lg-12">
+        <section class="panel">
+            <header class="panel-heading">
+              Exam Report Summary for {{exam.cTitle}} [{{class.cTitle}}]
+              <div class="pull-right">
+								<a class="btn btn-sm btn-primary" href="{{path('my_downloads')}}"> My Downloads</a>
+              </div>
+              </header>
+            {% set parents = [] %}
+              {% set span = childSubjects|length + subjects|length + 3 %}
+              {% set img_height = app.user.configs|first.letterheadHeight %}
+            {% for childSubject in childSubjects %}
+              {% if childSubject.subject.sTitle not in parents %}
+                {% set parents = parents|merge([childSubject.subject.sTitle]) %}
+              {% endif %}
+            {% endfor %}
+            <table id="printDiv" class="table table-striped table-advance table-hover">
+             <tbody>
+                <tr>
+                  <td colspan="{{span}}">
+                    {% if app.user.configs|first.titleDisplay == 'txt' %}
+                      <h3>{{app.user.configs|first.schName}}<br />
+                      {{app.user.configs|first.address}}<br />
+                      {{app.user.configs|first.telephone}}</h3>
+                      <h4>Exam Report Summary for {{exam.cTitle}} [ Class {{class.cTitle}} ]</h4>
+                    {% else  %}
+                      {% set img_path = "img/" ~ app.user.configs|first.letterhead %}
+                      <img style="width:100%; height:{{img_height}}px;" src="{{ absolute_url(asset(img_path)) }}" {# src="{{asset('img/{{app.user.configs|first.letterhead}}')}}" #} title="You can change this image at the settings." />
+                      <h4>Exam Report Summary for {{exam.cTitle}} [ Class {{class.cTitle}} ]</h4>
+                    {% endif %}
+                  </td>
+                </tr>
+                <tr>
+                  <th style="text-nowrap" class="col-md-3">Name</th>
+                  {% for subject in subjects %}
+                    {% if subject.sTitle in parents %}
+                      {% for c_subject in subject.childSubjects %}
+                      <th style="color:{{colforthis[loop.index0]}}">{{c_subject.cSTitle|title}}</th>
+                      {% endfor %}
+                    {% endif %}
+                    {# <th style="color:red">{{subject.sTitle|title}}</th> #}
+                  {% endfor %}
+                  <th>Total</th>
+                  <th>Position</th>
+                </tr>
+								{% set break = false %}
+                {% for key, item in sum if not break %}
+								{% if (download == null and loop.index == 3) or (download and download.times <= 1 and loop.index == 3) %}
+									{% set break = true %}
+								{% endif %}
+                <tr>
+                	<td style="text-nowrap; white-space: nowrap; font-weight:bold; color:black;">{{item[2].names|title}}</td>
+                    {% for subject in subjects %}
+                    {% if subject.childSubjects|length > 1 %}
+                      {% for childSub in subject.childSubjects %}
+                        {% set c_sub_key = item[2].id ~ "." ~ childSub.id ~ "." ~ "c" %}
+                        {% if key_list_c[c_sub_key][c_sub_key] is defined %}
+                          <td style="color:{{colforthis[loop.index0]}}">{{key_list_c[c_sub_key][c_sub_key].marks}}</td>
+                        {% else %}
+                          <td style="color:blue">_</td>
+                        {% endif %}
+                      {% endfor %}
+                    {% endif %}
+                    {% set st_sub_key = item[2].id ~ "." ~ subject.id ~ "." ~ "s" %}
+                     {#  {% if key_list_s[st_sub_key][st_sub_key] is defined %}
+                        <td style="color:red">{{key_list_s[st_sub_key][st_sub_key].marks}}</td>
+                      {% else %}
+                        <td style="color:red">_</td>
+                      {% endif %} #}
+                    {% endfor %}
+                	<td>{{item[0]}}</td>
+                	<td>{{item[1]}}</td>
+                </tr>
+                {% endfor %}
+              <tr>
+                {% if (download == null) or (download and download.times <= 1) %}
+                  <tr>
+                  <td colspan="{{span}}">
+                    <div class="col-lg-12 text-center" style="background-color:white; font-size:15px;">
+                      <h2>Congratulations!</h2>
+                      <p><strong>This service costs only Kshs 30/=</strong></p>
+                      <p><strong>Send through MPESA to: 0716339886 (Josiah), receive code in 5 seconds.</strong></p>
+                      <p><strong>Enter Code Below to Download Your Stuff.</strong></p>
+                      <p><strong>Any enquiry? Call 0705 285959 or 0736600033 on weekdays.</strong></p>
+                      <form class="form-inline">
+                        <div class="form-group">
+                          <label class="sr-only" for="exampleInputAmount">Amount (in Kshs)</label>
+                          <div class="input-group">
+                            <div class="input-group-addon">Code</div>
+                            <input type="text" class="form-control" id="code_input" placeholder="XXX-XXX">
+                          </div>
+                        </div>
+                        <button type="button" id="check_code" class="btn btn-primary">Submit Code!</button>
+                      </form>
+                      <p class="text-danger" id="error"></p>
+                      <p class="text-success" id="success"></p>
+                    </div>
+                  </td>
+                  </tr>
+                {% endif %}
+
+      					<td>Total Score</td>
+      					{% set total_score  = 0 %}
+      					{% for subject in subjects %}
+      						{% set total_score = total_score + sum_sub[subject.id][0] %}
+                      		{% if subject.sTitle in parents %}
+                      			{% for child in subject.childSubjects %}
+                      				<td>{{c_sum_sub[child.id][0]}}</td>
+                      			{% endfor %}
+                      		{% endif %}
+      						{# <td style="color:black;">{{sum_sub[subject.id][0]}}</td> #}
+      					{% endfor %}
+      					<td style="color:black;">{{total_score}}</td>
+              </tr>
+              <tr>
+					<td>Mean Score</td>
+					{% set total_mean  = 0 %}
+					{% for subject in subjects %}
+						{% set mean = sum_sub[subject.id][0] / students|length %}
+						{% set total_mean = total_mean + mean %}
+                		{% if subject.sTitle in parents %}
+                			{% for child in subject.childSubjects %}
+								{% set mean_child = c_sum_sub[child.id][0] / students|length %}
+                				<td>{{mean_child|round(2)}}</td>
+                			{% endfor %}
+                		{% endif %}
+						{# <td style="color:black;">{{mean|round(2)}}</td> #}
+					{% endfor %}
+					<td style="color:black;">{{total_mean|round(2)}}</td>
+              </tr>
+              <tr>
+					<td>Position</td>
+					{% for subject in subjects %}
+                		{% if subject.sTitle in parents %}
+                			{% for child in subject.childSubjects %}
+                				<td>
+                        </td>
+                			{% endfor %}
+                		{% endif %}
+						{# <td style="color:red;">{{sum_sub[subject.id][1]}}</td> #}
+					{% endfor %}
+              </tr>
+             </tbody>
+          </table>
+        </section>
+      </div>
+  {% endif %}
+{% endblock %}
+{% endembed %}
+{% endblock %}
+{% block javascripts %}
+    <script src="{{asset('printThis/printThis.js')}}"></script>
+    <script type="text/javascript">
+    $(document).ready(function() {
+      $( "#triggerPrint" ).click(function(e) {
+        $("#printDiv").printThis({
+          debug: false,               // show the iframe for debugging
+          importCSS: true,            // import page CSS
+          importStyle: false,         // import style tags
+          printContainer: true,       // grab outer container as well as the contents of the selector
+          pageTitle: "{{exam.cTitle}} [Class {{class.cTitle}}]",              // add title to print page
+          removeInline: false,        // remove all inline styles from print elements
+          printDelay: 333,            // variable print delay; depending on complexity a higher value may be necessary
+          header: null,               // prefix to html
+          footer: null,               // postfix to html
+          base: false ,               // preserve the BASE tag, or accept a string for the URL
+          formValues: true,           // preserve input/form values
+          canvas: false,              // copy canvas elements (experimental)
+          doctypeString: "...",       // enter a different doctype for older markup
+          removeScripts: false,       // remove script tags from print content
+          copyTagClasses: false       // copy classes from the html & body tag
+      });
+      });
+    });
+  </script>
+<script>
+  $(document).on('click', '[id="check_code"]', function(){
+
+      var code = $("#code_input").val();
+      var link = "{{class.id}}/{{exam.id}}";
+      var exam_id = "{{exam.id}}";
+      var desc = "{{exam.cTitle}} [ Class {{class.cTitle}} ]";
+
+			$('#check_code').html('Please Wait... ');
+      $.ajax({
+          url:'{{ (path('check_code_validity')) }}',
+          type: "POST",
+          dataType: "json",
+          data: {
+              "code": code,
+              "link": link,
+              "desc": desc,
+              "exam_id": exam_id,
+          },
+          async: true,
+          success: function (data)
+          {
+            if(data.success == true){
+              $("#error").text("");
+              $("#success").text(data.message);
+              $("#code_input").val("");
+              window.location.href = data.address;
+							$('#check_code').html('Nice!');
+            } else {
+              $("#success").text("");
+              $("#error").text(data.message);
+							$('#check_code').html('Oops!');
+            }
+            console.log(data);
+          },
+         error: function () {
+            $("#success").text("");
+            $("#error").text("something went wrong. Please call 0705285959 for assistance");
+          }
+      });
+
+  });
+</script>
+<script>
+	$(document).on('keypress', '#code_input', function(e){
+		 var key = e.which;
+		 if(key == 13){
+				$("#check_code").click();
+				e.preventDefault();
+			} else {
+				$('#check_code').html('Submit Code').removeClass('btn-success').addClass('btn-primary');
+			}
+	});
+
+</script>
+
+{% endblock %}

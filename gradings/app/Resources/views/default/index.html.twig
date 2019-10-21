@@ -1,0 +1,281 @@
+{% extends 'base.html.twig' %}
+{% block stylesheets %}
+  <link rel="stylesheet" href="{{asset('FlipClock/compiled/flipclock.css')}}">
+{% endblock %}
+{% block body %}
+<body>
+{{ include('templates/header.html.twig') }}
+{{ include('templates/aside.html.twig') }}
+{% embed "templates/content_draft.html.twig" %}
+	{% block content %}
+        <!--overview start-->
+        <div class="row state-overview">
+            <div class="col-lg-4">
+            <!--user profile info start-->
+            <section class="panel">
+                <div class="profile-widget profile-widget-info">
+                    <div class="panel-body">
+                      <div class="col-lg-4 col-sm-4 profile-widget-name">
+
+                        <div style="margin-top:20px;" class="follow-ava">
+                            <img src="img/mps.png" alt="">
+                        </div>
+                        <h6>milepostsolutions.co.ke</h6>
+                      </div>
+                      <div class="col-lg-8 col-sm-8 follow-info">
+                          <h4>Mile-Post Solutions</h4>
+                          <p>Welcome back {{app.user.fName}}, Let's make work easier and save time.</p>
+                      </div>
+                      <div class="weather-category twt-category">
+                                <ul>
+                                    <li class="active">
+                                        <h4>{{ "now"|date("d") }}</h4>
+                                        <i class="icon_calendar"></i> Day
+                                    </li>
+                                    <li>
+                                        <h4>{{ "now"|date("m") }}</h4>
+                                        <i class="icon_calendar"></i> Month
+                                    </li>
+                                    <li>
+                                        <h4>{{ "now"|date("Y") }}</h4>
+                                        <i class="icon_calendar"></i> Year
+                                    </li>
+                                </ul>
+                            </div>
+                    </div>
+                    <footer class="profile-widget-foot">
+                      <div id="clock">
+                        <p class="unit" id="hours"></p>
+                        <p class="unit" id="minutes"></p>
+                        <p class="unit" id="seconds"></p>
+                        <p class="unit" id="ampm"></p>
+                      </div>
+                    </footer>
+                </div>
+            </section>
+            <!--user profile info end-->
+          </div>
+          <!-- statics start -->
+          <div class="state col-lg-8">
+              <div class="row">
+                <div class="col-lg-3 col-sm-6" id="exam_box">
+                    <section class="panel">
+                        <div class="symbol">
+                            <i class="icon_document_alt"></i>
+                        </div>
+                        <div class="value">
+                            <h1>{{app.user.examCompanies|length}}</h1>
+                            <p> Exams</p>
+                        </div>
+                    </section>
+                </div>
+                <div class="col-lg-3 col-sm-6" id="class_box">
+                    <section class="panel">
+                        <div class="symbol">
+                            <i class="icon_lightbulb_alt"></i>
+                        </div>
+                        <div class="value">
+                            <h1>{{app.user.classes|length}}</h1>
+                            <p> Classes</p>
+                        </div>
+                    </section>
+                </div>
+                <div class="col-lg-3 col-sm-6" id="subject_box">
+                    <section class="panel">
+                        <div class="symbol">
+                            <i class="icon_documents_alt"></i>
+                        </div>
+                        <div class="value">
+                            <h1>{{app.user.subjects|length}}</h1>
+                            <p> Subjects</p>
+                        </div>
+                    </section>
+                </div>
+                <div class="col-lg-3 col-sm-6" id="student_box">
+                    <section class="panel">
+                        <div class="symbol">
+                            <i class="icon_group"></i>
+                        </div>
+                        <div class="value">
+                            <h1>{{app.user.students|length}}</h1>
+                            <p> Students</p>
+                        </div>
+                    </section>
+                </div>
+              </div>
+              <div class="row knob-charts">
+                  <div class="col-lg-12">
+                      <div class="panel">
+                          <div class="panel-body">
+                                <ul class="summary-list">
+                                {% if app.user.examCompanies is defined and app.user.examCompanies is not empty %}
+                                {% set continue = true %}
+                                  {% for exam_company in app.user.examCompanies|sort|reverse if continue == true %}
+                                    {% if exam_company.class is defined and exam_company.class is not empty %}
+                                      {% set no_of_students = exam_company.class.students|length %}
+                                      {% set no_of_subjects = app.user.subjects|length %}
+                                        {% set no_of_scores = 0 %}
+                                        {% for score in exam_company.scores %}
+                                          {% if score.marks is defined and score.marks > 0 %}
+                                            {% set no_of_scores = no_of_scores + 1 %}
+                                          {% endif %}
+                                        {% endfor %}
+                                        {% if app.user.students|length > 0 %}
+                                          {% set percentage = (no_of_scores / (no_of_students * no_of_subjects)) * 100 %}
+                                        {% else %}
+                                          {% set percentage = 0 %}
+                                        {% endif %}
+                                        <li>
+                                          {% if loop.index == 4 %} {% set continue = false %} {% endif %}
+                                            <a href="{{path('record_scores', {'classId': exam_company.class.id, 'companyId':exam_company.id})}}">
+                                                <input class="knob" data-readonly="true" data-width="80" data-height="80" data-displayPrevious=true  data-thickness=".1" value="{{percentage|round}}" data-fgColor="#007AFF" data-bgColor="#F7F7F7">
+                                                <p>{{exam_company.cTitle}}<br />[{{exam_company.class.cTitle}}]</p>
+                                            </a>
+                                        </li>
+                                    {% else %}
+                                        <li>
+                                            <a href="{{path('record_scores', {'classId': app.user.examCompanies|first.class.id, 'companyId': app.user.examCompanies|first.id})}}">
+                                                <input class="knob" data-readonly="true" data-width="80" data-height="80" data-displayPrevious=true  data-thickness=".1" value="0" data-fgColor="#007AFF" data-bgColor="#F7F7F7">
+                                                <p>{{app.user.examCompanies|first.cTitle}}</p>
+                                            </a>
+                                        </li>
+                                    {% endif %}
+                                  {% endfor %}
+                                {% else %}
+                                  <div class="well">
+                                    <h4>Its lonely here! You can add some exams after you're done with adding <a href="{{path('new_class')}}">classes</a>, <a href="{{path('new_subject')}}">subjects</a> and <a id="add_student" href="{{path('choose_class', {'goto': 'new_student'})}}" style="background-color:white;"> students </a>.</h4>
+                                  </div>
+                                {% endif %}
+
+                                  <li>
+                                    <a id="add_exam" href="{{path('choose_class_exam', {'goto': 'new_examCompany'})}}" class="btn btn-default " style="padding:10px!important; margin-bottom:10px; color:black;"> Add New Exam </a>
+                                  </li>
+
+                                </ul>
+                            </div>
+                      </div>
+                  </div>
+              </div>
+          </div>
+          <!-- statics end -->
+        </div>
+        <!--overview end-->
+
+        <!-- project team & activity start -->
+        <div class="row">
+            <div class="col-lg-4">
+                <!--project team start-->
+                <section id='subjs' class="panel">
+                  <div class="panel-body project-team">
+                      <div class="task-progress">
+                            <h1>Subjects</h1>
+                      </div>
+                  </div>
+                  {% if app.user.subjects is not empty %}
+                  <table class="table table-hover personal-task">
+                        <tbody>
+                        {% for subject in app.user.subjects %}
+                        <tr>
+                            <td>
+                                <p class="profile-name">{{subject.sTitle}}</p>
+                            </td>
+                            <td>
+                              {% if subject.childSubjects|length > 1 %}
+                                {% for child in subject.childSubjects %}
+                                  <span class="badge bg-important">{{child.cSTitle}}</span>
+                                {% endfor %}
+                              {% else %}
+                                <a href="{{path('new_childSubject', {'subjectId': subject.id})}}" class="badge">Add Child</a>
+                              {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                  {% else %}
+                    <div class="well">
+                      <h4>Its lonely here! You can  <a href="{{path('new_subject')}}" id="add_subject" style="background-color:white;"> add some subjects </a> after you're done with adding classes and students.</h4>
+                    </div>
+                  {% endif %}
+                </section>
+                <!--Project Team end-->
+            </div>
+
+            <div class="col-lg-8">
+                <!--Project Activity start-->
+                <section class="panel">
+                    <div class="panel-body progress-panel">
+                      <div class="row">
+                        <div class="col-lg-12 task-progress pull-left">
+                            <h1>Classes</h1>
+                        </div>
+                      </div>
+                    </div>
+                    {% if app.user.classes is not empty %}
+                    <table class="table table-hover personal-task">
+                        <tbody>
+                        {% set add_class = true %}
+                        {% for class in app.user.classes if add_class == true %}
+                        {% if loop.index == 15 %}{% set add_class = false %}{% endif %}
+                          <tr>
+                              <td>{{class.cTitle}}</td>
+                              <td>
+                                  {{class.classTeacher}}.
+                              </td>
+                              <td>
+                                  <span class="badge bg-important">{{class.students|length}} Students</span>
+                              </td>
+                              <td>
+                                <span class="profile-ava">
+                                    <a id="add_student" href="{{path('list_students', {'classId': class.id})}}" class="btn btn-info btn-xs">Class {{class}} Students</a>
+                                </span>
+                              </td>
+                          </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                    {% else %}
+                      <div class="well">
+                        <h4>Its lonely here! You can <a id="add_class" href="{{path('new_class')}}" style="background-color:white;"> add some classes </a> now. If you have already added some classes, you can now <a href="{{path('choose_class', {'goto': 'new_student'})}}" style="background-color:white;"> add some students to your class </a></h4>
+                      </div>
+                    {% endif %}
+                </section>
+                <!--Project Activity end-->
+            </div>
+        <!-- project team & activity end -->
+{% endblock %}
+{% endembed %}
+{% endblock %}
+{% block javascripts %}
+    <script src="{{asset('FlipClock/compiled/flipclock.js')}}"></script>
+    <script type="text/javascript">
+      var clock;
+
+      $(document).ready(function() {
+        clock = $('.clock').FlipClock({
+          clockFace: 'TwelveHourClock',
+          showSeconds: false
+        });
+      });
+    </script>
+    <script>
+      $( "#class_box" ).click(function() {
+        $("#class_menu").click();
+      });
+    </script>
+    <script>
+      $( "#exam_box" ).click(function() {
+        $("#exam_menu").click();
+      });
+    </script>
+    <script>
+      $( "#subject_box" ).click(function() {
+        $("#subject_menu").click();
+      });
+    </script>
+    <script>
+      $( "#student_box" ).click(function() {
+        $("#student_menu").click();
+      });
+    </script>
+{% endblock %}

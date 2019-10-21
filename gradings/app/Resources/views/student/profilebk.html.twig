@@ -1,0 +1,176 @@
+{% extends 'base.html.twig' %}
+{% block stylesheets %}
+    <!-- Morris Charts CSS -->
+    <link href="{{asset('vendor/morrisjs/morris.css')}}" rel="stylesheet">
+    <style type="text/css">
+	#morris-bar-chart { height:350px; padding-bottom:55px;} 
+	svg { height:500px;}
+	#morris-bar-chart2 { height:350px; padding-bottom:55px;}
+    </style>
+{% endblock %}
+{% block body %}
+<body>
+{% set info = "with_print_material" %}
+{{ include('templates/header.html.twig') }}        		
+{{ include('templates/aside.html.twig') }}        		
+{% embed "templates/content_draft.html.twig" %}
+	{% block content %}
+	{% if score_lst is not empty %}
+	<div class="col-lg-12">
+	  <section class="panel" id="printDiv">
+	      <header class="panel-heading">
+	          {{student.names}} [{{student.class.cTitle}}] - Progress Graph for at most Last 5 Exams
+          		 [ Order of subjects
+	            {% for subject in app.user.subjects %}
+	             <span style="margin:20px">{{subject.sTitle}}</span>
+	            {% endfor %} ]
+	      </header>
+	      <div class="panel-body" id="chartjs">
+	      	{% set width = exams|length * 250 %}
+              <div class="col-lg-12">
+                  <section class="panel">
+                        <div class="panel-body">
+                            <div id="morris-bar-chart"></div>
+                        </div>
+                  </section>
+              </div>   	      
+          </div>
+	      <div class="panel-body" id="chartjs">
+	      	{% set width = exams|length * 250 %}
+              <div class="col-lg-6">
+                  <section class="panel">
+                        <div class="panel-body">
+                            <div id="morris-bar-chart2"></div>
+                        </div>
+                  </section>
+              </div>   	      
+          </div>
+	  </section>
+	</div>
+	{% else %}
+		<div class="well">
+			<h4>You will find the student's graphs for previous exams here, after you have recorded some exam entries.</h4>
+		</div>
+	{% endif %}
+{% endblock %}
+{% endembed %}
+{% endblock %}
+{% block javascripts %}
+    <!-- Morris Charts JavaScript -->
+    <script src="{{asset('vendor/raphael/raphael.min.js')}}"></script>
+    <script src="{{asset('vendor/morrisjs/morris.min.js')}}"></script>
+    <script src="{{asset('data/morris-data.js')}}"></script>
+    <script src="{{asset('printThis/printThis.js')}}"></script>
+    <script type="text/javascript">
+	  $(document).ready(function() {
+	    $( "#triggerPrint" ).click(function(e) {		
+	    	$("#printDiv").printThis({
+			    debug: false,               // show the iframe for debugging
+			    importCSS: true,            // import page CSS
+			    importStyle: false,         // import style tags
+			    printContainer: true,       // grab outer container as well as the contents of the selector
+			    pageTitle: "Performance History for {{student.names}}",              // add title to print page
+			    removeInline: false,        // remove all inline styles from print elements
+			    printDelay: 333,            // variable print delay; depending on complexity a higher value may be necessary
+			    header: null,               // prefix to html
+			    footer: null,               // postfix to html
+			    base: false ,               // preserve the BASE tag, or accept a string for the URL
+			    formValues: true,           // preserve input/form values
+			    canvas: false,              // copy canvas elements (experimental)
+			    doctypeString: "...",       // enter a different doctype for older markup
+			    removeScripts: false,       // remove script tags from print content
+			    copyTagClasses: false       // copy classes from the html & body tag
+			});
+	    });
+	  });    
+	</script>
+    <script type="text/javascript">
+    $(function() {
+
+	    Morris.Bar({
+	        element: 'morris-bar-chart',
+	        data: [
+	        {% for exam in score_lst %}
+	        {
+	            y: '{{exam[0].examCompany.cTitle|slice(0,20)}}',
+	            {% for entry in exam %}
+	             {{entry.subject.sTitle|replace({'/':'_', ' ':'_'})}}: {{entry.marks}},
+	            {% endfor %}
+	        },
+	        {% endfor %}
+	        ],
+	        xkey: 'y',
+	        ykeys: [
+	            {% for subject in app.user.subjects %}
+	            '{{subject.sTitle|replace({'/':'_', ' ':'_'})}}',
+	            {% endfor %}
+	        ],
+	        labels: [
+	            {% for subject in app.user.subjects %}
+	            '{{subject.sTitle|replace({'/':'_', ' ':'_'})}}',
+	            {% endfor %}
+	        ],
+	        hideHover: 'auto',
+	        resize: true,
+	        xLabelAngle: 60,
+	        ymin: 0,
+	        ymax: 500,
+	    });
+
+		var items = $("#morris-bar-chart").find( "svg" ).find("rect");
+		$.each(items,function(index,v){
+		    var value = {{list|json_encode()}}[index]//theJson[index].count;
+		    var newY = parseFloat( $(this).attr('y') - 20 );
+		    var halfWidth = parseFloat( $(this).attr('width') / 2 );
+		    var newX = parseFloat( $(this).attr('x') ) +  halfWidth;
+		    var output = '<text style="text-anchor: middle; font: 12px sans-serif;" x="'+newX+'" y="'+newY+'" text-anchor="middle" font="10px &quot;Arial&quot;" stroke="none" fill="#000000" font-size="12px" font-family="sans-serif" font-weight="normal" transform="matrix(1,0,0,1,0,6.875)"><tspan dy="3.75">'+value+'</tspan></text>';
+		    $("#morris-bar-chart").find( "svg" ).append(parseSVG(output));
+		});
+
+	    Morris.Bar({
+	        element: 'morris-bar-chart2',
+	        data: [
+	        {% for exam in score_lst %}
+	        {% set total = 0 %}
+	        {
+	            y: '{{exam[0].examCompany.cTitle|slice(0,20)}}',
+	            {% for entry in exam %}
+	            	{% set total = total + entry.marks %}
+	            {% endfor %}
+	            a: {{total}}
+	        },
+	        {% endfor %}
+	        ],
+	        xkey: 'y',
+	        ykeys: ['a'],
+	        labels: ['Total Score'],
+	        hideHover: 'auto',
+	        resize: true,
+	        xLabelAngle: 60,
+	        ymax: 500,
+	        ymin: 0,
+	    });
+   
+		var items2 = $("#morris-bar-chart2").find( "svg" ).find("rect");
+		$.each(items2,function(index,v){
+		    var value = {{totalScore|json_encode()}}[index]//theJson[index].count;
+		    var newY = parseFloat( $(this).attr('y') - 20 );
+		    var halfWidth = parseFloat( $(this).attr('width') / 2 );
+		    var newX = parseFloat( $(this).attr('x') ) +  halfWidth;
+		    var output = '<text style="text-anchor: middle; font: 12px sans-serif;" x="'+newX+'" y="'+newY+'" text-anchor="middle" font="10px &quot;Arial&quot;" stroke="none" fill="#000000" font-size="12px" font-family="sans-serif" font-weight="normal" transform="matrix(1,0,0,1,0,6.875)"><tspan dy="3.75">'+value+'</tspan></text>';
+		    $("#morris-bar-chart2").find( "svg" ).append(parseSVG(output));
+		});
+
+    });    
+
+    function parseSVG(s) {
+        var div= document.createElementNS('http://www.w3.org/1999/xhtml', 'div');
+        div.innerHTML= '<svg xmlns="http://www.w3.org/2000/svg">'+s+'</svg>';
+        var frag= document.createDocumentFragment();
+        while (div.firstChild.firstChild)
+            frag.appendChild(div.firstChild.firstChild);
+        return frag;
+    }    
+    	
+    </script>
+{% endblock %}

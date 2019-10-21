@@ -1,0 +1,116 @@
+      <!--sidebar start-->
+      <aside>
+          <div id="sidebar"  class="nav-collapse ">
+              <!-- sidebar menu start-->
+              <ul class="sidebar-menu">
+                  <li class="active">
+                      <a class="" href="{{path('homepage')}}">
+                          <i class="icon_house_alt"></i>
+                          <span>Dashboard</span>
+                      </a>
+                  </li>
+                  <li class="sub-menu">
+                      <a href="javascript:;" class="" id="class_menu">
+                          <i class="icon_lightbulb_alt"></i>
+                          <span>Classes</span>
+                          <span class="menu-arrow arrow_carrot-right"></span>
+                      </a>
+                      <ul class="sub">
+                          <li><a class="add_class" href="{{path('new_class')}}">Add Class</a></li>
+                          <li><a class="list_classes" href="{{path('list_classes')}}">List Classes</a></li>
+                      </ul>
+                  </li>
+                  <li class="sub-menu">
+                      <a href="javascript:;" class="" id="subject_menu">
+                          <i class="icon_documents_alt"></i>
+                          <span>Subjects</span>
+                          <span class="menu-arrow arrow_carrot-right"></span>
+                      </a>
+                      <ul class="sub">
+                          <li><a class="add_subject" href="{{path('new_subject')}}">Add Subject</a></li>
+                          <li><a class="list_subjects" href="{{path('list_subjects')}}">List Subjects</a></li>
+                      </ul>
+                  </li>
+                  <li class="sub-menu">
+                      <a href="javascript:;" class="">
+                          <i class="icon_folder"></i>
+                          <span>Child Subjects</span>
+                          <span class="menu-arrow arrow_carrot-right"></span>
+                      </a>
+                      <ul class="sub">
+                          <li><a class="add_child_subject" href="{{path('choose_class_cs', {'goto': 'new_childSubject'})}}">Add Child Subject</a></li>
+                          <li><a class="list_child_subjects" href="{{path('choose_class_cs', {'goto': 'list_childSubjects'})}}">List Child Subjects</a></li>
+                          <li><a class="calculate_child_subjects" href="{{path('choose_class_cs', {'goto': 'calculate_childSubjects'})}}">Child Formulas</a></li>
+                      </ul>
+                  </li>
+
+                  <li class="sub-menu" id="testtt">
+                      <a href="javascript:;" class="" id="student_menu">
+                          <i class="icon_group"></i>
+                          <span>Students</span>
+                          <span class="menu-arrow arrow_carrot-right"></span>
+                      </a>
+                      <ul class="sub">
+                          <li><a class="add_student" href="{{path('choose_class', {'goto': 'new_student'})}}">Add Student</a></li>
+                          <li><a class="list_students" href="{{path('choose_class', {'goto': 'list_students'})}}">List Students</a></li>
+                      </ul>
+                  </li>
+                  <li class="sub-menu">
+                      <a href="javascript:;" class="" id="exam_menu">
+                          <i class="icon_document_alt"></i>
+                          <span>Exams</span>
+                          <span class="menu-arrow arrow_carrot-right"></span>
+                      </a>
+                      <ul class="sub">
+                          <li><a class="add_exam" href="{{path('choose_class_exam', {'goto': 'new_examCompany'})}}">Add Exam</a></li>
+                          <li><a class="list_exams" href="{{path('choose_class_exam', {'goto': 'list_examCompanies'})}}"><span>List Exams</span></a></li>
+                      </ul>
+                  </li>
+                  <li class="sub-menu">
+                      <a href="javascript:;" class="" id="exam_menu">
+                          <i class="icon_document_alt"></i>
+                          <span>Gradings</span>
+                          <span class="menu-arrow arrow_carrot-right"></span>
+                      </a>
+                      <ul class="sub">
+                          <li><a class="add_exam" href="{{path('grading_new')}}">Add Grading</a></li>
+                          <li><a class="add_exam" href="{{path('grading_index')}}">List Grading</a></li>
+                      </ul>
+                  </li>
+                  <li class="sub-menu">
+                      <a href="javascript:;" class="" id="exam_menu">
+                          <i class="icon_datareport_alt"></i>
+                          <span>Graphs</span>
+                          <span class="menu-arrow arrow_carrot-right"></span>
+                      </a>
+                      <ul class="sub">
+                          <li><a class="add_graph" href="{{path('graph_new')}}">Add Graph</a></li>
+                          <li><a class="add_graph" href="{{path('list_classes')}}">New Class Graph</a></li>
+                          <li><a class="add_graph" href="{{path('choose_class', {'goto': 'list_students'})}}">New Student Graph</a></li>
+                          <li><a class="list_graphs" href="{{path('graph_index')}}"><span>List Graphs</span></a></li>
+                      </ul>
+                  </li>
+                  <li class="sub-menu">
+                      <a class="go_to_timetabler" href="http://timetable.local">
+                          <i class="icon_house_alt"></i>
+                          <span>Timetabler</span>
+                      </a>
+                  </li>
+                  <li>
+                      <a class="settings" href="{{path('update_config')}}">
+                          <i class="icon_genius"></i>
+                          <span>Settings</span>
+                      </a>
+                  </li>
+                  <li>
+                      <a class="settings" href="{{path('update_config')}}">
+                          <!-- <i class="icon_tick"></i> -->
+                          <span id="score_show"></span>
+                      </a>
+                  </li>
+
+              </ul>
+              <!-- sidebar menu end-->
+          </div>
+      </aside>
+      <!--sidebar end-->

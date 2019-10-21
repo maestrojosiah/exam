@@ -1,0 +1,62 @@
+{% extends 'base.html.twig' %}
+{% block stylesheets %}
+    <!-- Morris Charts CSS -->
+    <link href="{{asset('vendor/morrisjs/morris.css')}}" rel="stylesheet">
+{% endblock %}
+{% block body %}
+<body>
+{% set info = "with_print_material" %}
+{{ include('templates/header.html.twig') }}        		
+{{ include('templates/aside.html.twig') }}        		
+{% embed "templates/content_draft.html.twig" %}
+	{% block content %}
+	<div class="col-lg-12">
+	<p>Click below to generate charts for the past {{app.user.configs|first.chartLimit}} exams. To increase or decrease the number of exams, go to <a href="{{path('update_config')}}">Settings</a></p>
+	<a class="btn btn-primary" href="{{path('student_profile', {'studentId': student.id, 'n': 't'})}}" >Generate New Graph</a>		
+	{% if message is defined %}
+	  <div class="well">
+	  	<h4>{{message}}</h4>
+	  </div>
+	{% else %}
+	  <section class="panel">
+	      <header class="panel-heading">
+	      </header>
+	      <div class="panel-body" id="chartjs">
+              <div class="col-lg-12">
+	            <table class="table table-striped">
+	                <thead>
+	                    <tr>
+	                        <th>Title</th>
+	                        <th>Actions</th>
+	                    </tr>
+	                </thead>
+	                <tbody>
+	                {% for graph in graphs %}
+	                    <tr>
+	                        <td>{{ graph.title }}</td>
+	                        <td>
+	                        <div class="btn-group" role="group" aria-label="Action">
+	                            <a class="btn btn-primary btn" href="{{ path('graph_show', { 'id': graph.id }) }}">details</a>
+	                            <a class="btn btn-info btn" href="{{ path('graph_edit', { 'id': graph.id }) }}">edit</a>
+	                            <a class="btn btn-success btn" href="{{ path('graphs_show', { 'graph_id': graph.id, 'which': 'bar_two' }) }}">graphs</a>
+	                        </div>
+	                        </td>
+	                    </tr>
+	                {% endfor %}
+	                </tbody>
+	            </table>
+
+              </div>   	      
+          </div>
+	      <div class="panel-body" id="chartjs">
+              <div class="col-lg-6">
+              </div>   	      
+          </div>
+	  </section>
+	{% endif %}
+	</div>
+{% endblock %}
+{% endembed %}
+{% endblock %}
+{% block javascripts %}
+{% endblock %}

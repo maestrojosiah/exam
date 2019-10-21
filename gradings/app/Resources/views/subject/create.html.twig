@@ -1,0 +1,117 @@
+{% extends 'base.html.twig' %}
+{% block body %}
+<body>
+{{ include('templates/header.html.twig') }}
+{{ include('templates/aside.html.twig') }}
+{% embed "templates/content_draft.html.twig" %}
+	{% block content %}
+	<div class="col-lg-6">
+	  <section class="panel">
+	      <header class="panel-heading">
+	          Add Subject
+	      </header>
+	      <div class="panel-body">
+	          <form id="form">
+	              <div class="form-group">
+	                  <label for="subject_s_title">Subject Title</label>
+	                  <input class="form-control" type="text" id="sTitle" placeholder="Subject Title" />
+	              </div>
+	              <button class="btn btn-primary btn-outline" type="button" id="save">Save</button>
+	              <a href="{{path('homepage')}}" class="btn btn-danger pull-right" style="margin-left: 5px;">DONE</a>
+	              <a href="{{path('list_subjects')}}" class="btn btn-danger pull-right">List</a>
+
+	          </form>
+
+	      </div>
+	  </section>
+	</div>
+	{% if app.user.subjects is not empty %}
+	<div class="col-lg-6">
+	  <section class="panel">
+	      <header class="panel-heading">
+	          Added Subjects
+	      </header>
+	      <div class="panel-body">
+					<p>
+						<ol id="added_subjects">
+							{% for subject in app.user.subjects %}
+								<li>{{subject.sTitle}}</li>
+								<ul>
+									{% for child in subject.childSubjects %}
+										<li>{{child.cSTitle}}</li>
+									{% endfor %}
+								</ul>
+							{% endfor %}
+						</ol>
+					</p>
+	      </div>
+	  </section>
+	</div>
+	{% else %}
+	<div class="col-lg-6">
+		<section class="panel">
+				<header class="panel-heading">
+						Added Subjects
+				</header>
+				<div class="panel-body">
+					<p>
+						<ol id="added_subjects">
+
+						</ol>
+					</p>
+				</div>
+		</section>
+	</div>
+	{% endif %}
+{% endblock %}
+{% endembed %}
+{% endblock %}
+{% block javascripts %}
+  <script type="text/javascript">
+    $(function() {
+      $("#sTitle").focus();
+    });
+  </script>
+	<script>
+	  $(document).on('click', '#save', function(){
+			var s_title = $('#sTitle').val();
+			$('#form').checkFields();
+			$('#save').html('Wait...');
+			$.ajax({
+	        url:'{{ (path('save_entity')) }}',
+	        type: "POST",
+	        dataType: "json",
+	        data: {
+						"return": 'getSTitle',
+						"entity": 'Subject',
+						"fields": ['sTitle'],
+						"values": [s_title],
+	        },
+	        async: true,
+	        success: function (data)
+	        {
+						console.log(data);
+						$("#sTitle").val('').focus();
+						$("#added_subjects").append('<li>'+data+'</li>');
+						$('#save').html('SAVED').removeClass('btn-primary').addClass('btn-success');
+	        },
+		      error: function (xhr, status, error) {
+						console.log('error');
+		      }
+	    });
+
+	  });
+	</script>
+	<script>
+		$(document).on('keypress', '#sTitle', function(e){
+			 var key = e.which;
+			 if(key == 13){
+					$("#save").click();
+					e.preventDefault();
+				} else {
+					$('#save').html('Save').removeClass('btn-success').addClass('btn-primary');
+				}
+		});
+
+</script>
+{% endblock %}

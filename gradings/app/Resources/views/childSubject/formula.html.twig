@@ -1,0 +1,112 @@
+{% extends 'base.html.twig' %}
+{% block body %}
+<body>
+{{ include('templates/header.html.twig') }}
+{{ include('templates/aside.html.twig') }}
+{% embed "templates/content_draft.html.twig" %}
+	{% block content %}
+	<h3>Set How you want to calculate your child subjects for {{subject.sTitle}}</h3>
+	<a class="btn btn-warning"  href="{{path('calculate_childSubjects', {'subjectId': subject.id})}}" onclick="window.location.href=window.location.href">Reset</a>
+	<hr />
+	<form class="form-inline" style="text-align:center;">
+	<div class="row">
+	<div class="col-md-6">
+		{% for child_subject in child_subjects %}
+		{% if loop.index > 1 %}
+		  <div class="form-group">
+		  	<div id="formula_sign-{{child_subject.id}}" class="badge" style="margin: 10px; height:30px; width:30px; font-size:22px;">{{signs[loop.index0]}}</div>
+		  </div>
+		{% endif %}
+		  <div class="form-group">
+		    <select id="formula_select-{{child_subject.id}}" class="form-control">
+			  <option value="plus-{{child_subject.id}}">{{child_subject.cSTitle}}</option>
+			  <option value="plus-{{child_subject.id}}" {% if signs[loop.index0] == "+" %} selected {% endif %}>+ (plus){{child_subject.cSTitle}}</option>
+			  <option value="minus-{{child_subject.id}}" {% if signs[loop.index0] == "-" %} selected {% endif %}>- (minus){{child_subject.cSTitle}}</option>
+			  <option value="ignore-{{child_subject.id}}" {% if signs[loop.index0] == "" %} selected {% endif %}>ignore {{child_subject.cSTitle}}</option>
+			</select>
+		  </div>
+		{% endfor %}
+		<hr style="width: 50%; height:1px; color:red; border-color:red; background-color:red; text-align:center; margin: 20px auto;"/>
+		  <div class="form-group">
+		  	<input id="divide_by" type="number" style="width:40%;" class="form-control" value="{{out_of}}" />
+		  </div>
+		<hr />
+		</div>
+		<div class="col-md-6" style="margin-top:50px;">
+			<span id="multiply_sign" class="badge pull-left" style="margin: 2px; height:30px; width:30px; font-size:22px;">X</span>
+			<input id="to_percentage" type="number" class="form-control" style="width:20%; margin-left:20px; float:left;" value="{{to_percentage}}" />
+		</div>
+		</div>
+		  <div class="form-group">
+		  	<button id="save_formula" type="button" class="btn btn-primary">Save Formula</button>
+		  </div>
+	</form>
+	{% endblock %}
+{% endembed %}
+{% endblock %}
+{% block javascripts %}
+  <script type="text/javascript">
+    $(function() {
+      $("#child_subject_c_s_title").focus();
+    });
+  </script>
+	<script>
+	  $(document).on('change', '[id^="formula_select-"]', function(){
+
+		var operation = $('#formula_select').val();
+    	var full_id = jQuery(this).attr("id");
+    	var split_id = full_id.split('-');
+    	var id = split_id[1];
+    	var subject_id = '{{subject.id}}';
+    	var this_value = $(this).val();
+    	$("#save_formula").html('Save Formula').removeClass('btn-success').addClass('btn-primary');
+
+    	if(this_value == 'plus-'+id)
+    		$("#formula_sign-"+id).show().text('+');
+    	else if (this_value == 'minus-'+id)
+    		$("#formula_sign-"+id).show().text('-');
+    	else if (this_value == 'ignore-'+id)
+    		$("#formula_sign-"+id).hide();
+
+	  });
+	</script>
+
+	<script>
+		$(document).on('click', '#save_formula', function(e){
+			var formula_string = "";
+			var subject_id = '{{subject.id}}';
+			$( "select" ).each(function( index ) {
+			  var thisone = $( this ).val();
+			  formula_string = formula_string + thisone + ":";
+			});
+			var divide_by = $("#divide_by").val();
+			var to_percentage = $("#to_percentage").val();
+
+			formula_string = formula_string + "/" + divide_by + "x" + to_percentage;
+
+			console.log(formula_string);
+			$("#save_formula").text("Saving");
+			$.ajax({
+		        url:'{{ (path('save_entity')) }}',
+		        type: "POST",
+		        dataType: "json",
+		        data: {
+					"return": 'getCalculation',
+					"entity": 'Formula',
+					"fields": ['calculation', 'subject_id'],
+					"values": [formula_string, subject_id],
+		        },
+		        async: true,
+		        success: function (data)
+		        {
+					console.log(data);
+					$("#save_formula").html('SAVED').removeClass('btn-primary').addClass('btn-success');
+		        },
+			      error: function (xhr, status, error) {
+			      	console.log("error");
+			    }
+	    	});
+		});
+
+</script>
+{% endblock %}

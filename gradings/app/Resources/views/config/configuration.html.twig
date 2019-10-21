@@ -1,0 +1,156 @@
+{% extends 'base.html.twig' %}
+{% block body %}
+<body>
+{{ include('templates/header.html.twig') }}
+{{ include('templates/aside.html.twig') }}
+{% embed "templates/content_draft.html.twig" %}
+  {% block content %}
+  <div class="col-lg-12">
+    <section class="panel">
+        <header class="panel-heading">
+        Update Settings
+        <a data-toggle="collapse" href="#collapseImport" role="button" aria-expanded="false" aria-controls="collapseExample">
+          | Import Students
+        </a>        
+        {% if not form.vars.valid %}
+                <div class="alert alert-warning">
+                {{ form_errors(form) }}
+                </div>
+              {% endif %}
+        </header>
+      {{ form_start(form, {'method': 'post', 'action': path('update_config'), 'attr': {'class': '', 'novalidate': 'novalidate' }} ) }}
+      <p>
+      </p>
+          <div class="col-lg-12 collapse" id="collapseImport" style="background-color:white;">
+          <div class="form-group">
+              <label for="classs_c_title">Import Students From Existing School (Optional)</label>
+              <p>If your school has an account, or if someone from your school has an account, you can import students from their database.</p>
+              <select class="form-control" id="my_school">
+                {% for setting_id, school in data.schools %}
+                  <option value="{{setting_id}}">{{school}}</option>
+                {% endfor %}
+                <option value="no_school_found">Your school Not Listed</option>
+              </select><hr />
+              <button type="button" id="import_students" class="btn btn-success btn-lg">Import Students</button>
+              <span id="status"></span>
+          </div>
+      </div>
+       <div class="col-lg-6" style="background-color:white;">
+        <div class="panel-body">
+            <div class="form-group">
+                <label for="classs_c_title">School Name</label>
+              {{ form_widget(form.sch_name, {'attr': {'class': 'form-control', 'placeholder': 'School name', 'id': 'school_name' }} ) }}
+            </div>
+            <div class="form-group">
+                <label for="classs_c_title">School Address</label>
+              {{ form_widget(form.address, {'attr': {'class': 'form-control', 'placeholder': 'School Address', 'id': 'school_address' }} ) }}
+            </div>
+            <div class="form-group">
+                <label for="classs_c_title">School Telephone</label>
+              {{ form_widget(form.telephone, {'attr': {'class': 'form-control', 'placeholder': 'school_telephone', 'id': 'school_name' }} ) }}
+            </div>
+            <div class="form-group">
+                <label for="classs_c_title">Results Per Page</label>
+              {{ form_widget(form.results_per_page, {'attr': {'class': 'form-control', 'id': 'results_per_page' }} ) }}
+            </div>
+            <div class="form-group">
+                <label for="classs_c_title">Website Tour Guide</label>
+              {{ form_widget(form.tour_guide, {'attr': {'class': 'form-control' }} ) }}
+            </div>
+          {{ form_widget(form.save, {'attr': {'class': 'btn btn-primary' }} ) }}
+            <!-- /.col-lg-6 (nested) -->
+        </div>
+      </div>
+      <div class="col-lg-6" style="background-color:white;">
+          <div class="form-group">
+              <label for="classs_c_title">Charts/Graphs Exam Entries Limit</label>
+            {{ form_widget(form.chart_limit, {'attr': {'class': 'form-control', 'value': '5'}} ) }}
+          </div>
+          <div class="form-group">
+              <label for="classs_c_title">Report Forms Orientation</label>
+            {{ form_widget(form.reportOrientation, {'attr': {'class': 'form-control', 'value': '5'}} ) }}
+          </div>
+          <div class="form-group">
+              <label for="classs_c_title">Letterhead Image [optional]</label>
+            {{ form_widget(form.letterhead, {'attr': {'class': 'form-control', 'novalidate': 'novalidate' }} ) }}
+          </div>
+          <div class="form-group">
+              <label for="classs_c_title">Letterhead height</label>
+            {{ form_widget(form.letterhead_height, {'attr': {'class': 'form-control' }} ) }}
+          </div>
+          <div class="form-group">
+              <label for="classs_c_title">What to display as Title</label>
+            {{ form_widget(form.title_display, {'attr': {'class': 'form-control' }} ) }}
+          </div>
+      </div>
+     {{ form_end(form) }}
+    </section>
+  </div>
+{% endblock %}
+{% endembed %}
+{% endblock %}
+{% block javascripts %}
+  <script type="text/javascript">
+    $(function() {
+      $("#classs_c_title").focus();
+    });
+  </script>
+  <script>
+      var tour = {
+          autoStart: true,
+          data : [
+              { element : '.panel-body', tooltip : 'You will need to set up some basic settings...', text: 'Please set your very basic information, Then click on "Save Settings"', position: 'B' },
+          ],
+          welcomeMessage: 'Welcome ExamPro App. If its your first time here, you may need a tour guide :) Click "start" to begin the tour.',
+          controlsPosition : 'BR',
+          buttons: {
+              next  : { text : 'Next &rarr;', class : 'btn btn-default'},
+              prev  : { text : '&larr; Previous', class: 'btn btn-default' },
+              start : { text : 'Start', class: 'btn btn-primary btn-lg' },
+              end   : { text : 'End', class: 'btn btn-primary' }
+          },
+          controlsCss: {
+              background: 'rgba(124, 124, 124, 0.9)',
+              color: '#fff',
+              width: '400px',
+              'border-radius': 0
+          }
+      };
+
+      $(document).ready(function(){
+          $('.touring').on('click', function(){
+              $.aSimpleTour(tour);
+          });
+      });
+    </script>
+
+    <script>
+      $(document).on('click', '[id="import_students"]', function(){
+
+          var setting_id = $("#my_school").val();
+
+          $("#status").html('<p class="alert alert-warning">Please wait...</p>');
+          $.ajax({
+              url:'{{ (path('import_students_to_user')) }}',
+              type: "POST",
+              dataType: "json",
+              data: {
+                  "setting_id": setting_id,
+              },
+              async: true,
+              success: function (data)
+              {
+                // alert(setting_id);
+                $("#status").html('<p class="alert alert-success">You have successfully imported the classes and students.');
+                location.reload();
+              },
+              error: function ()
+              {
+                $("#status").html('<p class="alert alert-danger">Something went wrong. Sorry.');
+              }
+          });
+
+      });
+     </script>
+
+{% endblock %}

@@ -1,0 +1,149 @@
+{% extends "::base.html.twig" %}
+
+{% block title %}Show Charts{% endblock %}
+{% block stylesheets %}
+  <link href="{{asset('css/pie.css')}}" rel="stylesheet">  
+  <style type="text/css">
+#os-Win {
+  margin-left:10px;
+  margin-top:10px;
+}
+#os-Win .pie {
+  background-color:blue;
+  border-color:blue;
+  -moz-transform:rotate(229.32deg); 
+  -webkit-transform:rotate(229.32deg); 
+  -o-transform:rotate(229.32deg);
+  transform:rotate(229.32deg);
+}
+#os-Win-lbl {
+  border-left:blue solid 1em;
+  padding-left:.5em;
+}
+#os-Mac {
+  -moz-transform:rotate(229.32deg); 
+  -webkit-transform:rotate(229.32deg);
+  -o-transform:rotate(229.32deg); 
+  transform:rotate(229.32deg); 
+}
+#os-Mac .pie {
+  background-color:purple;
+  border-color:purple;
+  -moz-transform:rotate(21.6deg); 
+  -webkit-transform:rotate(21.6deg);
+  -o-transform:rotate(21.6deg); 
+  transform:rotate(21.6deg); 
+}
+#os-Mac-lbl {
+  border-left:purple solid 1em;
+  padding-left:.5em;
+}
+#os-Other {
+  -moz-transform:rotate(250.92deg); 
+  -webkit-transform:rotate(250.92deg); 
+  -o-transform:rotate(250.92deg); 
+  transform:rotate(250.92deg); 
+}
+#os-Other .pie {
+  background-color:grey;
+  border-color:grey;
+  -moz-transform:rotate(109.44deg); 
+  -webkit-transform:rotate(109.44deg); 
+  -o-transform:rotate(109.44deg); 
+  transform:rotate(109.44deg); 
+}
+#os-Other-lbl {
+  border-left:grey solid 1em;
+  padding-left:.5em;
+}
+  </style>
+{% set contnr_height = ((graph.maximum / graph.xInterval) * 100) + 50 %}
+{% set measure_height = ((graph.maximum / graph.xInterval) * 100) %}
+{% set contnr_width = (graph.timelines|length * 52) + (graph.grouping * 20) + 150 %}
+{% set contnr_bottom_margin = graph.xLabelHeight + 100 %}
+{% include 'templates/css.html.twig' %}
+{% endblock %}
+
+{% block body %}
+    <div class="modal modal-success fade" id="page_modal">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h4 class="modal-title">Graph Details</h4>
+          </div>
+          <div class="modal-body">
+
+            <div class="row">
+              
+            {% include 'templates/charts_menu.html.twig' %}
+
+              {# start table bar graph #}
+              <div class="col-md-9">
+
+              {# start pie chart #}
+
+                {# splitted pie charts #}
+                <div style="margin-left:100px;">
+                {% if graph.grouping != 0 %} <h5>In your settings, you grouped this graph. Here are the pie charts in groups.</h5>{% endif %}
+                {% for chunked_timeline in chunked_timelines %}
+                  {% set index = loop.index %}
+                  {% set index0 = loop.index0 %}
+                    {% set sum = 0 %}
+                    {% for timeline in chunked_timeline %} 
+                      {% set sum = sum + timeline.figure %} 
+                    {% endfor %}
+                  <div class="chart">
+                    <h2>{{index}} : {% if exam_array[index0] is defined %}{{exam_array[index0]}}{% endif %}</h2>
+                    <div class="legend">
+                    {% for timeline in chunked_timeline %}  
+                      {% set degree = timeline.figure / sum * 360 %}
+                        <div id="g_{{timeline.id}}_{{index}}-lbl">{{timeline.description}} <span>{{degree|round(2)}}% ({{timeline.figure}})</span></div>
+                    {% endfor %}
+                    </div>
+                  {% for timeline in chunked_timeline %}  
+                  {% set degree = timeline.figure / score['score'] * 360 %}
+                  <div id="g_{{timeline.id}}_{{index}}" class="hold {% if degree > 180 %} gt50 {% endif %}">
+                    <div class="pie"></div>
+                    {% if degree > 180 %}<div class="pie fill"></div>{% endif %}
+                  </div>
+                  {% endfor %}
+                  </div>
+                {% endfor %}
+
+
+                {# one pie chart #}
+                <div class="chart">
+                {% if graph.grouping != 0 %} <h5>And here is one pie chart with all the data..</h5>{% endif %}
+                  <h4>{{graph.title}}</h4>
+                  <div class="legend">
+                  {% for timeline in timelines %}  
+                    {% set degree = timeline.figure / score['score'] * 360 %}
+                      <div id="p_{{timeline.id}}-lbl">{{timeline.description}} <span>{{degree|round(2)}}% ({{timeline.figure}})</span></div>
+                  {% endfor %}
+                  </div>
+                {% for timeline in timelines %}  
+                  {% set degree = timeline.figure / score['score'] * 360 %}
+                  <div id="p_{{timeline.id}}" class="hold {% if degree > 180 %} gt50 {% endif %}">
+                    <div class="pie"></div>
+                    {% if degree > 180 %}<div class="pie fill"></div>{% endif %}
+                  </div>
+                {% endfor %}
+                </div>
+                </div>
+              </div>
+            </div>
+            {# end piechart #}
+          </div>
+          <div class="modal-footer">
+            {% include 'templates/advert.html.twig' %}
+          </div>
+        </div>
+        <!-- /.modal-content -->
+      </div>
+      <!-- /.modal-dialog -->
+    </div>    
+
+
+{% endblock %}
+{% block javascripts %}
+{% endblock %}	

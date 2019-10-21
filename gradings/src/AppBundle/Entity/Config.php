@@ -1,0 +1,372 @@
+<?php
+
+namespace AppBundle\Entity;
+
+use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
+
+/**
+ * Config
+ *
+ * @ORM\Table(name="config")
+ * @ORM\Entity(repositoryClass="AppBundle\Repository\ConfigRepository")
+ */
+class Config
+{
+    /**
+     * @var int
+     *
+     * @ORM\Column(name="id", type="integer")
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="AUTO")
+     */
+    private $id;
+
+    /**
+     * @var string
+     * @Assert\NotBlank()
+     * @ORM\Column(name="sch_name", type="string", length=255)
+     */
+    private $schName;
+
+    /**
+     * @var string
+     * @Assert\NotBlank()
+     * @ORM\Column(name="address", type="string", length=100)
+     */
+    private $address;
+
+    /**
+     * @var string
+     * @Assert\NotBlank()
+     * @ORM\Column(name="telephone", type="string", length=30)
+     */
+    private $telephone;
+
+    /**
+     * @var string
+     * @Assert\NotBlank()
+     * @ORM\Column(name="results_per_page", type="string", length=3)
+     */
+    private $resultsPerPage;
+
+    /**
+     * @var string
+     * @Assert\NotBlank()
+     * @ORM\Column(name="tour_guide", type="string", length=10)
+     */
+    private $tourGuide;
+
+    /**
+     * @var string
+     * @ORM\Column(name="letterhead", type="string", length=255, nullable=true)
+     */
+    private $letterhead;
+
+    /**
+     * @var string
+     * @ORM\Column(name="chart_limit", type="string", length=255, nullable=true)
+     */
+    private $chartLimit;
+
+    /**
+     * @var string
+     * @ORM\Column(name="report_orientation", type="string", length=255, nullable=true)
+     */
+    private $reportOrientation;
+
+    /**
+     * @var string
+     * @Assert\NotBlank()
+     * @ORM\Column(name="letterhead_height", type="string", length=255)
+     */
+    private $letterheadHeight;
+
+    /**
+     * @var string
+     * @Assert\NotBlank()
+     * @ORM\Column(name="title_display", type="string", length=100)
+     */
+    private $titleDisplay;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="User", inversedBy="configs")
+     * @ORM\JoinColumn(name="user_id", referencedColumnName="id", onDelete="CASCADE")
+     */
+    private $user;
+
+
+    /**
+     * Get id
+     *
+     * @return int
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * Set schName
+     *
+     * @param string $schName
+     *
+     * @return Config
+     */
+    public function setSchName($schName)
+    {
+        $this->schName = $schName;
+
+        return $this;
+    }
+
+    /**
+     * Get schName
+     *
+     * @return string
+     */
+    public function getSchName()
+    {
+        return $this->schName;
+    }
+
+    /**
+     * Set address
+     *
+     * @param string $address
+     *
+     * @return Config
+     */
+    public function setAddress($address)
+    {
+        $this->address = $address;
+
+        return $this;
+    }
+
+    /**
+     * Get address
+     *
+     * @return string
+     */
+    public function getAddress()
+    {
+        return $this->address;
+    }
+
+    /**
+     * Set telephone
+     *
+     * @param string $telephone
+     *
+     * @return Config
+     */
+    public function setTelephone($telephone)
+    {
+        $this->telephone = $telephone;
+
+        return $this;
+    }
+
+    /**
+     * Get telephone
+     *
+     * @return string
+     */
+    public function getTelephone()
+    {
+        return $this->telephone;
+    }
+
+    /**
+     * Set resultsPerPage
+     *
+     * @param string $resultsPerPage
+     *
+     * @return Config
+     */
+    public function setResultsPerPage($resultsPerPage)
+    {
+        $this->resultsPerPage = $resultsPerPage;
+
+        return $this;
+    }
+
+    /**
+     * Get resultsPerPage
+     *
+     * @return string
+     */
+    public function getResultsPerPage()
+    {
+        return $this->resultsPerPage;
+    }
+
+    /**
+     * Set user
+     *
+     * @param \AppBundle\Entity\User $user
+     *
+     * @return Config
+     */
+    public function setUser(\AppBundle\Entity\User $user = null)
+    {
+        $this->user = $user;
+
+        return $this;
+    }
+
+    /**
+     * Get user
+     *
+     * @return \AppBundle\Entity\User
+     */
+    public function getUser()
+    {
+        return $this->user;
+    }
+
+    /**
+     * Set tourGuide
+     *
+     * @param string $tourGuide
+     *
+     * @return Config
+     */
+    public function setTourGuide($tourGuide)
+    {
+        $this->tourGuide = $tourGuide;
+
+        return $this;
+    }
+
+    /**
+     * Get tourGuide
+     *
+     * @return string
+     */
+    public function getTourGuide()
+    {
+        return $this->tourGuide;
+    }
+
+    /**
+     * Set letterhead
+     *
+     * @param string $letterhead
+     *
+     * @return Config
+     */
+    public function setLetterhead($letterhead)
+    {
+        $this->letterhead = $letterhead;
+
+        return $this;
+    }
+
+    /**
+     * Get letterhead
+     *
+     * @return string
+     */
+    public function getLetterhead()
+    {
+        return $this->letterhead;
+    }
+
+    /**
+     * Set letterheadHeight
+     *
+     * @param string $letterheadHeight
+     *
+     * @return Config
+     */
+    public function setLetterheadHeight($letterheadHeight)
+    {
+        $this->letterheadHeight = $letterheadHeight;
+
+        return $this;
+    }
+
+    /**
+     * Get letterheadHeight
+     *
+     * @return string
+     */
+    public function getLetterheadHeight()
+    {
+        return $this->letterheadHeight;
+    }
+
+    /**
+     * Set titleDisplay
+     *
+     * @param string $titleDisplay
+     *
+     * @return Config
+     */
+    public function setTitleDisplay($titleDisplay)
+    {
+        $this->titleDisplay = $titleDisplay;
+
+        return $this;
+    }
+
+    /**
+     * Get titleDisplay
+     *
+     * @return string
+     */
+    public function getTitleDisplay()
+    {
+        return $this->titleDisplay;
+    }
+
+    /**
+     * Set chartLimit
+     *
+     * @param string $chartLimit
+     *
+     * @return Config
+     */
+    public function setChartLimit($chartLimit)
+    {
+        $this->chartLimit = $chartLimit;
+
+        return $this;
+    }
+
+    /**
+     * Get chartLimit
+     *
+     * @return string
+     */
+    public function getChartLimit()
+    {
+        return $this->chartLimit;
+    }
+
+    /**
+     * Set reportOrientation
+     *
+     * @param string $reportOrientation
+     *
+     * @return Config
+     */
+    public function setReportOrientation($reportOrientation)
+    {
+        $this->reportOrientation = $reportOrientation;
+
+        return $this;
+    }
+
+    /**
+     * Get reportOrientation
+     *
+     * @return string
+     */
+    public function getReportOrientation()
+    {
+        return $this->reportOrientation;
+    }
+}

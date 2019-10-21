@@ -1,0 +1,147 @@
+{% extends 'base.html.twig' %}
+{% block body %}
+<body>
+{{ include('templates/header.html.twig') }}
+{{ include('templates/aside.html.twig') }}
+{% embed "templates/content_draft.html.twig" %}
+	{% block content %}
+      {% if students is empty %}
+        <div class="well">
+          <h3>There are no students for class {{class.cTitle}}. Please <a href="{{path('choose_class', {'goto': 'new_student'})}}">add students</a></h3>
+        </div>
+      {% elseif subjects is empty %}
+        <div class="well">
+          <h3>You don't have any subjects added yet! Please <a href="{{path('new_subject')}}">add subjects</a></h3>
+        </div>
+      {% else %}
+			<div class="col-lg-12">
+        <section class="panel">
+            <header class="panel-heading">
+              Exam Report Forms for {{exam.cTitle}} [{{class.cTitle}}]
+            </header>
+            {% set parents = [] %}
+            {% for childSubject in childSubjects %}
+              {% if childSubject.subject.sTitle not in parents %}
+                {% set parents = parents|merge([childSubject.subject.sTitle]) %}
+              {% endif %}
+            {% endfor %}
+            {% set total_possible = app.user.subjects|length * 100 %}
+            {% if app.user.configs|first.reportOrientation == "portrait" %}
+              {% set width_class = 'col-lg-8 col-md-offset-2' %}
+            {% else %}
+              {% set width_class = 'col-lg-6' %}
+            {% endif %}
+            {% for key, item in sum %}
+            <div class="{{width_class}}" style="color:black;">
+            <div style=" text-align:center;">
+              <h3>{{app.user.configs|first.schName|upper}}</h3>
+              <p style="color:black; font-weight:bold">
+                {{app.user.configs|first.address|upper}}, Telephone: {{app.user.configs|first.telephone|upper}}
+              </p>
+              <p style="color:black; font-style:italic">{{exam.cTitle}} [{{class.cTitle}}]</p>
+            </div>
+            <div>
+              <p class="col-lg-8">NAME: <span style="font-weight:bold;">{{item[2].names|title}}</span></p>
+            </div>
+            <div>
+              <p class="col-lg-8">CLASS: <span style="font-weight:bold;">{{item[2].class|title}}</span></p>
+              <p class="col-lg-4">DATE: <span style="font-weight:bold;">{{"now"|date("d/m/Y")}}</span></p>
+            </div>
+            <table class="table table-striped table-advance table-hover">
+              <thead>
+                <tr>
+                    <td>SUBJECTS</td>
+                    <td>SCORE</td>
+                    <td>GRADE</td>
+                    <td>REMARKS</td>
+
+                </tr>
+              </thead>
+             <tbody>
+                    {% for subject in subjects %}
+                    <tr>
+                    {% set st_sub_key = item[2].id ~ "." ~ subject.id ~ "." ~ "s" %}
+                      {% set closest = 0 %}
+                      {% set this_score = key_list_s[st_sub_key][st_sub_key].marks %}
+                      {% set arrNums = {} %}
+                      {% for grading in subject.gradings %}
+                          {% set key = grading.grade ~ "|" ~ grading.remark %}
+                          {% set arrNums = arrNums|merge({ (key): (grading.minimum) }) %}
+                      {% endfor %}
+                      {% set distances = {} %}
+                      {% for key, num in arrNums %}
+                          {% set figure = this_score - num|number_format %}
+                          {% set distances = distances|merge({ (key): (figure) }) %}
+                      {% endfor %}
+                      {% set measurer = 100 %}
+                      {% set smart_measurer = [] %}
+                      {% for key, distance in distances %}
+                        {% if distance > 0 and distance < measurer %}
+                          {% set measurer = distance %}
+                          {% set smart_measurer = key %}
+                        {% endif %}
+                      {% endfor %}
+                      {% if key_list_s[st_sub_key][st_sub_key] is defined %}
+                        <td>{{subject.sTitle|title}}</td>
+                        <td>{{this_score}}</td>
+                        <td>{{smart_measurer|split("|")[0]}}</td>
+                        <td>{{smart_measurer|split("|")[1]}}</td>
+                      {% else %}
+                        <td>{{subject.sTitle|title}}</td>
+                        <td>_</td>
+                        <td></td>
+                        <td></td>
+                      {% endif %}
+                    </tr>
+                    {% endfor %}
+                <tr style="font-weight:bold">
+                  <td>TOTAL MARKS</td>
+                	<td>{{item[0]}}</td>
+                  <td>OUT OF</td>
+                  <td>{{total_possible}}</td>
+                </tr>
+                <tr style="font-weight:bold">
+                  <td>POSITION</td>
+                	<td>{{item[1]}}</td>
+                  <td>OUT OF</td>
+                  <td>{{item[2].class.students|length}}</td>
+                </tr>
+             </tbody>
+          </table>
+          <div class="row">
+            <p class="col-lg-12">CLASS TEACHER: {{item[2].class.classTeacher|title}}</p>
+            <p class="col-lg-12">COMMENTS: <br /><br />
+							<span style="width:100%; border-bottom: 1px solid grey; display:block"></span><br />
+							<span style="width:100%; border-bottom: 1px solid grey; display:block"></span> </p>
+            <p class="col-lg-6">PRESENT: <br /><br />
+							<span style="width:100%; border-bottom: 1px solid grey; display:block"></span> </p>
+            <p class="col-lg-6">ABSENT: <br /><br />
+							<span style="width:100%; border-bottom: 1px solid grey; display:block"></span> </p>
+            <p class="col-lg-5">OUTSTANDING FEES: <br /><br />
+							<span style="width:100%; border-bottom: 1px solid grey; display:block"></span> </p>
+            <p class="col-lg-3"> DATE: <br /><br />
+							<span style="width:100%; border-bottom: 1px solid grey; display:block"></span> </p>
+            <p class="col-lg-4">SIGNATURE: <br /><br />
+							<span style="width:100%; border-bottom: 1px solid grey; display:block"></span> </p>
+            <p class="col-lg-4">NEXT TERM FEES: <br /><br />
+							<span style="width:100%; border-bottom: 1px solid grey; display:block"></span> </p>
+            <p class="col-lg-4">NEXT TERM DATE: <br /><br />
+							<span style="width:100%; border-bottom: 1px solid grey; display:block"></span> </p>
+            <p class="col-lg-4">REPORTING TIME: <br /><br />
+							<span style="width:100%; border-bottom: 1px solid grey; display:block"></span> </p>
+            <p class="col-lg-12">HEAD TEACHER'S REMARKS:<br /><br />
+							<span style="width:100%; border-bottom: 1px solid grey; display:block"></span><br />
+							<span style="width:100%; border-bottom: 1px solid grey; display:block"></span> </p>
+            <p class="col-lg-6"> DATE:<br /><br />
+							<span style="width:100%; border-bottom: 1px solid grey; display:block"></span> </p>
+            <p class="col-lg-6">SIGNATURE: <br /><br />
+							<span style="width:100%; border-bottom: 1px solid grey; display:block"></span> </p>
+          </div>
+        </div>
+        {% endfor %}
+        </section>
+      </div>
+  {% endif %}
+{% endblock %}
+{% endembed %}
+{% endblock %}

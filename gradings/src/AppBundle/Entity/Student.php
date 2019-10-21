@@ -1,0 +1,251 @@
+<?php
+
+namespace AppBundle\Entity;
+
+use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+
+
+/**
+ * Student
+ * @UniqueEntity("upi_number")
+ * @ORM\Table(name="student")
+ * @ORM\Entity(repositoryClass="AppBundle\Repository\StudentRepository")
+ */
+class Student
+{
+    /**
+     * @var int
+     *
+     * @ORM\Column(name="id", type="integer")
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="AUTO")
+     */
+    private $id;
+
+    /**
+     * @var string
+     * @Assert\NotBlank()
+     * @ORM\Column(name="names", type="string", length=255)
+     */
+    private $names;
+
+
+    /**
+     * @var string
+     * @Assert\NotBlank()
+     * @ORM\Column(name="gender", type="string", length=50)
+     */
+    private $gender;
+
+    /**
+     * @Assert\NotBlank()
+     * @ORM\ManyToOne(targetEntity="User", inversedBy="students")
+     * @ORM\JoinColumn(name="user_id", referencedColumnName="id", onDelete="CASCADE")
+     */
+    private $user;
+
+    /**
+     * @Assert\NotBlank()
+     * @ORM\ManyToOne(targetEntity="Classs", inversedBy="students")
+     * @ORM\JoinColumn(name="class_id", referencedColumnName="id", onDelete="CASCADE")
+     */
+    private $class;
+
+    /**
+     * @Assert\NotBlank()
+     * @ORM\OneToMany(targetEntity="Score", mappedBy="student")
+     */
+    private $scores;
+
+
+    /**
+     * @ORM\OneToMany(targetEntity="ScoreChild", mappedBy="student")
+     */
+    private $scoreChildren;
+
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->scores = new \Doctrine\Common\Collections\ArrayCollection();
+    }
+
+    /**
+     * Get id
+     *
+     * @return int
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+
+    /**
+     * Set names
+     *
+     * @param string $names
+     *
+     * @return Student
+     */
+    public function setNames($names)
+    {
+        $this->names = $names;
+
+        return $this;
+    }
+
+    /**
+     * Get names
+     *
+     * @return string
+     */
+    public function getNames()
+    {
+        return $this->names;
+    }
+
+    /**
+     * Set gender
+     *
+     * @param string $gender
+     *
+     * @return Student
+     */
+    public function setGender($gender)
+    {
+        $this->gender = $gender;
+
+        return $this;
+    }
+
+    /**
+     * Get gender
+     *
+     * @return string
+     */
+    public function getGender()
+    {
+        return $this->gender;
+    }
+
+    /**
+     * Set user
+     *
+     * @param \AppBundle\Entity\User $user
+     *
+     * @return Student
+     */
+    public function setUser(\AppBundle\Entity\User $user = null)
+    {
+        $this->user = $user;
+
+        return $this;
+    }
+
+    /**
+     * Get user
+     *
+     * @return \AppBundle\Entity\User
+     */
+    public function getUser()
+    {
+        return $this->user;
+    }
+
+    /**
+     * Set class
+     *
+     * @param \AppBundle\Entity\Classs $class
+     *
+     * @return Student
+     */
+    public function setClass(\AppBundle\Entity\Classs $class = null)
+    {
+        $this->class = $class;
+
+        return $this;
+    }
+
+    /**
+     * Get class
+     *
+     * @return \AppBundle\Entity\Classs
+     */
+    public function getClass()
+    {
+        return $this->class;
+    }
+
+    /**
+     * Add score
+     *
+     * @param \AppBundle\Entity\Score $score
+     *
+     * @return Student
+     */
+    public function addScore(\AppBundle\Entity\Score $score)
+    {
+        $this->scores[] = $score;
+
+        return $this;
+    }
+
+    /**
+     * Remove score
+     *
+     * @param \AppBundle\Entity\Score $score
+     */
+    public function removeScore(\AppBundle\Entity\Score $score)
+    {
+        $this->scores->removeElement($score);
+    }
+
+    /**
+     * Get scores
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getScores()
+    {
+        return $this->scores;
+    }
+
+    /**
+     * Add scoreChild
+     *
+     * @param \AppBundle\Entity\ScoreChild $scoreChild
+     *
+     * @return Student
+     */
+    public function addScoreChild(\AppBundle\Entity\ScoreChild $scoreChild)
+    {
+        $this->scoreChildren[] = $scoreChild;
+
+        return $this;
+    }
+
+    /**
+     * Remove scoreChild
+     *
+     * @param \AppBundle\Entity\ScoreChild $scoreChild
+     */
+    public function removeScoreChild(\AppBundle\Entity\ScoreChild $scoreChild)
+    {
+        $this->scoreChildren->removeElement($scoreChild);
+    }
+
+    /**
+     * Get scoreChildren
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getScoreChildren()
+    {
+        return $this->scoreChildren;
+    }
+
+}

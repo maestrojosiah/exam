@@ -1,0 +1,126 @@
+{% extends 'base.html.twig' %}
+{% block body %}
+<body>
+{{ include('templates/header.html.twig') }}
+{{ include('templates/aside.html.twig') }}
+{% embed "templates/content_draft.html.twig" %}
+	{% block content %}
+	<div class="col-lg-6">
+	  <section class="panel">
+	      <header class="panel-heading">
+	          Add Class
+	      </header>
+	      <div class="panel-body">
+	          <form id="form">
+	              <div class="form-group">
+	                  <label for="classs_c_title">Class Title</label>
+	                  <input class="form-control" type="text" id="cTitle" placeholder="Class Title" />
+	              </div>
+	              <div class="form-group">
+	                  <label for="classs_class_teacher">Class Teacher</label>
+	                  <input class="form-control" type="text" id="class_teacher" placeholder="Class Teacher" />
+	              </div>
+	              <button class="btn btn-primary btn-outline" type="button" id="save">Save</button>
+	              <a href="{{path('homepage')}}" class="btn btn-danger pull-right" style="margin-left: 5px;">DONE</a>
+	              <a href="{{path('list_classes')}}" class="btn btn-danger pull-right">List</a>
+
+	         </form>
+
+	      </div>
+	  </section>
+	</div>
+
+	{% if app.user.classes is not empty %}
+	<div class="col-lg-6">
+	  <section class="panel">
+	      <header class="panel-heading">
+	          Added Classes
+	      </header>
+	      <div class="panel-body">
+			<p>
+				<ol id="added_classes">
+					{% for class in app.user.classes %}
+						<li>{{class.cTitle}} [ {{ class.classTeacher }} ]</li>
+					{% endfor %}
+				</ol>
+			</p>
+	      </div>
+	  </section>
+	</div>
+	{% else %}
+	<div class="col-lg-6">
+		<section class="panel">
+				<header class="panel-heading">
+						Added Classes
+				</header>
+				<div class="panel-body">
+			<p>
+				<ol id="added_classes">
+
+				</ol>
+			</p>
+				</div>
+		</section>
+	</div>
+
+	{% endif %}
+
+{% endblock %}
+{% endembed %}
+{% endblock %}
+{% block javascripts %}
+  <script type="text/javascript">
+    $(function() {
+      $("#cTitle").focus();
+    });
+  </script>
+	<script>
+	  $(document).on('click', '#save', function(){
+			var c_title = $('#cTitle').val();
+			var class_teacher = $('#class_teacher').val();
+			$('#form').checkFields();
+			$('#save').html('Wait...');
+			$.ajax({
+	        url:'{{ (path('save_entity')) }}',
+	        type: "POST",
+	        dataType: "json",
+	        data: {
+						"return": 'getCTitle',
+						"entity": 'Classs',
+						"fields": ['cTitle', 'classTeacher'],
+						"values": [c_title, class_teacher],
+	        },
+	        async: true,
+	        success: function (data)
+	        {
+						console.log(data);
+						$("#cTitle").val('').focus();
+						$("#added_classes").append('<li>'+data+'</li>');
+						$("#class_teacher").val('');
+						$('#save').html('SAVED').removeClass('btn-primary').addClass('btn-success');
+	        },
+		      error: function (xhr, status, error) {
+						console.log('error');
+		      }
+	    });
+
+	  });
+	</script>
+	<script>
+	$(document).on('keyup', '#cTitle',function (e){
+			$('#save').html('Save').removeClass('btn-success').addClass('btn-primary');
+	});
+	</script>
+	<script>
+		$(document).on('keypress', '#class_teacher', function(e){
+			 var key = e.which;
+			 if(key == 13){
+					$("#save").click();
+					e.preventDefault();
+				} else {
+					$('#save').html('Save').removeClass('btn-success').addClass('btn-primary');
+				}
+		});
+
+</script>
+{% endblock %}
